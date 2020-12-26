@@ -33,3 +33,12 @@
 
 # Visual Studio local configuration folder
 /.vs
+*.user
+
+# Output directories
+Debug
+Release
+
+# Nuget packages are not (yet?) stored in this git repo
+/packages
+
