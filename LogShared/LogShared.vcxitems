@@ -15,14 +15,36 @@
     <ProjectCapability Include="SourceItemsFromImports" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="$(MSBuildThisFileDirectory)ELogLevel.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)ErrorMessages.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)EventSource.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)ILogSink.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)LogCentral.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)LogConsoleSink.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)LogDebugOutputSink.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)Logger.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)LogQueue.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)LogRotatingFileSink.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)LogStatement.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)LogUtf8FileSink.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)StringUtils.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="$(MSBuildThisFileDirectory)ELogLevel.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)ErrorMessages.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)LogCentral.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)LogConsoleSink.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)LogDebugOutputSink.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)Logger.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">NotUsing</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">NotUsing</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">NotUsing</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">NotUsing</PrecompiledHeader>
     </ClCompile>
+    <ClCompile Include="$(MSBuildThisFileDirectory)LogQueue.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)LogRotatingFileSink.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)LogStatement.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)LogUtf8FileSink.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)StringUtils.cpp" />
   </ItemGroup>
 </Project>
