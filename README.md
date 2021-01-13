@@ -15,8 +15,24 @@ There's a global g_Logger instance that can be configured during application sta
  - LogUtf8FileSink => to a text file that starts with the UTF-8 BOM, indicating the contents are in UTF-8 encoding
  - LogRotatingFileSink => multiple (UTF-8 encoded) text files, to limit the total size of logs
  - LogQueue => a wrapper that allows each of the aforementioned log sinks to become buffered and asynchronous (NB: not recommended for DebugOutput)
+ 
+ To create your own custom long sink, simply derive a class from ILogSink and implement its only method 'OutputString'. Instantiate and use your class like this:
+
+   `g_Logger.AddListener(std::make_shared<MyLogSink>())`
 
  For unit testing it's often useful to use a locally defined logger rather than g_Logger, and use the "DEBUG" version of the LOG macros (DLOGD, DLOGI etc).
+
+# Considerations for usage
+
+A typical log command (e.g. `LOGD("var=" << var)`) has the following properties:
+- check if the log statement should be logged; if the minimum log level (property of LogCentral) is higher than - in this example - DEBUG, then the rest of the log statement is not evaluated, which means (almost) zero overhead for log statements that are ignored
+- the idea is that all log statements could stay in, even when these do not seem very interesting; but they can be enabled even at runtime, if your application enables that
+- if you wish, it is possible to completely discard log statements (e.g. if the release build should never ever contain logs at DEBUG level), by defining these macros before including Logger.h:
+  ```
+  #define LOGD(x) (void)0
+  #include "Logger.h"
+  ```
+- the log statement is std::wostream based, to support UTF-x on Windows
 
 ## Notes
 
