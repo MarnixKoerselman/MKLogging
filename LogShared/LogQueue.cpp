@@ -29,6 +29,7 @@ void CLogQueue::Drain()
         bQueueEmpty = m_MessageQueue.empty();
         if (!bQueueEmpty)
         {
+            lock.unlock();
             std::this_thread::yield();
         }
     }
