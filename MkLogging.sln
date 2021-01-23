@@ -9,14 +9,14 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 		README.md = README.md
 	EndProjectSection
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "LogTest", "LogTest\LogTest.vcxproj", "{A8506B1E-9EF9-4643-A1FA-74FF2A4EEC84}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "MKLoggingFiles", "MKLoggingFiles\MKLoggingFiles.vcxitems", "{2E7DC2DE-443A-467E-A6B2-2FBEE3B6B189}"
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "LogShared", "LogShared\LogShared.vcxitems", "{2E7DC2DE-443A-467E-A6B2-2FBEE3B6B189}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "MKLoggingTest", "MKLoggingTest\MKLoggingTest.vcxproj", "{A8506B1E-9EF9-4643-A1FA-74FF2A4EEC84}"
 EndProject
 Global
 	GlobalSection(SharedMSBuildProjectFiles) = preSolution
-		LogShared\LogShared.vcxitems*{2e7dc2de-443a-467e-a6b2-2fbee3b6b189}*SharedItemsImports = 9
-		LogShared\LogShared.vcxitems*{a8506b1e-9ef9-4643-a1fa-74ff2a4eec84}*SharedItemsImports = 4
+		MKLoggingFiles\MKLoggingFiles.vcxitems*{2e7dc2de-443a-467e-a6b2-2fbee3b6b189}*SharedItemsImports = 9
+		MKLoggingFiles\MKLoggingFiles.vcxitems*{a8506b1e-9ef9-4643-a1fa-74ff2a4eec84}*SharedItemsImports = 4
 	EndGlobalSection
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|x64 = Debug|x64

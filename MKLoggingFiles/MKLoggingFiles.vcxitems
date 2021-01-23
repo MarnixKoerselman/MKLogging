@@ -4,7 +4,7 @@
     <MSBuildAllProjects Condition="'$(MSBuildVersion)' == '' Or '$(MSBuildVersion)' &lt; '16.0'">$(MSBuildAllProjects);$(MSBuildThisFileFullPath)</MSBuildAllProjects>
     <HasSharedItems>true</HasSharedItems>
     <ItemsProjectGuid>{2e7dc2de-443a-467e-a6b2-2fbee3b6b189}</ItemsProjectGuid>
-    <ItemsProjectName>LogShared</ItemsProjectName>
+    <ItemsProjectName>MKLoggingFiles</ItemsProjectName>
   </PropertyGroup>
   <ItemDefinitionGroup>
     <ClCompile>
