@@ -35,12 +35,7 @@
     <ClCompile Include="$(MSBuildThisFileDirectory)LogCentral.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)LogConsoleSink.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)LogDebugOutputSink.cpp" />
-    <ClCompile Include="$(MSBuildThisFileDirectory)Logger.cpp">
-      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">NotUsing</PrecompiledHeader>
-      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">NotUsing</PrecompiledHeader>
-      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">NotUsing</PrecompiledHeader>
-      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">NotUsing</PrecompiledHeader>
-    </ClCompile>
+    <ClCompile Include="$(MSBuildThisFileDirectory)Logger.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)LogQueue.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)LogRotatingFileSink.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)LogStatement.cpp" />
