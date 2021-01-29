@@ -4,13 +4,14 @@
 CLogQueue::CLogQueue(const std::shared_ptr<ILogSink>& pLogDelegate)
     : m_pDelegate(pLogDelegate)
     , m_WorkerThread(&CLogQueue::ConsumerThread, this)
+    , m_IsProcessingStopped(false)
 {
 }
 
 CLogQueue::~CLogQueue()
 {
     // trigger thread EOL
-    m_bStopProcessing = true;
+    m_IsProcessingStopped = true;
     m_QueueChanged.notify_one();
 
     // wait for the thread to complete
@@ -22,12 +23,12 @@ CLogQueue::~CLogQueue()
 
 void CLogQueue::Drain()
 {
-    bool bQueueEmpty = false;
-    while (!bQueueEmpty)
+    bool isQueueEmpty = false;
+    while (!isQueueEmpty)
     {
         std::unique_lock<std::mutex> lock(m_AccessQueue);
-        bQueueEmpty = m_MessageQueue.empty();
-        if (!bQueueEmpty)
+        isQueueEmpty = m_MessageQueue.empty();
+        if (!isQueueEmpty)
         {
             lock.unlock();
             std::this_thread::yield();
@@ -54,11 +55,14 @@ void CLogQueue::ConsumerThread()
 {
     while (true)
     {
-        // unlock as soon as possible, before dealing with the potentially very slow Delegate, to allow the producer access to the queue
         std::unique_lock<std::mutex> lock(m_AccessQueue);
-        m_QueueChanged.wait(lock, [this] { return m_bStopProcessing || !m_MessageQueue.empty(); });
+        // unlock as soon as possible, before dealing with the potentially very slow Delegate, to allow the producer access to the queue
+        m_QueueChanged.wait(lock, [this]
+        {
+            return m_IsProcessingStopped || !m_MessageQueue.empty();
+        });
         // check the 'abort' condition
-        if (m_bStopProcessing)
+        if (m_IsProcessingStopped)
         {
             OutputDebugStringW(__FUNCTIONW__ L": Stop Processing\n");
             return;
@@ -68,7 +72,17 @@ void CLogQueue::ConsumerThread()
             std::wstring sMessage = m_MessageQueue.front();
             m_MessageQueue.pop();
             lock.unlock(); // release the queue for access by log producers
-            m_pDelegate->OutputString(sMessage);
+            if (m_pDelegate)
+            {
+                m_pDelegate->OutputString(sMessage);
+            }
         }
+        //else
+        //{
+        //    // spurious signal detected!
+        //    LOGW("Spurious signal detected!");
+        //    // this should not happen, but just in case:
+        //    lock.unlock();
+        //}
     }
 }

@@ -17,7 +17,7 @@ std::wstring FormatString(_In_z_ _Printf_format_string_ const wchar_t* szFormat,
         return std::wstring();
     }
 
-    const size_t nBufferLength = iLength + 1;
+    const size_t nBufferLength = size_t(iLength) + 1;
     std::wstring sValue(nBufferLength, L'\00'); // include terminating \00
 
     va_start(args, szFormat);
@@ -41,7 +41,7 @@ std::string FormatString(_In_z_ _Printf_format_string_ const char* szFormat, ...
         return std::string();
     }
 
-    const size_t nBufferLength = iLength + 1;
+    const size_t nBufferLength = size_t(iLength) + 1;
     std::string sValue(nBufferLength, '\00'); // include terminating \00
 
     va_start(args, szFormat);
