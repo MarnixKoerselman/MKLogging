@@ -265,7 +265,6 @@ TEST(IntegrationTest, ImplementationMultipleThreads)
         << "\n\tDraining the queue took " << std::chrono::duration_cast<std::chrono::milliseconds>(endTime - producedTime).count() << " ms"
         << "\n\tTotal duration=" << std::chrono::duration_cast<std::chrono::milliseconds>(endTime - startTime).count() << " ms"
     );
-    // TODO: why does it take so long to drain the queue when the system is at rest??
 
     logger.RemoveListener(pBufferedFile);
     pBufferedFile->Drain(); // drain again to get the statistics in the file before the end of the test

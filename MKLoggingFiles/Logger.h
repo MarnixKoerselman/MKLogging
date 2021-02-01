@@ -5,8 +5,7 @@
 #include "LogCentral.h"
 
 // This global variable must be defined once in every project that uses the logging facilities.
-// Currently this is done through a global instance in the LogLib.
-//extern std::shared_ptr<CLogCentral> g_pLogger;
+// Currently this is done through a global instance defined in Logger.cpp.
 extern CLogCentral g_LogCentral;
 
 // Set of macros that simplify logging using the default global logger
