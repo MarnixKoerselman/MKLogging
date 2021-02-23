@@ -27,6 +27,7 @@
     <ClInclude Include="$(MSBuildThisFileDirectory)LogRotatingFileSink.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)LogStatement.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)LogUtf8FileSink.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)LogUtf8UnbufferedFileSink.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)StringUtils.h" />
   </ItemGroup>
   <ItemGroup>
@@ -40,6 +41,7 @@
     <ClCompile Include="$(MSBuildThisFileDirectory)LogRotatingFileSink.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)LogStatement.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)LogUtf8FileSink.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)LogUtf8UnbufferedFileSink.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)StringUtils.cpp" />
   </ItemGroup>
 </Project>
