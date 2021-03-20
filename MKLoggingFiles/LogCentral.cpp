@@ -1,7 +1,7 @@
 #include "LogCentral.h"
 #include "Logger.h"
 
-CLogCentral::CLogCentral(const std::list<std::shared_ptr<ILogSink>>& pListeners)
+CLogCentral::CLogCentral(const std::initializer_list<std::shared_ptr<ILogSink>>& pListeners)
     : CEventSource<ILogSink>(pListeners)
     , m_MinimumLogLevel(ELogLevel::Warning)
 {

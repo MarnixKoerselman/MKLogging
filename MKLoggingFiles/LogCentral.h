@@ -8,7 +8,7 @@
 class CLogCentral : public CEventSource<ILogSink>, public ILogSink
 {
 public:
-    CLogCentral(const std::list<std::shared_ptr<ILogSink>>& pListeners);
+    CLogCentral(const std::initializer_list<std::shared_ptr<ILogSink>>& pListeners);
 
     void SetMinimumLogLevel(ELogLevel logLevel);
     bool IsLogged(ELogLevel logLevel) noexcept;

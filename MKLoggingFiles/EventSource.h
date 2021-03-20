@@ -1,7 +1,8 @@
 #pragma once
 
 #include <mutex>
-#include <list>
+#include <vector>
+#include <initializer_list>
 
 template <typename EventNotificationInterface>
 class CEventSource
@@ -12,7 +13,7 @@ class CEventSource
 public:
     CEventSource() = default;
 
-    CEventSource(const std::list<std::shared_ptr<EventNotificationInterface>>& pListeners)
+    CEventSource(const std::initializer_list<std::shared_ptr<EventNotificationInterface>>& pListeners)
         : m_pListeners(pListeners)
     {
     }
@@ -35,7 +36,12 @@ public:
         }
     }
 
+    const auto& GetListeners() const
+    {
+        return m_pListeners;
+    }
+
 protected:
-    std::list<std::shared_ptr<EventNotificationInterface>> m_pListeners;
+    std::vector<std::shared_ptr<EventNotificationInterface>> m_pListeners;
     Mutex m_AccessListeners;
 };
