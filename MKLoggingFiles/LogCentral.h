@@ -8,7 +8,7 @@
 class CLogCentral : public CEventSource<ILogSink>, public ILogSink
 {
 public:
-    CLogCentral(const std::initializer_list<std::shared_ptr<ILogSink>>& pListeners);
+    explicit CLogCentral(const std::initializer_list<std::shared_ptr<ILogSink>>& listeners);
 
     void SetMinimumLogLevel(ELogLevel logLevel);
     bool IsLogged(ELogLevel logLevel) noexcept;
@@ -22,7 +22,7 @@ private:
 
 
 // Set of macros that simplify logging with a CLogCentral instance.
-#define ENDLINE L"\n"
+#define ENDLINE "\n"
 #define MKL_ISLOGGED(mp_logger, mp_LogLevel) mp_logger.IsLogged(mp_LogLevel)
 #define MKL_LOGV(mp_logger) do { if (MKL_ISLOGGED(mp_logger, ELogLevel::Verbose)) { CLogStatement(&mp_logger).Get(ELogLevel::Verbose, __FUNCTION__, __FILE__, __LINE__) << ENDLINE; } } while (0)
 #define MKL_LOGD(mp_logger, mp_out) do { if (MKL_ISLOGGED(mp_logger, ELogLevel::Debug)) { CLogStatement(&mp_logger).Get(ELogLevel::Debug, __FUNCTION__, __FILE__, __LINE__) << mp_out << ENDLINE; } } while (0)

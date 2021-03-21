@@ -1,8 +1,8 @@
 #include "LogCentral.h"
 #include "Logger.h"
 
-CLogCentral::CLogCentral(const std::initializer_list<std::shared_ptr<ILogSink>>& pListeners)
-    : CEventSource<ILogSink>(pListeners)
+CLogCentral::CLogCentral(const std::initializer_list<std::shared_ptr<ILogSink>>& listeners)
+    : CEventSource<ILogSink>(listeners)
     , m_MinimumLogLevel(ELogLevel::Warning)
 {
 #ifdef _DEBUG
@@ -19,7 +19,7 @@ void CLogCentral::SetMinimumLogLevel(ELogLevel logLevel)
 void CLogCentral::OutputString(const std::wstring& text)
 {
     std::lock_guard<std::recursive_mutex> lock(m_AccessListeners);
-    for (const auto& pListener : m_pListeners)
+    for (const auto& pListener : m_Listeners)
     {
         pListener->OutputString(text);
     }
@@ -29,5 +29,5 @@ bool CLogCentral::IsLogged(ELogLevel logLevel) noexcept
 {
     // TODO: allow overruling the hard-coded log level by dynamic application properties, to manipulate the log level at runtime
 
-    return (logLevel >= m_MinimumLogLevel);
+    return (logLevel >= m_MinimumLogLevel) && HasListeners();
 }

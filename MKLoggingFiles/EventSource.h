@@ -12,36 +12,37 @@ class CEventSource
 
 public:
     CEventSource() = default;
-
-    CEventSource(const std::initializer_list<std::shared_ptr<EventNotificationInterface>>& pListeners)
-        : m_pListeners(pListeners)
+    
+    explicit CEventSource(const std::initializer_list<std::shared_ptr<EventNotificationInterface>>& listeners)
+        : m_Listeners(listeners)
     {
     }
-
+    
     virtual ~CEventSource() = default;
 
     void AddListener(const std::shared_ptr<EventNotificationInterface>& pListener)
     {
         Lock lock(m_AccessListeners);
-        m_pListeners.push_back(pListener);
+        m_Listeners.push_back(pListener);
     }
-
+    
     void RemoveListener(const std::shared_ptr<EventNotificationInterface>& pListener)
     {
         Lock lock(m_AccessListeners);
-        auto pos = std::find(m_pListeners.begin(), m_pListeners.end(), pListener);
-        if (pos != m_pListeners.end())
+        auto pos = std::find(m_Listeners.begin(), m_Listeners.end(), pListener);
+        if (pos != m_Listeners.end())
         {
-            m_pListeners.erase(pos);
+            m_Listeners.erase(pos);
         }
     }
 
-    const auto& GetListeners() const
+    bool HasListeners() const
     {
-        return m_pListeners;
+        return !m_Listeners.empty();
     }
 
 protected:
-    std::vector<std::shared_ptr<EventNotificationInterface>> m_pListeners;
+    std::vector<std::shared_ptr<EventNotificationInterface>> m_Listeners;
     Mutex m_AccessListeners;
 };
+
