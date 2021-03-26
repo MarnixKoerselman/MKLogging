@@ -3,5 +3,7 @@
 
 void CLogDebugOutputSink::OutputString(const std::wstring& text) noexcept
 {
-    ::OutputDebugStringW(text.c_str());
+    if (IsDebuggerPresent()) {
+        ::OutputDebugStringW(text.c_str());
+    }
 }
