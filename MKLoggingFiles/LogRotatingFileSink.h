@@ -26,6 +26,6 @@ private:
     const std::wstring m_sLogFileName = L"app"; // The base name of the log file(s). The timestamp of file creation will be inserted in the name, and ".log" appended. NB: should not contain a '.' (because used in regex)
     const std::wstring m_LogFileExtension = L"log"; // NB: should not contain a '.' (because used in regex)
     CLogUtf8FileSink m_LogFile;
-    const long m_LogFileSizeThreshold;
+    const long m_FileSizeThreshold;
     const int m_MaxFileCount;
 };

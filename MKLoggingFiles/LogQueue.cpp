@@ -10,6 +10,7 @@ CLogQueue::CLogQueue(const std::shared_ptr<ILogSink>& pLogDelegate)
 
 CLogQueue::~CLogQueue()
 {
+    Drain();
     // trigger thread EOL
     m_IsProcessingStopped = true;
     m_QueueChanged.notify_one();

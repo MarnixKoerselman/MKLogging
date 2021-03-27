@@ -5,9 +5,9 @@
 #include <iomanip>
 #include <StringUtils.h>
 
-CLogRotatingFileSink::CLogRotatingFileSink(const std::filesystem::path& logFileDirectoryPath, long iMaxLogFileSize /*= 10*1024*1024*/, int maxLogFileCount /*= 10*/)
+CLogRotatingFileSink::CLogRotatingFileSink(const std::filesystem::path& logFileDirectoryPath, long fileSizeThreshold /*= 10*1024*1024*/, int maxLogFileCount /*= 10*/)
     : m_LogFileDirectoryPath(logFileDirectoryPath)
-    , m_LogFileSizeThreshold(iMaxLogFileSize)
+    , m_FileSizeThreshold(fileSizeThreshold)
     , m_MaxFileCount(maxLogFileCount)
 {
     if (m_LogFileDirectoryPath.empty())
@@ -25,7 +25,7 @@ void CLogRotatingFileSink::OutputString(const std::wstring& text)
 void CLogRotatingFileSink::RollOver()
 {
     // the 'current log file' may use caching methods, so the log file size must be tracked by the application and cannot be retrieved reliably from the file system
-    if (m_LogFile.GetFileSize() >= m_LogFileSizeThreshold)
+    if (m_LogFile.GetFileSize() >= m_FileSizeThreshold)
     {
         m_LogFile.Close();
     }
