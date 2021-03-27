@@ -42,7 +42,7 @@ size_t CLogQueue::GetMessageQueueSize()
     return m_MessageQueue.size();
 }
 
-void CLogQueue::OutputString(const std::wstring& text)
+void CLogQueue::OutputString(const std::string& text)
 {
     // make the change while locked, and unlock before signalling the changed condition
     std::unique_lock<std::mutex> lock(m_AccessQueue);
@@ -70,12 +70,12 @@ void CLogQueue::ConsumerThread()
         }
         if (!m_MessageQueue.empty())
         {
-            std::wstring sMessage = m_MessageQueue.front();
+            auto message = m_MessageQueue.front();
             m_MessageQueue.pop();
             lock.unlock(); // release the queue for access by log producers
             if (m_pDelegate)
             {
-                m_pDelegate->OutputString(sMessage);
+                m_pDelegate->OutputString(message);
             }
         }
         //else

@@ -13,14 +13,14 @@ public:
     size_t GetMessageQueueSize();
 
 public: // ILogSink
-    void OutputString(const std::wstring& text) override;
+    void OutputString(const std::string& text) override;
 
 protected:
     void ConsumerThread();
 
 protected:
     std::shared_ptr<ILogSink> m_pDelegate;
-    std::queue<std::wstring> m_MessageQueue; // FIFO queue
+    std::queue<std::string> m_MessageQueue; // FIFO queue
     std::mutex m_AccessQueue;
     std::condition_variable m_QueueChanged;
     std::thread m_WorkerThread;

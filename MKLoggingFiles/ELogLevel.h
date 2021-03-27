@@ -13,7 +13,7 @@ enum class ELogLevel
     Max = None
 };
 
-const wchar_t* ELogLevel_ToString(ELogLevel logLevel) noexcept;
-ELogLevel ELogLevel_FromString(const wchar_t* szLogLevel);
+const char* ELogLevel_ToString(ELogLevel logLevel) noexcept;
+ELogLevel ELogLevel_FromString(const char* szLogLevel);
 
 void operator++(ELogLevel& eValue);

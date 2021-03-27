@@ -40,7 +40,8 @@ bool CLogUtf8FileSink::Create(const std::filesystem::path& directoryPath, const 
     }
 
     std::filesystem::path logFilePath = directoryPath / fileName;
-    m_pFile = _wfsopen(logFilePath.c_str(), L"wt, ccs=UTF-8", _SH_DENYWR);
+    m_pFile = _wfsopen(logFilePath.c_str(), L"wt", _SH_DENYWR);
+    // m_pFile = _wfsopen(logFilePath.c_str(), L"wt, ccs=UTF-8", _SH_DENYWR);
     return (m_pFile != nullptr);
 }
 
@@ -68,13 +69,13 @@ bool CLogUtf8FileSink::IsOpen() const
 }
 
 // ILogSink
-void CLogUtf8FileSink::OutputString(const std::wstring& text)
+void CLogUtf8FileSink::OutputString(const std::string& text)
 {
     assert(IsOpen());
 
     // Since the file is created as UTF-8, an automatic conversion from UCS2 to UTF-8 is performed.
     // The number of written bytes is roughly (in most cases exactly) equal to the number of UCS2 characters.
-    const int iWrittenByteCount = std::fwprintf(m_pFile, text.c_str());
+    const int iWrittenByteCount = std::fprintf(m_pFile, text.c_str());
     if (iWrittenByteCount < 0)
     {
         LOGE(L"fwprintf failed");
@@ -82,11 +83,5 @@ void CLogUtf8FileSink::OutputString(const std::wstring& text)
     else
     {
         m_iWrittenByteCount += iWrittenByteCount;
-    }
-
-    const int iFlushResult = std::fflush(m_pFile); // Flush, because what good is a tool for post-mortem analysis if the log contents remain in volatile memory?
-    if (iFlushResult != 0)
-    {
-        LOGE(L"Result of flushing the file stream: " << iFlushResult);
     }
 }

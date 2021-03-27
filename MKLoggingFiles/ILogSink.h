@@ -5,5 +5,5 @@
 __interface ILogSink
 {
 public: // ILogSink
-    void OutputString(const std::wstring& text);
+    void OutputString(const std::string& text);
 };

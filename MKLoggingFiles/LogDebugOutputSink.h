@@ -6,5 +6,5 @@
 class CLogDebugOutputSink : public ILogSink
 {
 public: // ILogSink
-    void OutputString(const std::wstring& text) noexcept override;
+    void OutputString(const std::string& text) noexcept override;
 };

@@ -16,7 +16,7 @@ void CLogCentral::SetMinimumLogLevel(ELogLevel logLevel)
     m_MinimumLogLevel = logLevel;
 }
 
-void CLogCentral::OutputString(const std::wstring& text)
+void CLogCentral::OutputString(const std::string& text)
 {
     std::lock_guard<std::recursive_mutex> lock(m_AccessListeners);
     for (const auto& pListener : m_Listeners)

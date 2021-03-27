@@ -19,15 +19,15 @@ CLogStatement::~CLogStatement()
     m_pLogSink->OutputString(m_Buffer.str());
 }
 
-std::wostream& CLogStatement::Get(ELogLevel logLevel, const char* szFunction, const char* szFile, long lineNumber)
+std::ostream& CLogStatement::Get(ELogLevel logLevel, const char* szFunction, const char* szFile, long lineNumber)
 {
-    std::wostream& os = m_Buffer;
+    std::ostream& os = m_Buffer;
 
 #ifdef _DEBUG
     // Only show full file path (which may include personal info of the developer) in debug build
     if (logLevel >= ELogLevel::Warning)
     {
-        os << szFile << L" (" << lineNumber << L")\n";
+        os << szFile << " (" << lineNumber << ")\n";
     }
 #else
     UNREFERENCED_PARAMETER(szFile);
@@ -44,20 +44,20 @@ std::wostream& CLogStatement::Get(ELogLevel logLevel, const char* szFunction, co
         //WTF? Could not convert to local time?
         std::cerr << "Cannot convert time_t " << now2 << " to local time, errno=" << errno << std::endl;
     }
-    os << std::put_time(&systemTime, L"%F %T") << L"." << std::setw(3) << std::setfill(L'0') << ms.count()
-        << L" (0x" << std::hex << std::setw(8) << std::setfill(L'0') << std::uppercase << ::GetCurrentThreadId() << L") "
-        << std::nouppercase << std::dec << std::left << std::setw(10) << std::setfill(L' ')
+    os << std::put_time(&systemTime, "%F %T") << "." << std::setw(3) << std::setfill('0') << ms.count()
+        << " (0x" << std::hex << std::setw(8) << std::setfill('0') << std::uppercase << ::GetCurrentThreadId() << ") "
+        << std::nouppercase << std::dec << std::left << std::setw(10) << std::setfill(' ')
         << ELogLevel_ToString(logLevel)
-        << szFunction << L": ";
+        << szFunction << ": ";
 
     return os;
 }
 
 void CLogStatement::LogHex(ELogLevel logLevel, const char* szFunction, const char* szFile, long lineNumber, const char* szDataHeader, const void* pData, int iDataSize)
 {
-    std::wostream& os = Get(logLevel, szFunction, szFile, lineNumber);
+    std::ostream& os = Get(logLevel, szFunction, szFile, lineNumber);
 
-    os << szDataHeader << L" Size=" << iDataSize << L" bytes\n";
+    os << szDataHeader << " Size=" << iDataSize << " bytes\n";
 
     if ((pData != nullptr) && (iDataSize > 0))
     {
@@ -66,39 +66,39 @@ void CLogStatement::LogHex(ELogLevel logLevel, const char* szFunction, const cha
         const std::uint8_t* pByteBuffer(reinterpret_cast<const std::uint8_t*>(pData));
 
         // show contents of the buffer as hex values
-        os << std::hex << std::uppercase << std::setfill(L'0');
+        os << std::hex << std::uppercase << std::setfill('0');
         for (int i = 0; i < std::min(iDataSize, maxTraceValueCount); i++)
         {
             if (i > 0)
             {
                 if ((i % 16) == 0)
                 {
-                    os << L"\n";
+                    os << "\n";
                 }
                 else if ((i % 8) == 0)
                 {
-                    os << L"  ";
+                    os << "  ";
                 }
             }
 
-            os << L' ' << std::setw(2) << pByteBuffer[i];
+            os << ' ' << std::setw(2) << pByteBuffer[i];
         }
 
         if (iDataSize > maxTraceValueCount)
         {
-            os << L"\n...........";
+            os << "\n...........";
             for (int i = iDataSize - maxTraceValueCount; i < iDataSize; i++)
             {
                 int column = iDataSize - i - maxTraceValueCount;
                 if ((column % 16) == 0)
                 {
-                    os << L"\n";
+                    os << "\n";
                 }
                 else if ((column % 8) == 0)
                 {
-                    os << L"  ";
+                    os << "  ";
                 }
-                os << L' ' << std::setw(2) << pByteBuffer[i];
+                os << ' ' << std::setw(2) << pByteBuffer[i];
             }
         }
         os << std::endl;

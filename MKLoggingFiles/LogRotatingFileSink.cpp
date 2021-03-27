@@ -16,7 +16,7 @@ CLogRotatingFileSink::CLogRotatingFileSink(const std::filesystem::path& logFileD
     }
 }
 
-void CLogRotatingFileSink::OutputString(const std::wstring& text)
+void CLogRotatingFileSink::OutputString(const std::string& text)
 {
     RollOver();
     m_LogFile.OutputString(text);

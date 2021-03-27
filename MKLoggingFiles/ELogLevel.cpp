@@ -26,25 +26,25 @@ void operator++(ELogLevel& eValue)
 //    return eOldValue;
 //}
 
-const wchar_t* ELogLevel_ToString(ELogLevel logLevel) noexcept
+const char* ELogLevel_ToString(ELogLevel logLevel) noexcept
 {
     switch (logLevel)
     {
-        case ELogLevel::Verbose:    return L"VERBOSE";
-        case ELogLevel::Debug:      return L"DEBUG";
-        case ELogLevel::Info:       return L"INFO";
-        case ELogLevel::Warning:    return L"WARNING";
-        case ELogLevel::Error:      return L"ERROR";
-        case ELogLevel::None:       return L"NONE";
-        default:                    assert(false); return L"<invalid log level>";
+        case ELogLevel::Verbose:    return "VERBOSE";
+        case ELogLevel::Debug:      return "DEBUG";
+        case ELogLevel::Info:       return "INFO";
+        case ELogLevel::Warning:    return "WARNING";
+        case ELogLevel::Error:      return "ERROR";
+        case ELogLevel::None:       return "NONE";
+        default:                    assert(false); return "<invalid log level>";
     }
 }
 
-ELogLevel ELogLevel_FromString(const wchar_t* szLogLevel)
+ELogLevel ELogLevel_FromString(const char* szLogLevel)
 {
     for (ELogLevel value = ELogLevel::Verbose; value <= ELogLevel::None; ++value)
     {
-        if (_wcsicmp(szLogLevel, ELogLevel_ToString(value)) == 0)
+        if (_stricmp(szLogLevel, ELogLevel_ToString(value)) == 0)
         {
             return value;
         }

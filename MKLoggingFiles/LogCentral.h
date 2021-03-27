@@ -14,7 +14,7 @@ public:
     bool IsLogged(ELogLevel logLevel) noexcept;
 
 public: // ILogSink
-    void OutputString(const std::wstring& text) override;
+    void OutputString(const std::string& text) override;
 
 private:
     ELogLevel m_MinimumLogLevel;

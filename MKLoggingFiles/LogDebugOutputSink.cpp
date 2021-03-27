@@ -1,9 +1,9 @@
 #include "LogDebugOutputSink.h"
 #include <Windows.h>
 
-void CLogDebugOutputSink::OutputString(const std::wstring& text) noexcept
+void CLogDebugOutputSink::OutputString(const std::string& text) noexcept
 {
     if (IsDebuggerPresent()) {
-        ::OutputDebugStringW(text.c_str());
+        ::OutputDebugStringA(text.c_str());
     }
 }

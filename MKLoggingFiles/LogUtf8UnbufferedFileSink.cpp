@@ -25,10 +25,10 @@ void CLogUtf8UnbufferedFileSink::Close()
     }
 }
 
-void CLogUtf8UnbufferedFileSink::OutputString(const std::wstring& text)
+void CLogUtf8UnbufferedFileSink::OutputString(const std::string& text)
 {
     if (m_FileDescriptor != 0) {
-        _write(m_FileDescriptor, text.data(), static_cast<unsigned int>(text.size() * sizeof(wchar_t)));
+        _write(m_FileDescriptor, text.data(), static_cast<unsigned int>(text.size() * sizeof(char)));
         _commit(m_FileDescriptor);
     }
 }

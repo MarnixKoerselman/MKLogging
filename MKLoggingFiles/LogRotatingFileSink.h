@@ -14,7 +14,7 @@ public:
     virtual ~CLogRotatingFileSink() = default;
 
 public: // ILogSink
-    void OutputString(const std::wstring& text) override;
+    void OutputString(const std::string& text) override;
 
 protected: // methods made protected instead of private to improve testability
     void RollOver();

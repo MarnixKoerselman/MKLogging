@@ -15,7 +15,7 @@ public:
     bool IsOpen() const;
 
 public: // ILogSink
-    void OutputString(const std::wstring& text) override;
+    void OutputString(const std::string& text) override;
 
 private:
     FILE* m_pFile = nullptr;

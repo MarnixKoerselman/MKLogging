@@ -1,7 +1,7 @@
 #include "LogConsoleSink.h"
 #include <iostream>
 
-void CLogConsoleSink::OutputString(const std::wstring& text)
+void CLogConsoleSink::OutputString(const std::string& text)
 {
-    std::wcout << text;
+    std::cout << text;
 }

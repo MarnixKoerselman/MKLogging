@@ -12,7 +12,7 @@ public:
     void Close();
 
 public: // ILogSink
-    void OutputString(const std::wstring& text) override;
+    void OutputString(const std::string& text) override;
 
 private:
     int m_FileDescriptor = 0;

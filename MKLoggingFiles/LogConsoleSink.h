@@ -5,5 +5,5 @@
 class CLogConsoleSink : public ILogSink
 {
 public: // ILogSink
-    void OutputString(const std::wstring& text) override;
+    void OutputString(const std::string& text) override;
 };

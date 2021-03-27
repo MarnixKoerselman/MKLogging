@@ -10,11 +10,11 @@ public:
     CLogStatement(ILogSink* pLogSink);
     virtual ~CLogStatement();
 
-    std::wostream& Get(ELogLevel logLevel, const char* szFunction, const char* szFile, long lineNumber);
+    std::ostream& Get(ELogLevel logLevel, const char* szFunction, const char* szFile, long lineNumber);
 
     void LogHex(ELogLevel logLevel, const char* szFunction, const char* szFile, long lineNumber, const char* szDataHeader, const void* pData, int iDataSize);
 
 private:
     ILogSink* m_pLogSink;
-    std::wostringstream m_Buffer;
+    std::ostringstream m_Buffer;
 };
