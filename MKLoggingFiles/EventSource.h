@@ -36,6 +36,11 @@ public:
         }
     }
 
+    void RemoveAllListeners()
+    {
+        m_Listeners.clear();
+    }
+
     bool HasListeners() const
     {
         return !m_Listeners.empty();
