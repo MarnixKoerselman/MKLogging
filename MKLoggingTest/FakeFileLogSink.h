@@ -9,11 +9,11 @@ class TestFileStream : public ILogSink
 public:
     TestFileStream(std::filesystem::path filePath);
     virtual ~TestFileStream();
-    std::wostream& GetStream();
+    std::ostream& GetStream();
 public: // ILogSink
-    virtual void OutputString(const std::wstring& text) override;
+    virtual void OutputString(const std::string& text) override;
 private:
-    std::wofstream m_LogFile;
+    std::ofstream m_LogFile;
 };
 
 class TestStdFile

@@ -5,9 +5,9 @@
 class FakeStringLogSink : public ILogSink
 {
 public:
-    std::wstring Buffer;
+    std::string Buffer;
 public: // ILogSink
-    virtual void OutputString(const std::wstring& text) override
+    virtual void OutputString(const std::string& text) override
     {
         Buffer.append(text);
     }

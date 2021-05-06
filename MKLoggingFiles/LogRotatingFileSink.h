@@ -1,7 +1,7 @@
 #pragma once
 
 #include "ILogSink.h"
-#include "LogUtf8FileSink.h"
+#include "LogFileSink.h"
 #include <time.h>
 #include <filesystem>
 
@@ -25,7 +25,7 @@ private:
     const std::filesystem::path m_LogFileDirectoryPath;
     const std::wstring m_sLogFileName = L"app"; // The base name of the log file(s). The timestamp of file creation will be inserted in the name, and ".log" appended. NB: should not contain a '.' (because used in regex)
     const std::wstring m_LogFileExtension = L"log"; // NB: should not contain a '.' (because used in regex)
-    CLogUtf8FileSink m_LogFile;
+    CLogFileSink m_LogFile;
     const long m_FileSizeThreshold;
     const int m_MaxFileCount;
 };

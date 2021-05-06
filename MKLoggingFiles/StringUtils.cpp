@@ -53,7 +53,7 @@ std::string FormatString(_In_z_ _Printf_format_string_ const char* szFormat, ...
     return sValue;
 }
 
-void StringReplaceAll(std::wstring& s, const std::wstring& sFrom, const std::wstring& sTo)
+void StringReplaceAll(std::string& s, const std::string& sFrom, const std::string& sTo)
 {
     if (sFrom.empty())
         return;

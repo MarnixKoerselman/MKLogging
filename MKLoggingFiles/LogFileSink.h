@@ -3,11 +3,11 @@
 #include "ILogSink.h"
 #include <filesystem>
 
-class CLogUtf8FileSink : public ILogSink
+class CLogFileSink : public ILogSink
 {
 public:
-    CLogUtf8FileSink() = default;
-    virtual ~CLogUtf8FileSink();
+    CLogFileSink() = default;
+    virtual ~CLogFileSink();
     bool Create(const std::filesystem::path& directoryPath, const std::filesystem::path& fileName);
     void Close();
 

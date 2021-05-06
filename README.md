@@ -12,8 +12,8 @@ This is Microsoft based, using standard C++17 as much as possible (maybe you can
 There's a global g_Logger instance that can be configured during application startup to add the appropriate log sinks. Currently available log sinks are:
  - LogDebugOutputSink => OutputDebugString
  - LogConsole => std::wcout
- - LogUtf8FileSink => to a text file that starts with the UTF-8 BOM, indicating the contents are in UTF-8 encoding
- - LogRotatingFileSink => multiple (UTF-8 encoded) text files, to limit the total size of logs
+ - LogFileSink => to a text file
+ - LogRotatingFileSink => multiple text files, to limit the total size of logs
  - LogQueue => a wrapper that allows each of the aforementioned log sinks to become buffered and asynchronous (NB: not recommended for DebugOutput)
  
  To create your own custom long sink, simply derive a class from ILogSink and implement its only method 'OutputString'. Instantiate and use your class like this:

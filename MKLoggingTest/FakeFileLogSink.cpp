@@ -13,14 +13,14 @@ TestFileStream::~TestFileStream()
     m_LogFile.close();
 }
 
-std::wostream& TestFileStream::GetStream()
+std::ostream& TestFileStream::GetStream()
 {
     return m_LogFile;
 }
 
 // ILogSink
 
-void TestFileStream::OutputString(const std::wstring& text)
+void TestFileStream::OutputString(const std::string& text)
 {
     m_LogFile << text;
 }

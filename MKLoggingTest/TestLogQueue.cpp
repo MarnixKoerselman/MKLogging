@@ -18,7 +18,7 @@ TEST(UnitTest, LogQueue)
     std::shared_ptr<CLogQueue> pBufferedSink = std::make_shared<CLogQueue>(pMockSink);
 
     // Set expectations
-    std::wstring sTestString = L"This is a test";
+    std::string sTestString = "This is a test";
     EXPECT_CALL(mockSink, OutputString(sTestString))
         .RetiresOnSaturation();
 

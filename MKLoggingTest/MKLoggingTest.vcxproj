@@ -38,7 +38,6 @@
   <ItemGroup>
     <ClCompile Include="FakeFileLogSink.cpp" />
     <ClCompile Include="main.cpp" />
-    <ClCompile Include="TestErrorMessages.cpp" />
     <ClCompile Include="TestLogger.cpp" />
     <ClCompile Include="TestLogQueue.cpp" />
     <ClCompile Include="TestLogFileRotation.cpp" />

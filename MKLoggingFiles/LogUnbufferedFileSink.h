@@ -2,11 +2,11 @@
 
 #include "ILogSink.h"
 
-class CLogUtf8UnbufferedFileSink : public ILogSink
+class CLogUnbufferedFileSink : public ILogSink
 {
 public:
-    CLogUtf8UnbufferedFileSink() = default;
-    virtual ~CLogUtf8UnbufferedFileSink();
+    CLogUnbufferedFileSink() = default;
+    virtual ~CLogUnbufferedFileSink();
 
     bool Create(const std::wstring& filePath);
     void Close();
