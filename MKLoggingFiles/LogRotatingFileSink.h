@@ -20,6 +20,7 @@ protected: // methods made protected instead of private to improve testability
     void RollOver();
     std::filesystem::path GetNextFileName() const;
     std::wstring GenerateFileName(time_t now = time(nullptr)) const;
+    std::wstring GetLogFileNameRegex() const;
 
 private:
     const std::filesystem::path m_LogFileDirectoryPath;

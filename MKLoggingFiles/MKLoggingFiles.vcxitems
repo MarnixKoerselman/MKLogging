@@ -27,7 +27,6 @@
     <ClInclude Include="$(MSBuildThisFileDirectory)LogStatement.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)LogFileSink.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)LogUnbufferedFileSink.h" />
-    <ClInclude Include="$(MSBuildThisFileDirectory)StringUtils.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="$(MSBuildThisFileDirectory)ELogLevel.cpp" />
@@ -40,6 +39,5 @@
     <ClCompile Include="$(MSBuildThisFileDirectory)LogStatement.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)LogFileSink.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)LogUnbufferedFileSink.cpp" />
-    <ClCompile Include="$(MSBuildThisFileDirectory)StringUtils.cpp" />
   </ItemGroup>
 </Project>

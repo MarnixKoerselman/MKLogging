@@ -9,7 +9,7 @@
 #include "FakeStringLogSink.h"
 
 #include <atlfile.h>
-#include <StringUtils.h>
+#include "StringUtils.h"
 #include <LogQueue.h>
 #include <LogDebugOutputSink.h>
 
@@ -124,6 +124,7 @@ TEST(IntegrationTest, LogFileSink)
     DataBuffer buffer(static_cast<size_t>(nFileSize));
     ASSERT_HRESULT_SUCCEEDED(logFile.Read(buffer.data(), static_cast<DWORD>(buffer.size())));
 
+    // Convert the UTF-8 file content back to UTF-16 / UCS-2 for comparison with the original
     std::string sActualOutput = std::string(reinterpret_cast<const char*>(buffer.data()), buffer.size());
 
     std::string sExpectedOutput = sTestMessage;

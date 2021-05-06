@@ -38,6 +38,7 @@
   <ItemGroup>
     <ClCompile Include="FakeFileLogSink.cpp" />
     <ClCompile Include="main.cpp" />
+    <ClCompile Include="StringUtils.cpp" />
     <ClCompile Include="TestLogger.cpp" />
     <ClCompile Include="TestLogQueue.cpp" />
     <ClCompile Include="TestLogFileRotation.cpp" />
@@ -50,6 +51,7 @@
     <ClInclude Include="FakeFileLogSink.h" />
     <ClInclude Include="FakeStringLogSink.h" />
     <ClInclude Include="MockLogSink.h" />
+    <ClInclude Include="StringUtils.h" />
     <ClInclude Include="TestUtils.h" />
   </ItemGroup>
   <ItemDefinitionGroup />

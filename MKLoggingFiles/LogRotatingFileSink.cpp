@@ -3,7 +3,6 @@
 #include <map>
 #include <regex>
 #include <iomanip>
-#include <StringUtils.h>
 
 CLogRotatingFileSink::CLogRotatingFileSink(const std::filesystem::path& logFileDirectoryPath, long fileSizeThreshold /*= 10*1024*1024*/, int maxLogFileCount /*= 10*/)
     : m_LogFileDirectoryPath(logFileDirectoryPath)
@@ -44,7 +43,7 @@ void CLogRotatingFileSink::RollOver()
         // while collection size > m_MaxFileCount => remove the oldest file
         // the log files have the timestamp in sortable order in the file name
         std::list<std::filesystem::path> logFilePaths;
-        std::wregex matcher(FormatString(L"%s-.*\\.%s", m_sLogFileName.c_str(), m_LogFileExtension.c_str()));
+        std::wregex matcher(GetLogFileNameRegex());
         std::wcmatch wideMatch;
 
         for (auto& dirEntry : std::filesystem::directory_iterator(m_LogFileDirectoryPath))
@@ -94,4 +93,13 @@ std::wstring CLogRotatingFileSink::GenerateFileName(time_t timeStamp /*= time(nu
         << std::put_time(&gmtStamp, L"%Y-%m-%d-%H-%M-%S");
 
     return fileNameStream.str();
+}
+
+std::wstring CLogRotatingFileSink::GetLogFileNameRegex() const
+{
+    // FormatString(L"%s-.*\\.%s", m_sLogFileName.c_str(), m_LogFileExtension.c_str())
+    std::wstring matcher = m_sLogFileName;
+    matcher += L"-.*\\.";
+    matcher += m_LogFileExtension;
+    return matcher;
 }
