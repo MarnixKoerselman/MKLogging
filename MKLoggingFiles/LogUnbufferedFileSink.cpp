@@ -10,7 +10,17 @@ CLogUnbufferedFileSink::~CLogUnbufferedFileSink()
 bool CLogUnbufferedFileSink::Create(const std::wstring& filePath)
 {
     int fileDescriptor = 0;
-    errno_t result = _wsopen_s(&fileDescriptor, filePath.c_str(), _O_BINARY | _O_WRONLY | _O_CREAT, _SH_DENYWR, _S_IWRITE);
+    errno_t result = _wsopen_s(&fileDescriptor, filePath.c_str(), _O_BINARY | _O_WRONLY | _O_CREAT | _O_TRUNC, _SH_DENYWR, _S_IWRITE);
+    if (result == 0) {
+        m_FileDescriptor = fileDescriptor;
+    }
+    return (result == 0);
+}
+
+bool CLogUnbufferedFileSink::Append(const std::wstring& filePath)
+{
+    int fileDescriptor = 0;
+    errno_t result = _wsopen_s(&fileDescriptor, filePath.c_str(), _O_BINARY | _O_WRONLY | _O_CREAT | _O_APPEND, _SH_DENYWR, _S_IWRITE);
     if (result == 0) {
         m_FileDescriptor = fileDescriptor;
     }
