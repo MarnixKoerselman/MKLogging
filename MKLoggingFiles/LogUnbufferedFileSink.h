@@ -9,7 +9,7 @@ public:
     virtual ~CLogUnbufferedFileSink();
 
     bool Create(const std::wstring& filePath);
-    bool Append(const std::wstring& filePath);
+    bool OpenToAppend(const std::wstring& filePath);
     void Close();
 
 public: // ILogSink

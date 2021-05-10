@@ -17,7 +17,7 @@ bool CLogUnbufferedFileSink::Create(const std::wstring& filePath)
     return (result == 0);
 }
 
-bool CLogUnbufferedFileSink::Append(const std::wstring& filePath)
+bool CLogUnbufferedFileSink::OpenToAppend(const std::wstring& filePath)
 {
     int fileDescriptor = 0;
     errno_t result = _wsopen_s(&fileDescriptor, filePath.c_str(), _O_BINARY | _O_WRONLY | _O_CREAT | _O_APPEND, _SH_DENYWR, _S_IWRITE);
