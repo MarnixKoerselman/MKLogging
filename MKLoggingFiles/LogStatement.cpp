@@ -25,7 +25,7 @@ std::ostream& CLogStatement::Get(ELogLevel logLevel, const char* szFunction, con
 
 #ifdef _DEBUG
     // Only show full file path (which may include personal info of the developer) in debug build
-    if (logLevel >= ELogLevel::Warning)
+    if ((logLevel >= ELogLevel::Warning) && IsDebuggerPresent())
     {
         os << szFile << " (" << lineNumber << ")\n";
     }
