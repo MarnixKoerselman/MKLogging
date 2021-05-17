@@ -9,15 +9,15 @@ std::wstring FormatString(_In_z_ _Printf_format_string_ const wchar_t* szFormat,
 {
     va_list args;
     va_start(args, szFormat);
-    const int iLength = _vscwprintf(szFormat, args);
+    const int length = _vscwprintf(szFormat, args);
     va_end(args);
 
-    if (iLength < 0)
+    if (length < 0)
     {
         return std::wstring();
     }
 
-    const size_t nBufferLength = size_t(iLength) + 1;
+    const size_t nBufferLength = size_t(length) + 1;
     std::wstring sValue(nBufferLength, L'\00'); // include terminating \00
 
     va_start(args, szFormat);
@@ -33,24 +33,24 @@ std::string FormatString(_In_z_ _Printf_format_string_ const char* szFormat, ...
 {
     va_list args;
     va_start(args, szFormat);
-    const int iLength = _vscprintf(szFormat, args);
+    const int length = _vscprintf(szFormat, args);
     va_end(args);
 
-    if (iLength < 0)
+    if (length < 0)
     {
         return std::string();
     }
 
-    const size_t nBufferLength = size_t(iLength) + 1;
-    std::string sValue(nBufferLength, '\00'); // include terminating \00
+    const size_t nBufferLength = size_t(length) + 1;
+    std::string value(nBufferLength, '\00'); // include terminating \00
 
     va_start(args, szFormat);
-    std::vsnprintf(sValue.data(), sValue.size(), szFormat, args);
+    std::vsnprintf(value.data(), value.size(), szFormat, args);
     va_end(args);
 
-    sValue.pop_back(); // remove terminating \00
+    value.pop_back(); // remove terminating \00
 
-    return sValue;
+    return value;
 }
 
 void StringReplaceAll(std::string& s, const std::string& sFrom, const std::string& sTo)
@@ -62,7 +62,7 @@ void StringReplaceAll(std::string& s, const std::string& sFrom, const std::strin
     while (nStartIndex = s.find(sFrom, nStartIndex), nStartIndex != std::wstring::npos)
     {
         s.replace(nStartIndex, sFrom.length(), sTo);
-        nStartIndex += sTo.length(); // In case 'to' contains 'from', like replacing 'x' with 'yx'
+        nStartIndex += sTo.length();
     }
 }
 

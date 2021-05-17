@@ -12,9 +12,9 @@ public:
 
     std::ostream& Get(ELogLevel logLevel, const char* szFunction, const char* szFile, long lineNumber);
 
-    void LogHex(ELogLevel logLevel, const char* szFunction, const char* szFile, long lineNumber, const char* szDataHeader, const void* pData, int iDataSize);
+    void LogHex(ELogLevel logLevel, const char* szFunction, const char* szFile, long lineNumber, const char* szDataHeader, const void* data, int dataSize);
 
 private:
-    ILogSink* m_pLogSink;
+    ILogSink* m_LogSink;
     std::ostringstream m_Buffer;
 };

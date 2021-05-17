@@ -1,8 +1,8 @@
 #include "LogQueue.h"
 #include <Windows.h> // OutputDebugString
 
-CLogQueue::CLogQueue(const std::shared_ptr<ILogSink>& pLogDelegate)
-    : m_pDelegate(pLogDelegate)
+CLogQueue::CLogQueue(const std::shared_ptr<ILogSink>& logDelegate)
+    : m_Delegate(logDelegate)
     , m_WorkerThread(&CLogQueue::ConsumerThread, this)
     , m_IsProcessingStopped(false)
 {
@@ -73,17 +73,10 @@ void CLogQueue::ConsumerThread()
             auto message = m_MessageQueue.front();
             m_MessageQueue.pop();
             lock.unlock(); // release the queue for access by log producers
-            if (m_pDelegate)
+            if (m_Delegate)
             {
-                m_pDelegate->OutputString(message);
+                m_Delegate->OutputString(message);
             }
         }
-        //else
-        //{
-        //    // spurious signal detected!
-        //    LOGW("Spurious signal detected!");
-        //    // this should not happen, but just in case:
-        //    lock.unlock();
-        //}
     }
 }

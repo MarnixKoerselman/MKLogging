@@ -23,5 +23,5 @@ public:
     virtual ~TestStdFile();
     void PrintF(_In_z_ _Printf_format_string_ const wchar_t*szFormat, ...);
 private:
-    FILE* m_pFile;
+    FILE* m_File;
 };

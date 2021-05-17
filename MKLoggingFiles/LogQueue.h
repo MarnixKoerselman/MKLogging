@@ -6,7 +6,7 @@
 class CLogQueue : public ILogSink
 {
 public:
-    CLogQueue(const std::shared_ptr<ILogSink>& pLogDelegate);
+    CLogQueue(const std::shared_ptr<ILogSink>& logDelegate);
     virtual ~CLogQueue();
 
     void Drain();
@@ -19,7 +19,7 @@ protected:
     void ConsumerThread();
 
 protected:
-    std::shared_ptr<ILogSink> m_pDelegate;
+    std::shared_ptr<ILogSink> m_Delegate;
     std::queue<std::string> m_MessageQueue; // FIFO queue
     std::mutex m_AccessQueue;
     std::condition_variable m_QueueChanged;

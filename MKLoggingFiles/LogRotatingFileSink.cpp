@@ -33,7 +33,7 @@ void CLogRotatingFileSink::RollOver()
     {
         std::filesystem::path logFileName = GetNextFileName();
         LOGD(L"Create logfile " << logFileName);
-        if (!m_LogFile.Create(m_LogFileDirectoryPath, logFileName))
+        if (!m_LogFile.Create(m_LogFileDirectoryPath / logFileName))
         {
             // TODO: handle error
         }

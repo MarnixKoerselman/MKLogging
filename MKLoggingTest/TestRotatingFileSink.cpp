@@ -6,6 +6,7 @@
 
 using namespace testing;
 
+// make (protected) implementation methods public, so they can be tested
 class TestableLogRotatingFileSink : public CLogRotatingFileSink
 {
 public:
@@ -23,7 +24,7 @@ public:
     }
 };
 
-TEST(UnitTest, RollingLogFile_GenerateFileName)
+TEST(RotatingLogFile, GenerateFileName)
 {
     // we don't really care about the exact format of the generated file name, as long as it's different
 
@@ -32,12 +33,8 @@ TEST(UnitTest, RollingLogFile_GenerateFileName)
     time_t now;
     time(&now);
 
-    std::wstring sFileName1 = sink.GenerateFileName(now);
-    now++;
-    std::wstring sFileName2 = sink.GenerateFileName(now);
-
-    EXPECT_NE(sFileName1, sFileName2);
-
+    EXPECT_NE(sink.GenerateFileName(now), sink.GenerateFileName(now + 1));
     // also test that the file names are generated in an alphabetically sortable way, i.e. the filename generated at t=T should be lower in rank than for t=(T+1)
-    EXPECT_LT(sFileName1, sFileName2);
+    EXPECT_LT(sink.GenerateFileName(now), sink.GenerateFileName(now + 1));
+    EXPECT_EQ(sink.GenerateFileName(now), sink.GenerateFileName(now));
 }

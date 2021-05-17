@@ -17,6 +17,7 @@
   <ItemGroup>
     <ClInclude Include="$(MSBuildThisFileDirectory)ELogLevel.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)EventSource.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)FileSystemUtils.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)ILogSink.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)LogCentral.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)LogConsoleSink.h" />
@@ -30,6 +31,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="$(MSBuildThisFileDirectory)ELogLevel.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)FileSystemUtils.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)LogCentral.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)LogConsoleSink.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)LogDebugOutputSink.cpp" />

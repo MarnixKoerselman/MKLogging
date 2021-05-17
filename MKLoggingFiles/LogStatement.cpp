@@ -8,15 +8,15 @@
 #include <iomanip>
 
 CLogStatement::CLogStatement(ILogSink* pLogSink)
-    : m_pLogSink(pLogSink)
+    : m_LogSink(pLogSink)
 {
-    assert(m_pLogSink != nullptr);
+    assert(m_LogSink != nullptr);
     std::boolalpha(m_Buffer);
 }
 
 CLogStatement::~CLogStatement()
 {
-    m_pLogSink->OutputString(m_Buffer.str());
+    m_LogSink->OutputString(m_Buffer.str());
 }
 
 std::ostream& CLogStatement::Get(ELogLevel logLevel, const char* szFunction, const char* szFile, long lineNumber)
@@ -53,21 +53,21 @@ std::ostream& CLogStatement::Get(ELogLevel logLevel, const char* szFunction, con
     return os;
 }
 
-void CLogStatement::LogHex(ELogLevel logLevel, const char* szFunction, const char* szFile, long lineNumber, const char* szDataHeader, const void* pData, int iDataSize)
+void CLogStatement::LogHex(ELogLevel logLevel, const char* szFunction, const char* szFile, long lineNumber, const char* szDataHeader, const void* data, int dataSize)
 {
     std::ostream& os = Get(logLevel, szFunction, szFile, lineNumber);
 
-    os << szDataHeader << " Size=" << iDataSize << " bytes\n";
+    os << szDataHeader << " Size=" << dataSize << " bytes\n";
 
-    if ((pData != nullptr) && (iDataSize > 0))
+    if ((data != nullptr) && (dataSize > 0))
     {
         // trace a maximum of 128 values
         const int maxTraceValueCount = 128;
-        const std::uint8_t* pByteBuffer(reinterpret_cast<const std::uint8_t*>(pData));
+        const std::uint8_t* pByteBuffer(reinterpret_cast<const std::uint8_t*>(data));
 
         // show contents of the buffer as hex values
         os << std::hex << std::uppercase << std::setfill('0');
-        for (int i = 0; i < std::min(iDataSize, maxTraceValueCount); i++)
+        for (int i = 0; i < std::min(dataSize, maxTraceValueCount); i++)
         {
             if (i > 0)
             {
@@ -84,12 +84,12 @@ void CLogStatement::LogHex(ELogLevel logLevel, const char* szFunction, const cha
             os << ' ' << std::setw(2) << pByteBuffer[i];
         }
 
-        if (iDataSize > maxTraceValueCount)
+        if (dataSize > maxTraceValueCount)
         {
             os << "\n...........";
-            for (int i = iDataSize - maxTraceValueCount; i < iDataSize; i++)
+            for (int i = dataSize - maxTraceValueCount; i < dataSize; i++)
             {
-                int column = iDataSize - i - maxTraceValueCount;
+                int column = dataSize - i - maxTraceValueCount;
                 if ((column % 16) == 0)
                 {
                     os << "\n";
