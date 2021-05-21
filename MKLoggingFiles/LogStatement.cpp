@@ -1,11 +1,9 @@
-#define NOMINMAX
-
 #include "LogStatement.h"
 #include <chrono>
-#include <Windows.h>
 #include <cassert>
 #include <iostream>
 #include <iomanip>
+#include <thread>
 
 CLogStatement::CLogStatement(ILogSink* pLogSink)
     : m_LogSink(pLogSink)
@@ -25,7 +23,7 @@ std::ostream& CLogStatement::Get(ELogLevel logLevel, const char* szFunction, con
 
 #ifdef _DEBUG
     // Only show full file path (which may include personal info of the developer) in debug build
-    if ((logLevel >= ELogLevel::Warning) && IsDebuggerPresent())
+    if ((logLevel >= ELogLevel::Warning))
     {
         os << szFile << " (" << lineNumber << ")\n";
     }
@@ -44,8 +42,9 @@ std::ostream& CLogStatement::Get(ELogLevel logLevel, const char* szFunction, con
         //WTF? Could not convert to local time?
         std::cerr << "Cannot convert time_t " << now2 << " to local time, errno=" << errno << std::endl;
     }
+    
     os << std::put_time(&systemTime, "%F %T") << "." << std::setw(3) << std::setfill('0') << ms.count()
-        << " (0x" << std::hex << std::setw(8) << std::setfill('0') << std::uppercase << ::GetCurrentThreadId() << ") "
+        << " (0x" << std::hex << std::setw(8) << std::setfill('0') << std::uppercase << std::this_thread::get_id() << ") "
         << std::nouppercase << std::dec << std::left << std::setw(10) << std::setfill(' ')
         << ELogLevel_ToString(logLevel)
         << szFunction << ": ";
