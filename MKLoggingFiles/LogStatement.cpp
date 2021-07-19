@@ -17,7 +17,7 @@ CLogStatement::~CLogStatement()
     m_LogSink->OutputString(m_Buffer.str());
 }
 
-std::ostream& CLogStatement::Get(ELogLevel logLevel, const char* szFunction, const char* szFile, long lineNumber)
+std::ostream& CLogStatement::Get(ELogLevel logLevel, const char* szFunction, [[maybe_unused]] const char* szFile, [[maybe_unused]] long lineNumber)
 {
     std::ostream& os = m_Buffer;
 
@@ -27,9 +27,6 @@ std::ostream& CLogStatement::Get(ELogLevel logLevel, const char* szFunction, con
     {
         os << szFile << " (" << lineNumber << ")\n";
     }
-#else
-    UNREFERENCED_PARAMETER(szFile);
-    UNREFERENCED_PARAMETER(lineNumber);
 #endif
 
     auto now = std::chrono::system_clock::now();
