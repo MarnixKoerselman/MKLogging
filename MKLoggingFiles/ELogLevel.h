@@ -10,7 +10,8 @@ enum class ELogLevel
     None,     ///< No logging.
 
     Min = Verbose,
-    Max = None
+    Max = None,
+    All = Min,
 };
 
 const char* ELogLevel_ToString(ELogLevel logLevel) noexcept;
