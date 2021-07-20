@@ -40,13 +40,13 @@ void CLogUnbufferedFileSink::Close()
 
 void CLogUnbufferedFileSink::OutputString(const std::string& text)
 {
-    OutputData(text.data(), text.size() * sizeof(*text.data()));
+    OutputData(text.data(), text.size() * sizeof(std::string::value_type));
 }
 
 //void CLogUnbufferedFileSink::OutputString(const std::wstring& text)
 //{
 //    // When the file is opened in Unicode translation mode—for example, if fd is opened by using _open or _sopen and a mode parameter that includes _O_WTEXT, _O_U16TEXT, or _O_U8TEXT, or if it's opened by using fopen and a mode parameter that includes ccs=UNICODE, ccs=UTF-16LE, or ccs=UTF-8, or if the mode is changed to a Unicode translation mode by using _setmode—buffer is interpreted as a pointer to an array of wchar_t that contains UTF-16 data. An attempt to write an odd number of bytes in this mode causes a parameter validation error.
-//    OutputData(text.data(), text.size() * sizeof(*text.data()));
+//    OutputData(text.data(), text.size() * sizeof(std::wstring::value_type));
 //}
 
 void CLogUnbufferedFileSink::OutputData(const void* data, size_t size)
