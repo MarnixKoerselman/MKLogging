@@ -49,10 +49,10 @@ void CLogUnbufferedFileSink::OutputString(const std::string& text)
 //    OutputData(text.data(), text.size() * sizeof(*text.data()));
 //}
 
-void CLogUnbufferedFileSink::OutputData(const void* data, unsigned int size)
+void CLogUnbufferedFileSink::OutputData(const void* data, size_t size)
 {
     if (m_FileDescriptor != 0) {
-        _write(m_FileDescriptor, data, size);
+        _write(m_FileDescriptor, data, static_cast<unsigned int>(size));
         _commit(m_FileDescriptor);
     }
 }

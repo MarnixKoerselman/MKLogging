@@ -42,7 +42,7 @@ std::filesystem::path GetApplicationPath()
     std::wstring sFilePath;
     do {
         sFilePath.resize(bufferSize);
-        DWORD length = ::GetModuleFileNameW(nullptr, sFilePath.data(), sFilePath.size());
+        DWORD length = ::GetModuleFileNameW(nullptr, sFilePath.data(), static_cast<DWORD>(sFilePath.size()));
         fileNameComplete = (GetLastError() != ERROR_INSUFFICIENT_BUFFER);
         if (fileNameComplete) {
             sFilePath.resize(length);
