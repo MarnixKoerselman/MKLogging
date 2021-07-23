@@ -38,6 +38,7 @@ public:
 
     void RemoveAllListeners()
     {
+        Lock lock(m_AccessListeners);
         m_Listeners.clear();
     }
 
