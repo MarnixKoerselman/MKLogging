@@ -4,6 +4,7 @@
 #include <iostream>
 #include <iomanip>
 #include <thread>
+#include <algorithm>
 
 CLogStatement::CLogStatement(ILogSink* pLogSink)
     : m_LogSink(pLogSink)
