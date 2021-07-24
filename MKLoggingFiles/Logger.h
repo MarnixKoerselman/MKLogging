@@ -6,34 +6,34 @@
 
 // This global variable must be defined once in every project that uses the logging facilities.
 // Currently this is done through a global instance defined in Logger.cpp.
-extern CLogCentral g_LogCentral;
+CLogCentral& LogCentral();
 
 // Set of macros that simplify logging using the default global logger
 
 #ifndef ISLOGGED
-#define ISLOGGED(mp_LogLevel) MKL_ISLOGGED(g_LogCentral, mp_LogLevel)
+#define ISLOGGED(mp_LogLevel) MKL_ISLOGGED(LogCentral(), mp_LogLevel)
 #endif
 
 #ifndef LOGV
-#define LOGV() MKL_LOGV(g_LogCentral)
+#define LOGV() MKL_LOGV(LogCentral())
 #endif
 
 #ifndef LOGD
-#define LOGD(mp_out) MKL_LOGD(g_LogCentral, mp_out)
+#define LOGD(mp_out) MKL_LOGD(LogCentral(), mp_out)
 #endif
 
 #ifndef LOGI
-#define LOGI(mp_out) MKL_LOGI(g_LogCentral, mp_out)
+#define LOGI(mp_out) MKL_LOGI(LogCentral(), mp_out)
 #endif
 
 #ifndef LOGW
-#define LOGW(mp_out) MKL_LOGW(g_LogCentral, mp_out)
+#define LOGW(mp_out) MKL_LOGW(LogCentral(), mp_out)
 #endif
 
 #ifndef LOGE
-#define LOGE(mp_out) MKL_LOGE(g_LogCentral, mp_out)
+#define LOGE(mp_out) MKL_LOGE(LogCentral(), mp_out)
 #endif
 
 #ifndef LOGHEX
-#define LOGHEX(mp_LogLevel, mp_DataHeader, mp_Data, mp_DataSize) MKL_LOGHEX(g_LogCentral, mp_LogLevel, mp_DataHeader, mp_Data, mp_DataSize)
+#define LOGHEX(mp_LogLevel, mp_DataHeader, mp_Data, mp_DataSize) MKL_LOGHEX(LogCentral(), mp_LogLevel, mp_DataHeader, mp_Data, mp_DataSize)
 #endif

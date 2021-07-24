@@ -12,7 +12,7 @@ class TestEnvironment : public testing::Environment
 public:
     void SetUp() override
     {
-        g_LogCentral.AddListener(std::make_shared<CLogDebugOutputSink>());
+        LogCentral().AddListener(std::make_shared<CLogDebugOutputSink>());
     }
     void TearDown() override
     {

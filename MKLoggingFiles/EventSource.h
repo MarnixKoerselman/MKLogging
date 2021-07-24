@@ -7,6 +7,7 @@
 template <typename EventNotificationInterface>
 class CEventSource
 {
+protected:
     using Mutex = std::recursive_mutex;
     using Lock = std::lock_guard<std::recursive_mutex>;
 

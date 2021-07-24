@@ -2,6 +2,7 @@
 
 #include "Logger.h"
 #include <queue>
+#include <mutex>
 
 class CLogQueue : public ILogSink
 {
