@@ -1,7 +1,7 @@
 #pragma once
 
 #include "ILogSink.h"
-#include <filesystem>
+//#include <filesystem>
 
 class CLogFileSink : public ILogSink
 {
