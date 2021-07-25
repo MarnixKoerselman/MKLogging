@@ -16,6 +16,10 @@ bool CLogUnbufferedFileSink::Create(const std::wstring& filePath)
     errno_t result = _wsopen_s(&fileDescriptor, filePath.c_str(), _O_BINARY | _O_WRONLY | _O_CREAT | _O_TRUNC, _SH_DENYWR, _S_IWRITE);
     if (result == 0) {
         m_FileDescriptor = fileDescriptor;
+
+        // write UTF-8 BOM
+        const char* szUtf8Bom = "\xEF\xBB\xBF";
+        _write(m_FileDescriptor, szUtf8Bom, 3);
     }
     return (result == 0);
 }

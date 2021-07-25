@@ -47,6 +47,7 @@
     <ClCompile Include="FakeFileLogSink.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="StringUtils.cpp" />
+    <ClCompile Include="TestLogFileSink.cpp" />
     <ClCompile Include="TestLogger.cpp" />
     <ClCompile Include="TestLogQueue.cpp" />
     <ClCompile Include="TestRotatingFileSink.cpp" />

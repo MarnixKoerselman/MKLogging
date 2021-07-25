@@ -1,5 +1,8 @@
-#include <Logger.h>
+﻿#include <Logger.h>
 #include <LogFileSink.h>
+#include <LogQueue.h>
+#include <LogDebugOutputSink.h>
+#include <LogUnbufferedFileSink.h>
 
 #include <string>
 #include <filesystem>
@@ -7,10 +10,7 @@
 #include <gtest/gtest.h>
 #include "TestUtils.h"
 #include "FakeStringLogSink.h"
-
 #include "StringUtils.h"
-#include <LogQueue.h>
-#include <LogDebugOutputSink.h>
 
 // Functional: use global instance g_LogCentral
 TEST(Functional, DefaultBehaviour)
@@ -84,25 +84,120 @@ TEST(Logger, LogLevelFilterWithNoLogSink)
     }
 }
 
-TEST(LogFileSink, Basic)
+TEST(Logger, Utf8)
+{
+    auto stringSink = std::make_shared<FakeStringLogSink>();
+    CLogCentral logger({ stringSink });
+    logger.SetMinimumLogLevel(ELogLevel::All);
+
+    const char* szTestMessage = u8"Hello World\n你好世界";
+    std::string testMessage = szTestMessage;
+
+    MKL_LOGI(logger, szTestMessage);
+    std::string actualMessage = stringSink->Buffer.substr(stringSink->Buffer.rfind(szTestMessage));
+    actualMessage.pop_back(); // remove the \n that was added by the logger
+    EXPECT_STREQ(szTestMessage, actualMessage.c_str());
+
+    stringSink->Buffer.clear();
+
+    MKL_LOGI(logger, testMessage);
+    actualMessage = stringSink->Buffer.substr(stringSink->Buffer.rfind(testMessage));
+    actualMessage.pop_back(); // remove the \n that was added by the logger
+    EXPECT_EQ(testMessage, actualMessage);
+}
+
+TEST(Logger, ANSI)
+{
+    auto stringSink = std::make_shared<FakeStringLogSink>();
+    CLogCentral logger({ stringSink });
+    logger.SetMinimumLogLevel(ELogLevel::All);
+
+    const char* szTestMessage = "Hello World\n";
+    std::string testMessage = szTestMessage;
+
+    MKL_LOGI(logger, szTestMessage);
+    std::string actualMessage = stringSink->Buffer.substr(stringSink->Buffer.rfind(szTestMessage));
+    actualMessage.pop_back(); // remove the \n that was added by the logger
+    EXPECT_STREQ(szTestMessage, actualMessage.c_str());
+
+    stringSink->Buffer.clear();
+
+    MKL_LOGI(logger, testMessage);
+    actualMessage = stringSink->Buffer.substr(stringSink->Buffer.rfind(testMessage));
+    actualMessage.pop_back(); // remove the \n that was added by the logger
+    EXPECT_EQ(testMessage, actualMessage);
+}
+
+TEST(Logger, UCS2)
+{
+    auto stringSink = std::make_shared<FakeStringLogSink>();
+    CLogCentral logger({ stringSink });
+    logger.SetMinimumLogLevel(ELogLevel::All);
+
+    const wchar_t* szTestMessage = L"Hello World\n";
+    std::wstring testMessage = szTestMessage;
+    std::string testMessageUtf8 = Ucs2ToUtf8(szTestMessage);
+
+    MKL_LOGI(logger, szTestMessage);
+    std::string actualMessage = stringSink->Buffer.substr(stringSink->Buffer.rfind(testMessageUtf8));
+    actualMessage.pop_back(); // remove the \n that was added by the logger
+    EXPECT_EQ(testMessageUtf8, actualMessage);
+
+    stringSink->Buffer.clear();
+
+    MKL_LOGI(logger, testMessage);
+    actualMessage = stringSink->Buffer.substr(stringSink->Buffer.rfind(testMessageUtf8));
+    actualMessage.pop_back(); // remove the \n that was added by the logger
+    EXPECT_EQ(testMessageUtf8, actualMessage);
+}
+
+TEST(Logger, CombineStringTypes)
 {
     std::filesystem::path testOuputDirectoryPath = TEST_OUTPUT_DIRECTORY_PATH;
     EnsureCleanOutputDirectory(testOuputDirectoryPath);
+    auto unbufferedLogPath = testOuputDirectoryPath / "unbuffered.log";
+    auto bufferedLogPath = testOuputDirectoryPath / "buffered.log";
 
-    std::filesystem::path logFilePath = testOuputDirectoryPath / "test.log";
-    std::string testMessage = "Hello World\n";
-    {
-        CLogFileSink logFile;
-        ASSERT_TRUE(logFile.Create(logFilePath));
-        logFile.OutputString(testMessage);
-    }
-    // the log file is now flushed and closed and ready for evaluation
+    auto bufferedLogFile = std::make_shared<CLogFileSink>();
+    EXPECT_TRUE(bufferedLogFile->Create(bufferedLogPath));
 
-    std::string actualOutput = ReadLogFileAsBinary(logFilePath);
+    auto unbufferedLogFile = std::make_shared<CLogUnbufferedFileSink>();
+    EXPECT_TRUE(unbufferedLogFile->Create(unbufferedLogPath));
 
-    std::string expectedOutput = testMessage;
-    StringReplaceAll(expectedOutput, "\n", "\r\n"); // ... windows uses \r\n instead of \n ...
-    EXPECT_EQ(expectedOutput, actualOutput);
+    auto stringSink = std::make_shared<FakeStringLogSink>();
+
+    CLogCentral logger({ stringSink, bufferedLogFile, unbufferedLogFile, std::make_shared<CLogDebugOutputSink>() });
+    logger.SetMinimumLogLevel(ELogLevel::All);
+
+    MKL_LOGI(logger, "\n\tHello world" << L"\n\tHello world" << u8"\n\t你好世界" << L"\n\t你好世界" << L"\n\t\x4f60\x597d\x4e16\x754c");
+
+    auto helloWorldChinese = u8"\n\t你好世界";
+
+    // string buffer
+    EXPECT_EQ(89u, stringSink->Buffer.find("\n\tHello world"));
+    EXPECT_EQ(102u, stringSink->Buffer.find("\n\tHello world", 90));
+    EXPECT_EQ(115u, stringSink->Buffer.find(helloWorldChinese));
+    EXPECT_EQ(129u, stringSink->Buffer.find(helloWorldChinese, 116));
+    EXPECT_EQ(143u, stringSink->Buffer.find(helloWorldChinese, 130));
+
+    // buffered log file
+    std::string actualBufferedData = ReadLogFileAsBinary(bufferedLogPath);
+    EXPECT_TRUE(actualBufferedData.empty());
+    // flush/close the buffered log file
+    bufferedLogFile->Close();
+    actualBufferedData = ReadLogFileAsBinary(bufferedLogPath);
+    EXPECT_EQ(92u, actualBufferedData.find("\n\tHello world"));
+    EXPECT_EQ(105u, actualBufferedData.find("\n\tHello world", 93));
+    EXPECT_EQ(118u, actualBufferedData.find(helloWorldChinese));
+    EXPECT_EQ(132u, actualBufferedData.find(helloWorldChinese, 119));
+    EXPECT_EQ(146u, actualBufferedData.find(helloWorldChinese, 133));
+
+    std::string actualUnbufferedData = ReadLogFileAsBinary(unbufferedLogPath);
+    EXPECT_EQ(92u, actualUnbufferedData.find("\n\tHello world"));
+    EXPECT_EQ(105u, actualUnbufferedData.find("\n\tHello world", 93));
+    EXPECT_EQ(118u, actualUnbufferedData.find(helloWorldChinese));
+    EXPECT_EQ(132u, actualUnbufferedData.find(helloWorldChinese, 119));
+    EXPECT_EQ(146u, actualUnbufferedData.find(helloWorldChinese, 133));
 }
 
 TEST(Logger, MultipleThreadsWithDebugOutputAndQueuedLogFile)
@@ -184,12 +279,7 @@ TEST(Logger, MultipleThreadsWithDebugOutputAndQueuedLogFile)
     std::string newLogFileText(fileSize, '\0');
     size_t nReadItemCount = fread_s(newLogFileText.data(), sizeof(char) * newLogFileText.size(), sizeof(char), newLogFileText.size(), file);
     fclose(file);
-    ASSERT_LT(nReadItemCount, newLogFileText.size()); // newline translation in effect - number of characters in buffer should be less than the file size
+    ASSERT_EQ(nReadItemCount, newLogFileText.size()); // newline translation in effect - number of characters in buffer should be less than the file size
     newLogFileText.resize(nReadItemCount);
-
-    // newLogFileText is not exactly the same as logFileText, because of the \n to \r\n conversion when writing, which is reversed when reading the file
-    // in the POSIX way (as opposed to binary reading in the previous test).
-    EXPECT_NE(logFileText, newLogFileText); // they should have different line endings
-    StringReplaceAll(logFileText, "\r\n", "\n"); // replace the \r\n line endings that are added in Windows when using fwrite on text files
-    EXPECT_EQ(logFileText, newLogFileText); // now they should be the same
+    EXPECT_EQ(logFileText, newLogFileText);
 }

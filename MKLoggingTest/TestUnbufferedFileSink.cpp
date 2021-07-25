@@ -15,6 +15,8 @@ TEST(UnbufferedFileSink, Basic)
     file.OutputString(expectedText);
 
     std::string actualText = ReadLogFileAsBinary(logFilePath);
+    // ignore 3 bytes BOM
+    actualText.erase(0, 3);
     EXPECT_EQ(expectedText, actualText);
 }
 

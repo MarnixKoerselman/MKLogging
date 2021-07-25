@@ -66,14 +66,14 @@ void StringReplaceAll(std::string& s, const std::string& sFrom, const std::strin
     }
 }
 
-std::wstring Utf8ToUtf16(const std::string& utf8Str)
+std::wstring Utf8ToUcs2(const std::string& text)
 {
-    std::wstring_convert<std::codecvt_utf8_utf16<wchar_t>> conv;
-    return conv.from_bytes(utf8Str);
+    static std::wstring_convert<std::codecvt_utf8<wchar_t>> converter;
+    return converter.from_bytes(text);
 }
 
-std::string Utf16ToUtf8(const std::wstring& utf16Str)
+std::string Ucs2ToUtf8(const std::wstring& text)
 {
-    std::wstring_convert<std::codecvt_utf8_utf16<wchar_t>> conv;
-    return conv.to_bytes(utf16Str);
+    static std::wstring_convert<std::codecvt_utf8<wchar_t>> converter;
+    return converter.to_bytes(text);
 }

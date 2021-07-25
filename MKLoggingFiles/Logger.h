@@ -37,3 +37,9 @@ CLogCentral& LogCentral();
 #ifndef LOGHEX
 #define LOGHEX(mp_LogLevel, mp_DataHeader, mp_Data, mp_DataSize) MKL_LOGHEX(LogCentral(), mp_LogLevel, mp_DataHeader, mp_Data, mp_DataSize)
 #endif
+
+#ifndef LOG_NO_STD_STRING_HELPERS
+// Helper to simplify/enrich the logging of std::wstring variables
+std::ostream& operator <<(std::ostream& os, const std::wstring& s);
+std::ostream& operator <<(std::ostream& os, const wchar_t* sz);
+#endif
