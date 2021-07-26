@@ -10,7 +10,7 @@
 class CLogRotatingFileSink : public ILogSink
 {
 public:
-    CLogRotatingFileSink(const std::filesystem::path& logFileDirectoryPath, long logFileSizeThreshold = 10 * 1024 * 1024, int maxLogFileCount = 10);
+    CLogRotatingFileSink(const std::filesystem::path& logFileDirectoryPath, size_t logFileSizeThreshold = 10 * 1024 * 1024, int maxLogFileCount = 10);
     virtual ~CLogRotatingFileSink() = default;
 
 public: // ILogSink
@@ -27,6 +27,6 @@ private:
     const std::wstring m_sLogFileName = L"app"; // The base name of the log file(s). The timestamp of file creation will be inserted in the name, and ".log" appended. NB: should not contain a '.' (because used in regex)
     const std::wstring m_LogFileExtension = L"log"; // NB: should not contain a '.' (because used in regex)
     CLogFileSink m_LogFile;
-    const long m_FileSizeThreshold;
+    const size_t m_FileSizeThreshold;
     const int m_MaxFileCount;
 };

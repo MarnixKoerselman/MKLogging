@@ -8,11 +8,10 @@ class CLogFileSink : public ILogSink
 public:
     CLogFileSink() = default;
     virtual ~CLogFileSink();
-    //bool Create(const std::filesystem::path& directoryPath, const std::filesystem::path& fileName);
     bool Create(const std::wstring& filePath);
     void Close();
 
-    long GetFileSize() const;
+    size_t GetFileSize() const;
     bool IsOpen() const;
 
 public: // ILogSink
@@ -20,5 +19,5 @@ public: // ILogSink
 
 private:
     FILE* m_File = nullptr;
-    long m_iWrittenByteCount = 0;
+    size_t m_FileSize = 0;
 };

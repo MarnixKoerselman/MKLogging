@@ -4,7 +4,7 @@
 #include <regex>
 #include <iomanip>
 
-CLogRotatingFileSink::CLogRotatingFileSink(const std::filesystem::path& logFileDirectoryPath, long fileSizeThreshold /*= 10*1024*1024*/, int maxLogFileCount /*= 10*/)
+CLogRotatingFileSink::CLogRotatingFileSink(const std::filesystem::path& logFileDirectoryPath, size_t fileSizeThreshold /*= 10*1024*1024*/, int maxLogFileCount /*= 10*/)
     : m_LogFileDirectoryPath(logFileDirectoryPath)
     , m_FileSizeThreshold(fileSizeThreshold)
     , m_MaxFileCount(maxLogFileCount)

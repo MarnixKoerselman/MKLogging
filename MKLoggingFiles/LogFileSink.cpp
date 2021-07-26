@@ -23,7 +23,7 @@ bool CLogFileSink::Create(const std::wstring& filePath)
     m_File = _wfsopen(filePath.c_str(), L"wb", _SH_DENYWR);
     const char* szUtf8Bom = "\xEF\xBB\xBF";
     fwrite(szUtf8Bom, 1, 3, m_File);
-    m_iWrittenByteCount = 3;
+    m_FileSize = 3u;
     
     // https ://docs.microsoft.com/en-us/cpp/c-runtime-library/reference/fwrite
     // If file is opened with UTF-8 string processing, then only wstring values should be written
@@ -45,9 +45,9 @@ void CLogFileSink::Close()
     }
 }
 
-long CLogFileSink::GetFileSize() const
+size_t CLogFileSink::GetFileSize() const
 {
-    return m_iWrittenByteCount;
+    return m_FileSize;
 }
 
 bool CLogFileSink::IsOpen() const
@@ -63,8 +63,8 @@ void CLogFileSink::OutputString(const std::string& text)
     }
 
     const size_t writtenElementCount = std::fwrite(text.data(), sizeof(std::string::value_type), text.size(), m_File);
-    m_iWrittenByteCount += writtenElementCount * sizeof(std::string::value_type);
+    m_FileSize += writtenElementCount * sizeof(std::string::value_type);
 
     //const size_t writtenElementCount = std::fwrite(text.data(), sizeof(std::wstring::value_type), text.size(), m_File);
-    //m_iWrittenByteCount += writtenElementCount * sizeof(std::wstring::value_type);
+    //m_FileSize += writtenElementCount * sizeof(std::wstring::value_type);
 }
