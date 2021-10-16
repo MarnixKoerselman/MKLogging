@@ -11,6 +11,7 @@
 #include "TestUtils.h"
 #include "FakeStringLogSink.h"
 #include "StringUtils.h"
+#include "MockLogSink.h"
 
 // Functional: use global instance g_LogCentral
 TEST(Functional, DefaultBehaviour)
@@ -44,7 +45,7 @@ TEST(Logger, LogSinkInterface)
     std::shared_ptr<FakeStringLogSink> stringSink = std::make_shared<FakeStringLogSink>();
     CLogCentral logger({ stringSink });
 
-    MKL_LOGE(logger, "test");
+    MKL_LOGE(&logger, "test");
 
     std::string buffer = stringSink->Buffer;
     EXPECT_NE(std::string::npos, buffer.find("test"));
@@ -93,14 +94,14 @@ TEST(Logger, Utf8)
     const char* szTestMessage = u8"Hello World\n你好世界";
     std::string testMessage = szTestMessage;
 
-    MKL_LOGI(logger, szTestMessage);
+    MKL_LOGI(&logger, szTestMessage);
     std::string actualMessage = stringSink->Buffer.substr(stringSink->Buffer.rfind(szTestMessage));
     actualMessage.pop_back(); // remove the \n that was added by the logger
     EXPECT_STREQ(szTestMessage, actualMessage.c_str());
 
     stringSink->Buffer.clear();
 
-    MKL_LOGI(logger, testMessage);
+    MKL_LOGI(&logger, testMessage);
     actualMessage = stringSink->Buffer.substr(stringSink->Buffer.rfind(testMessage));
     actualMessage.pop_back(); // remove the \n that was added by the logger
     EXPECT_EQ(testMessage, actualMessage);
@@ -115,14 +116,14 @@ TEST(Logger, ANSI)
     const char* szTestMessage = "Hello World\n";
     std::string testMessage = szTestMessage;
 
-    MKL_LOGI(logger, szTestMessage);
+    MKL_LOGI(&logger, szTestMessage);
     std::string actualMessage = stringSink->Buffer.substr(stringSink->Buffer.rfind(szTestMessage));
     actualMessage.pop_back(); // remove the \n that was added by the logger
     EXPECT_STREQ(szTestMessage, actualMessage.c_str());
 
     stringSink->Buffer.clear();
 
-    MKL_LOGI(logger, testMessage);
+    MKL_LOGI(&logger, testMessage);
     actualMessage = stringSink->Buffer.substr(stringSink->Buffer.rfind(testMessage));
     actualMessage.pop_back(); // remove the \n that was added by the logger
     EXPECT_EQ(testMessage, actualMessage);
@@ -138,14 +139,14 @@ TEST(Logger, UCS2)
     std::wstring testMessage = szTestMessage;
     std::string testMessageUtf8 = Ucs2ToUtf8(szTestMessage);
 
-    MKL_LOGI(logger, szTestMessage);
+    MKL_LOGI(&logger, szTestMessage);
     std::string actualMessage = stringSink->Buffer.substr(stringSink->Buffer.rfind(testMessageUtf8));
     actualMessage.pop_back(); // remove the \n that was added by the logger
     EXPECT_EQ(testMessageUtf8, actualMessage);
 
     stringSink->Buffer.clear();
 
-    MKL_LOGI(logger, testMessage);
+    MKL_LOGI(&logger, testMessage);
     actualMessage = stringSink->Buffer.substr(stringSink->Buffer.rfind(testMessageUtf8));
     actualMessage.pop_back(); // remove the \n that was added by the logger
     EXPECT_EQ(testMessageUtf8, actualMessage);
@@ -169,7 +170,7 @@ TEST(Logger, CombineStringTypes)
     CLogCentral logger({ stringSink, bufferedLogFile, unbufferedLogFile, std::make_shared<CLogDebugOutputSink>() });
     logger.SetMinimumLogLevel(ELogLevel::All);
 
-    MKL_LOGI(logger, "\n\tHello world" << L"\n\tHello world" << u8"\n\t你好世界" << L"\n\t你好世界" << L"\n\t\x4f60\x597d\x4e16\x754c");
+    MKL_LOGI(&logger, "\n\tHello world" << L"\n\tHello world" << u8"\n\t你好世界" << L"\n\t你好世界" << L"\n\t\x4f60\x597d\x4e16\x754c");
 
     auto helloWorldChinese = u8"\n\t你好世界";
 
@@ -227,7 +228,7 @@ TEST(Logger, MultipleThreadsWithDebugOutputAndQueuedLogFile)
                 for (int bottlesOfBeer = 99; bottlesOfBeer > 0; bottlesOfBeer--)
                 {
                     // NB: by default only warnings and errors are logged in a Release build
-                    MKL_LOGW(logger, "\n" << bottlesOfBeer << " bottles of beer on the wall, " << bottlesOfBeer << " bottles of beer.\n"
+                    MKL_LOGW(&logger, "\n" << bottlesOfBeer << " bottles of beer on the wall, " << bottlesOfBeer << " bottles of beer.\n"
                         << "Take one down and pass it around, " << bottlesOfBeer - 1 << " bottles of beer on the wall.");
                 }
             }
@@ -252,7 +253,7 @@ TEST(Logger, MultipleThreadsWithDebugOutputAndQueuedLogFile)
     std::chrono::system_clock::time_point endTime = std::chrono::system_clock::now();
 
     // log some statistics
-    MKL_LOGW(logger, ""
+    MKL_LOGW(&logger, ""
         << "\n\tIt took the main thread " << std::chrono::duration_cast<std::chrono::microseconds>(intermediateTime - startTime).count() << " us to set up the production"
         << "\n\t and there were " << intermediateQueueLength << " items in the queue at that time"
         << "\n\tProduction took " << std::chrono::duration_cast<std::chrono::milliseconds>(producedTime - startTime).count() << " ms in total"
@@ -282,4 +283,18 @@ TEST(Logger, MultipleThreadsWithDebugOutputAndQueuedLogFile)
     ASSERT_EQ(nReadItemCount, newLogFileText.size()); // newline translation in effect - number of characters in buffer should be less than the file size
     newLogFileText.resize(nReadItemCount);
     EXPECT_EQ(logFileText, newLogFileText);
+}
+
+TEST(Logger, ChainOfLoggers)
+{
+    auto mockLeafSink = std::make_shared<MockLogSink>();
+    auto leafLogger = std::make_shared<CLogCentral>(std::initializer_list<std::shared_ptr<ILogSink>> { mockLeafSink });
+
+    auto mockRootSink = std::make_shared<MockLogSink>();
+    CLogCentral rootLogger({ leafLogger, mockRootSink/*, std::make_shared<CLogDebugOutputSink>()*/ });
+
+    EXPECT_CALL(*mockLeafSink, OutputString).Times(2);
+    EXPECT_CALL(*mockRootSink, OutputString).Times(1);
+    MKL_LOGV(&rootLogger);
+    MKL_LOGV(leafLogger.get());
 }

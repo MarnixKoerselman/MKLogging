@@ -44,34 +44,34 @@ TEST(LogQueue, MultiThreaded)
     producers.push_back(std::thread([&logger]
     {
         //DebugBreak();
-        MKL_LOGV(logger);
+        MKL_LOGV(&logger);
     }));
     producers.push_back(std::thread([&logger, numberOfLogsPerThread]
     {
         //DebugBreak();
         for (int i = 0; i < numberOfLogsPerThread; i++)             {
-            MKL_LOGD(logger, "This is test " << i << " in thread 0x" << std::hex << std::this_thread::get_id());
+            MKL_LOGD(&logger, "This is test " << i << " in thread 0x" << std::hex << std::this_thread::get_id());
         }
     }));
     producers.push_back(std::thread([&logger, numberOfLogsPerThread]
     {
         //DebugBreak();
         for (int i = 0; i < numberOfLogsPerThread; i++)             {
-            MKL_LOGI(logger, "This is test " << i << " in thread 0x" << std::hex << std::this_thread::get_id());
+            MKL_LOGI(&logger, "This is test " << i << " in thread 0x" << std::hex << std::this_thread::get_id());
         }
     }));
     producers.push_back(std::thread([&logger, numberOfLogsPerThread]
     {
         //DebugBreak();
         for (int i = 0; i < numberOfLogsPerThread; i++)             {
-            MKL_LOGW(logger, "This is test " << i << " in thread 0x" << std::hex << std::this_thread::get_id());
+            MKL_LOGW(&logger, "This is test " << i << " in thread 0x" << std::hex << std::this_thread::get_id());
         }
     }));
     producers.push_back(std::thread([&logger, numberOfLogsPerThread]
     {
         //DebugBreak();
         for (int i = 0; i < numberOfLogsPerThread; i++)             {
-            MKL_LOGE(logger, "This is test " << i << " in thread 0x" << std::hex << std::this_thread::get_id());
+            MKL_LOGE(&logger, "This is test " << i << " in thread 0x" << std::hex << std::this_thread::get_id());
         }
     }));
 

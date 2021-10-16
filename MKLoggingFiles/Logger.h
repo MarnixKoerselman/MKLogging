@@ -6,7 +6,7 @@
 
 // This global variable must be defined once in every project that uses the logging facilities.
 // Currently this is done through a global instance defined in Logger.cpp.
-CLogCentral& LogCentral();
+CLogCentral* LogCentral();
 
 // Set of macros that simplify logging using the default global logger
 
