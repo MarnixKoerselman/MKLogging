@@ -4,13 +4,12 @@
 
 void FileSystemUtils::CreateDirectoriesFromFilePath(const std::wstring& filePath)
 {
-    std::filesystem::path directoryPath(filePath);
-    directoryPath.remove_filename();
+    std::filesystem::path directoryPath = std::filesystem::path(filePath).parent_path();
 
     if (!std::filesystem::exists(directoryPath)) {
         std::error_code errorCode;
         if (!std::filesystem::create_directories(directoryPath, errorCode)) {
-            LOGE("Could not create directories (" << errorCode << ")");
+            LOGE("Could not create directories in " << directoryPath << " (" << errorCode << ")");
         }
     }
 }
