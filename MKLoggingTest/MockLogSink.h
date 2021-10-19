@@ -6,5 +6,5 @@
 class MockLogSink : public ILogSink
 {
 public: // ILogSink
-    MOCK_METHOD1(OutputString, void(const std::string& text));
+	MOCK_METHOD1(OutputRecord, void(const LogRecord& record));
 };

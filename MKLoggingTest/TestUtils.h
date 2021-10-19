@@ -5,12 +5,12 @@
 // type definitions
 struct DirectoryEntry
 {
-    std::wstring Path;
-    uintmax_t FileSize;
-    std::filesystem::file_time_type LastModifiedTime;
+	std::wstring Path;
+	uintmax_t FileSize;
+	std::filesystem::file_time_type LastModifiedTime;
 
-    DirectoryEntry(std::wstring path, uintmax_t fileSize, std::filesystem::file_time_type lastModifiedTime);
-    bool operator==(const DirectoryEntry& rhs) const;
+	DirectoryEntry(std::wstring path, uintmax_t fileSize, std::filesystem::file_time_type lastModifiedTime);
+	bool operator==(const DirectoryEntry& rhs) const;
 };
 
 using DirectoryEntries = std::vector<DirectoryEntry>;

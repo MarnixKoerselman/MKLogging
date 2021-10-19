@@ -1,7 +1,7 @@
 #include "LogConsoleSink.h"
 #include <iostream>
 
-void CLogConsoleSink::OutputString(const std::string& text)
+void CLogConsoleSink::OutputRecord(const LogRecord& record)
 {
-    std::cout << text;
+	OutputFormattedRecord(std::cout, record);
 }

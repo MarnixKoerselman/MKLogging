@@ -10,31 +10,31 @@ using namespace testing;
 class TestableLogRotatingFileSink : public CLogRotatingFileSink
 {
 public:
-    TestableLogRotatingFileSink(const std::wstring& sDirectory)
-        : CLogRotatingFileSink(sDirectory)
-    {
-    }
-    std::filesystem::path GetNextFileName() const
-    {
-        return CLogRotatingFileSink::GetNextFileName();
-    }
-    std::wstring GenerateFileName(time_t now = time(nullptr)) const
-    {
-        return CLogRotatingFileSink::GenerateFileName(now);
-    }
+	TestableLogRotatingFileSink(const std::wstring& sDirectory)
+		: CLogRotatingFileSink(sDirectory)
+	{
+	}
+	std::filesystem::path GetNextFileName() const
+	{
+		return CLogRotatingFileSink::GetNextFileName();
+	}
+	std::wstring GenerateFileName(time_t now = time(nullptr)) const
+	{
+		return CLogRotatingFileSink::GenerateFileName(now);
+	}
 };
 
 TEST(RotatingLogFile, GenerateFileName)
 {
-    // we don't really care about the exact format of the generated file name, as long as it's different
+	// we don't really care about the exact format of the generated file name, as long as it's different
 
-    TestableLogRotatingFileSink sink(L"");
+	TestableLogRotatingFileSink sink(L"");
 
-    time_t now;
-    time(&now);
+	time_t now;
+	time(&now);
 
-    EXPECT_NE(sink.GenerateFileName(now), sink.GenerateFileName(now + 1));
-    // also test that the file names are generated in an alphabetically sortable way, i.e. the filename generated at t=T should be lower in rank than for t=(T+1)
-    EXPECT_LT(sink.GenerateFileName(now), sink.GenerateFileName(now + 1));
-    EXPECT_EQ(sink.GenerateFileName(now), sink.GenerateFileName(now));
+	EXPECT_NE(sink.GenerateFileName(now), sink.GenerateFileName(now + 1));
+	// also test that the file names are generated in an alphabetically sortable way, i.e. the filename generated at t=T should be lower in rank than for t=(T+1)
+	EXPECT_LT(sink.GenerateFileName(now), sink.GenerateFileName(now + 1));
+	EXPECT_EQ(sink.GenerateFileName(now), sink.GenerateFileName(now));
 }

@@ -2,8 +2,8 @@
 
 #include "ILogSink.h"
 
-class CLogConsoleSink : public ILogSink
+class CLogConsoleSink : public LogSinkWithFormatter
 {
 public: // ILogSink
-    void OutputString(const std::string& text) override;
+	void OutputRecord(const LogRecord& record) override;
 };

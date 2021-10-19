@@ -4,6 +4,6 @@
 
 namespace FileSystemUtils
 {
-void CreateDirectoriesFromFilePath(const std::wstring& filePath);
+	void CreateDirectoriesFromFilePath(const std::wstring& filePath);
 };
 

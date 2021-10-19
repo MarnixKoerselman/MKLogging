@@ -5,10 +5,17 @@
 class FakeStringLogSink : public ILogSink
 {
 public:
-    std::string Buffer;
+	std::string Buffer;
 public: // ILogSink
-    virtual void OutputString(const std::string& text) override
-    {
-        Buffer.append(text);
-    }
+	virtual void OutputRecord(const LogRecord& record) override
+	{
+		if (record.PreformattedMessage)
+		{
+			Buffer.append(*record.PreformattedMessage);
+		}
+		else
+		{
+			Buffer.append(record.GetMessage());
+		}
+	}
 };
