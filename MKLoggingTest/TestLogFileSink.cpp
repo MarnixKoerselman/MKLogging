@@ -14,7 +14,7 @@ TEST(LogFileSink, Basic)
 	std::filesystem::path logFilePath = testOuputDirectoryPath / "test.log";
 	std::string testMessage = "Hello World\n";
 	{
-		CLogFileSink logFile;
+		LogFileSink logFile;
 		ASSERT_TRUE(logFile.Create(logFilePath));
 		logFile.WriteToFile(testMessage);
 	}
@@ -35,7 +35,7 @@ TEST(LogFileSink, Utf8)
 	std::filesystem::path logFilePath = testOuputDirectoryPath / "test.log";
 	std::string testMessage = u8"Hello World\n你好世界";
 	{
-		CLogFileSink logFile;
+		LogFileSink logFile;
 		ASSERT_TRUE(logFile.Create(logFilePath));
 		logFile.WriteToFile(testMessage);
 	}

@@ -5,21 +5,17 @@
 #include <initializer_list>
 
 template <typename EventNotificationInterface>
-class CEventSource
+class EventSource
 {
-protected:
-	using Mutex = std::recursive_mutex;
-	using Lock = std::lock_guard<std::recursive_mutex>;
-
 public:
-	CEventSource() = default;
+	EventSource() = default;
 
-	explicit CEventSource(const std::initializer_list<std::shared_ptr<EventNotificationInterface>>& listeners)
+	explicit EventSource(const std::initializer_list<std::shared_ptr<EventNotificationInterface>>& listeners)
 		: m_Listeners(listeners)
 	{
 	}
 
-	virtual ~CEventSource() = default;
+	virtual ~EventSource() = default;
 
 	void AddListener(const std::shared_ptr<EventNotificationInterface>& pListener)
 	{
@@ -49,7 +45,10 @@ public:
 	}
 
 protected:
+	using Mutex = std::recursive_mutex;
+	using Lock = std::lock_guard<std::recursive_mutex>;
+
+protected:
 	std::vector<std::shared_ptr<EventNotificationInterface>> m_Listeners;
 	Mutex m_AccessListeners;
 };
-

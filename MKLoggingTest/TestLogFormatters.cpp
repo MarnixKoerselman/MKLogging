@@ -4,6 +4,7 @@
 //#include <LogDebugOutputSink.h>
 //#include <LogUnbufferedFileSink.h>
 #include <LogFormatter.h>
+#include <LogEnterLeave.h>
 
 //#include <string>
 //#include <filesystem>
@@ -37,23 +38,28 @@ TEST(LogFormatters, DefaultLogFormatter)
 													});
 
 	{
-		LogRecord(&mockSink, ELogLevel::Info, function, __FILE__, line).Get() << "test";
+		LogRecordAutoSink(&mockSink, ELogLevel::Info, function, __FILE__, line).Get() << "test";
 	}
 }
 
-TEST(LogFormatters, MessageOnlyLogFormatter)
+TEST(LogFormatters, MessageOnlyLogFormatter_LogRecordWithSink)
 {
-	MessageOnlyLogFormatter formatter;
+	// unless explicitly configured, a log sink does not have a formatter
 	std::shared_ptr<FakeStringLogSink> buffer = std::make_shared<FakeStringLogSink>();
 	{
-		LogRecord(buffer.get(), ELogLevel::Info, __FUNCTION__, __FILE__, __LINE__).Get() << "test";
+		LogRecordAutoSink(buffer.get(), ELogLevel::Info, __FUNCTION__, __FILE__, __LINE__).Get() << "test";
 	}
 	EXPECT_STREQ("test", buffer->Buffer.c_str());
 	buffer->Buffer.clear();
+}
 
-	CLogCentral logger;
+TEST(LogFormatters, MessageOnlyLogFormatter_LogCentral)
+{
+	// Logger does have a default formatter, which must be explicitly replaced
+	Logger logger;
+	logger.SetFormatter(nullptr);
+	std::shared_ptr<FakeStringLogSink> buffer = std::make_shared<FakeStringLogSink>();
 	logger.AddListener(buffer);
 	MKL_LOGD(logger, "test");
 	EXPECT_STREQ("test\n", buffer->Buffer.c_str());
 }
-

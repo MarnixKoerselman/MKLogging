@@ -2,14 +2,14 @@
 #include "Logger.h"
 #include "FileSystemUtils.h"
 
-CLogFileSink::~CLogFileSink()
+LogFileSink::~LogFileSink()
 {
 	Close();
 }
 
-bool CLogFileSink::Create(const std::wstring& filePath)
+bool LogFileSink::Create(const std::wstring& filePath)
 {
-	LOGD(L"filePath=" << filePath.c_str());
+	LOGD(L"filePath=" << filePath);
 
 	if (m_File != nullptr)
 	{
@@ -32,7 +32,7 @@ bool CLogFileSink::Create(const std::wstring& filePath)
 	return (m_File != nullptr);
 }
 
-void CLogFileSink::Close()
+void LogFileSink::Close()
 {
 	if (m_File != nullptr)
 	{
@@ -45,17 +45,17 @@ void CLogFileSink::Close()
 	}
 }
 
-size_t CLogFileSink::GetFileSize() const
+size_t LogFileSink::GetFileSize() const
 {
 	return m_FileSize;
 }
 
-bool CLogFileSink::IsOpen() const
+bool LogFileSink::IsOpen() const
 {
 	return (m_File != nullptr);
 }
 
-void CLogFileSink::WriteToFile(const std::string& text)
+void LogFileSink::WriteToFile(const std::string& text)
 {
 	if (IsOpen())
 	{
@@ -68,11 +68,11 @@ void CLogFileSink::WriteToFile(const std::string& text)
 }
 
 // ILogSink
-void CLogFileSink::OutputRecord(const LogRecord& record)
+void LogFileSink::OutputRecord(const LogRecord& record)
 {
 	if (IsOpen())
 	{
-		std::stringstream buffer;
+		std::ostringstream buffer;
 		OutputFormattedRecord(buffer, record);
 		WriteToFile(buffer.str());
 	}

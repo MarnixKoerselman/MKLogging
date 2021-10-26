@@ -1,8 +1,8 @@
 #pragma once
 
-#include "ILogSink.h"
+#include "LogSinkWithFormatter.h"
 
-class CLogConsoleSink : public LogSinkWithFormatter
+class LogConsoleSink : public LogSinkWithFormatter
 {
 public: // ILogSink
 	void OutputRecord(const LogRecord& record) override;

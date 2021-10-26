@@ -42,10 +42,11 @@ TEST(Functional, DefaultBehaviour)
 
 TEST(Logger, LogSinkInterface)
 {
-	CLogCentral logger;
+	Logger logger;
 
 	std::shared_ptr<FakeStringLogSink> stringSink = std::make_shared<FakeStringLogSink>();
 	logger.AddListener(stringSink);
+	logger.SetFormatter(nullptr);
 
 	MKL_LOGE(logger, "test");
 
@@ -56,7 +57,7 @@ TEST(Logger, LogSinkInterface)
 
 TEST(Logger, LogLevelFilter)
 {
-	CLogCentral localLogger;
+	Logger localLogger;
 	localLogger.AddListener(std::make_shared<FakeStringLogSink>());
 
 	for (ELogLevel eSetLogLevel = ELogLevel::Min; eSetLogLevel <= ELogLevel::Max; ++eSetLogLevel)
@@ -79,7 +80,7 @@ TEST(Logger, LogLevelFilter)
 
 TEST(Logger, LogLevelFilterWithNoLogSink)
 {
-	CLogCentral localLogger;
+	Logger localLogger;
 
 	for (ELogLevel eSetLogLevel = ELogLevel::Min; eSetLogLevel <= ELogLevel::Max; ++eSetLogLevel)
 	{
@@ -95,7 +96,7 @@ TEST(Logger, LogLevelFilterWithNoLogSink)
 TEST(Logger, Utf8)
 {
 	auto stringSink = std::make_shared<FakeStringLogSink>();
-	CLogCentral logger;
+	Logger logger;
 	logger.AddListener(stringSink);
 	logger.SetMinimumLogLevel(ELogLevel::All);
 
@@ -118,7 +119,7 @@ TEST(Logger, Utf8)
 TEST(Logger, ANSI)
 {
 	auto stringSink = std::make_shared<FakeStringLogSink>();
-	CLogCentral logger;
+	Logger logger;
 	logger.AddListener(stringSink);
 	logger.SetMinimumLogLevel(ELogLevel::All);
 
@@ -141,7 +142,7 @@ TEST(Logger, ANSI)
 TEST(Logger, UCS2)
 {
 	auto stringSink = std::make_shared<FakeStringLogSink>();
-	CLogCentral logger;
+	Logger logger;
 	logger.AddListener(stringSink);
 	logger.SetMinimumLogLevel(ELogLevel::All);
 
@@ -167,23 +168,22 @@ TEST(Logger, CombineStringTypes)
 	std::filesystem::path testOuputDirectoryPath = TEST_OUTPUT_DIRECTORY_PATH;
 	EnsureCleanOutputDirectory(testOuputDirectoryPath);
 	auto unbufferedLogPath = testOuputDirectoryPath / "unbuffered.log";
-	auto unbufferedLogFile = std::make_shared<CLogUnbufferedFileSink>();
-	unbufferedLogFile->SetFormatter(MessageOnlyLogFormatter::Singleton());
+	auto unbufferedLogFile = std::make_shared<LogUnbufferedFileSink>();
 	EXPECT_TRUE(unbufferedLogFile->Create(unbufferedLogPath));
 
 	auto bufferedLogPath = testOuputDirectoryPath / "buffered.log";
-	auto bufferedLogFile = std::make_shared<CLogFileSink>();
-	bufferedLogFile->SetFormatter(MessageOnlyLogFormatter::Singleton());
+	auto bufferedLogFile = std::make_shared<LogFileSink>();
 	EXPECT_TRUE(bufferedLogFile->Create(bufferedLogPath));
 
 	auto stringSink = std::make_shared<FakeStringLogSink>();
 
-	CLogCentral logger;
+	Logger logger;
 	logger.AddListener(stringSink);
 	logger.AddListener(bufferedLogFile);
 	logger.AddListener(unbufferedLogFile);
-	logger.AddListener(std::make_shared<CLogDebugOutputSink>());
+	logger.AddListener(std::make_shared<LogDebugOutputSink>());
 	logger.SetMinimumLogLevel(ELogLevel::All);
+	logger.SetFormatter(nullptr);
 
 	MKL_LOGI(logger, "\n\tHello world" << L"\n\tHello world" << u8"\n\t你好世界" << L"\n\t你好世界" << L"\n\t\x4f60\x597d\x4e16\x754c");
 
@@ -225,13 +225,13 @@ TEST(Logger, MultipleThreadsWithDebugOutputAndQueuedLogFile)
 	std::filesystem::path logFilePath = testOuputDirectoryPath / L"test.log";
 
 	// Make something that looks like a realistic logging configuration (debug and file output)
-	std::shared_ptr<CLogFileSink> logFile = std::make_shared<CLogFileSink>();
+	std::shared_ptr<LogFileSink> logFile = std::make_shared<LogFileSink>();
 	EXPECT_TRUE(logFile->Create(logFilePath));
-	std::shared_ptr<CLogQueue> bufferedFile = std::make_shared<CLogQueue>(logFile);
+	std::shared_ptr<LogQueue> bufferedFile = std::make_shared<LogQueue>(logFile);
 
-	std::shared_ptr<CLogDebugOutputSink> debugOutput = std::make_shared<CLogDebugOutputSink>();
+	std::shared_ptr<LogDebugOutputSink> debugOutput = std::make_shared<LogDebugOutputSink>();
 
-	CLogCentral logger;
+	Logger logger;
 	logger.AddListener(debugOutput);
 	logger.AddListener(bufferedFile);
 	logger.SetMinimumLogLevel(ELogLevel::Info);

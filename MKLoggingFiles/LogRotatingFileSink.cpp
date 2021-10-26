@@ -4,7 +4,7 @@
 #include <regex>
 #include <iomanip>
 
-CLogRotatingFileSink::CLogRotatingFileSink(const std::filesystem::path& logFileDirectoryPath, size_t fileSizeThreshold /*= 10*1024*1024*/, int maxLogFileCount /*= 10*/)
+LogRotatingFileSink::LogRotatingFileSink(const std::filesystem::path& logFileDirectoryPath, size_t fileSizeThreshold /*= 10*1024*1024*/, int maxLogFileCount /*= 10*/)
 	: m_LogFileDirectoryPath(logFileDirectoryPath)
 	, m_FileSizeThreshold(fileSizeThreshold)
 	, m_MaxFileCount(maxLogFileCount)
@@ -15,13 +15,13 @@ CLogRotatingFileSink::CLogRotatingFileSink(const std::filesystem::path& logFileD
 	}
 }
 
-void CLogRotatingFileSink::OutputRecord(const LogRecord& record)
+void LogRotatingFileSink::OutputRecord(const LogRecord& record)
 {
 	RollOver();
 	m_LogFile.OutputRecord(record);
 }
 
-void CLogRotatingFileSink::RollOver()
+void LogRotatingFileSink::RollOver()
 {
 	// the 'current log file' may use caching methods, so the log file size must be tracked by the application and cannot be retrieved reliably from the file system
 	if (m_LogFile.GetFileSize() >= m_FileSizeThreshold)
@@ -74,14 +74,14 @@ void CLogRotatingFileSink::RollOver()
 	}
 }
 
-std::filesystem::path CLogRotatingFileSink::GetNextFileName() const
+std::filesystem::path LogRotatingFileSink::GetNextFileName() const
 {
 	std::filesystem::path logFileName = GenerateFileName();
 	logFileName.replace_extension(m_LogFileExtension);
 	return logFileName;
 }
 
-std::wstring CLogRotatingFileSink::GenerateFileName(time_t timeStamp /*= time(nullptr)*/) const
+std::wstring LogRotatingFileSink::GenerateFileName(time_t timeStamp /*= time(nullptr)*/) const
 {
 	tm gmtStamp;
 	gmtime_s(&gmtStamp, &timeStamp);
@@ -95,7 +95,7 @@ std::wstring CLogRotatingFileSink::GenerateFileName(time_t timeStamp /*= time(nu
 	return fileNameStream.str();
 }
 
-std::wstring CLogRotatingFileSink::GetLogFileNameRegex() const
+std::wstring LogRotatingFileSink::GetLogFileNameRegex() const
 {
 	// FormatString(L"%s-.*\\.%s", m_sLogFileName.c_str(), m_LogFileExtension.c_str())
 	std::wstring matcher = m_sLogFileName;

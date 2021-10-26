@@ -4,8 +4,7 @@
 
 void FileSystemUtils::CreateDirectoriesFromFilePath(const std::wstring& filePath)
 {
-	std::filesystem::path directoryPath(filePath);
-	directoryPath.remove_filename();
+	std::filesystem::path directoryPath = std::filesystem::path(filePath).parent_path();
 
 	if (!directoryPath.empty() && !std::filesystem::exists(directoryPath))
 	{

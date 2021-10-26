@@ -1,14 +1,13 @@
 #pragma once
 
-#include "ILogSink.h"
-//#include <filesystem>
+#include "LogSinkWithFormatter.h"
 #include <string>
 
-class CLogFileSink : public LogSinkWithFormatter
+class LogFileSink : public LogSinkWithFormatter
 {
 public:
-	CLogFileSink() = default;
-	virtual ~CLogFileSink();
+	LogFileSink() = default;
+	virtual ~LogFileSink();
 	bool Create(const std::wstring& filePath);
 	void Close();
 

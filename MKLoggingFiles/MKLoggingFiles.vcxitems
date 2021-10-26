@@ -19,29 +19,33 @@
     <ClInclude Include="$(MSBuildThisFileDirectory)EventSource.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)FileSystemUtils.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)ILogSink.h" />
-    <ClInclude Include="$(MSBuildThisFileDirectory)LogCentral.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)LogConsoleSink.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)LogDebugOutputSink.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)LogEnterLeave.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)LogFormatter.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)Logger.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)LogQueue.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)LogRecordAutoSink.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)LogRotatingFileSink.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)LogRecord.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)LogFileSink.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)LogSinkWithFormatter.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)LogUnbufferedFileSink.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="$(MSBuildThisFileDirectory)ELogLevel.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)FileSystemUtils.cpp" />
-    <ClCompile Include="$(MSBuildThisFileDirectory)LogCentral.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)LogConsoleSink.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)LogDebugOutputSink.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)LogEnterLeave.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)LogFormatter.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)Logger.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)LogQueue.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)LogRecordAutoSink.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)LogRotatingFileSink.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)LogRecord.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)LogFileSink.cpp" />
-    <ClCompile Include="$(MSBuildThisFileDirectory)LogSinkBase.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)LogSinkWithFormatter.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)LogUnbufferedFileSink.cpp" />
   </ItemGroup>
 </Project>

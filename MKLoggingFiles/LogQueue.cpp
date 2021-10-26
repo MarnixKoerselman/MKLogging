@@ -1,14 +1,14 @@
 #include "LogQueue.h"
 #include <Windows.h> // OutputDebugString
 
-CLogQueue::CLogQueue(const std::shared_ptr<ILogSink>& logDelegate)
+LogQueue::LogQueue(const std::shared_ptr<ILogSink>& logDelegate)
 	: m_Delegate(logDelegate)
-	, m_WorkerThread(&CLogQueue::ConsumerThread, this)
+	, m_WorkerThread(&LogQueue::ConsumerThread, this)
 	, m_IsProcessingStopped(false)
 {
 }
 
-CLogQueue::~CLogQueue()
+LogQueue::~LogQueue()
 {
 	Drain();
 	// trigger thread EOL
@@ -22,7 +22,7 @@ CLogQueue::~CLogQueue()
 	}
 }
 
-void CLogQueue::Drain()
+void LogQueue::Drain()
 {
 	bool isQueueEmpty = false;
 	while (!isQueueEmpty)
@@ -37,12 +37,12 @@ void CLogQueue::Drain()
 	}
 }
 
-size_t CLogQueue::GetMessageQueueSize()
+size_t LogQueue::GetMessageQueueSize()
 {
 	return m_MessageQueue.size();
 }
 
-void CLogQueue::OutputRecord(const LogRecord& record)
+void LogQueue::OutputRecord(const LogRecord& record)
 {
 	// make the change while locked, and unlock before signalling the changed condition
 	std::unique_lock<std::mutex> lock(m_AccessQueue);
@@ -52,7 +52,7 @@ void CLogQueue::OutputRecord(const LogRecord& record)
 	m_QueueChanged.notify_one();
 }
 
-void CLogQueue::ConsumerThread()
+void LogQueue::ConsumerThread()
 {
 	while (true)
 	{
@@ -71,12 +71,14 @@ void CLogQueue::ConsumerThread()
 		if (!m_MessageQueue.empty())
 		{
 			LogRecord record = m_MessageQueue.front();
-			m_MessageQueue.pop();
 			lock.unlock(); // release the queue for access by log producers
 			if (m_Delegate)
 			{
 				m_Delegate->OutputRecord(record);
 			}
+			lock.lock();
+			m_MessageQueue.pop();
+			lock.unlock(); // release the queue for access by log producers
 		}
 	}
 }

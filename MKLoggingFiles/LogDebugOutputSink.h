@@ -1,9 +1,9 @@
 #pragma once
 
-#include "ILogSink.h"
+#include "LogSinkWithFormatter.h"
 
 // Use OutputDebugString for output during debugging
-class CLogDebugOutputSink : public LogSinkWithFormatter
+class LogDebugOutputSink : public LogSinkWithFormatter
 {
 public: // ILogSink
 	void OutputRecord(const LogRecord& record) override;

@@ -1,13 +1,13 @@
 #pragma once
 
-#include "ILogSink.h"
+#include "LogSinkWithFormatter.h"
 #include <string>
 
-class CLogUnbufferedFileSink : public LogSinkWithFormatter
+class LogUnbufferedFileSink : public LogSinkWithFormatter
 {
 public:
-	CLogUnbufferedFileSink() = default;
-	virtual ~CLogUnbufferedFileSink();
+	LogUnbufferedFileSink() = default;
+	virtual ~LogUnbufferedFileSink();
 
 	bool Create(const std::wstring& filePath);
 	bool OpenToAppend(const std::wstring& filePath);

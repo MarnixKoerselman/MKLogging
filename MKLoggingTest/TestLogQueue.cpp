@@ -13,15 +13,14 @@ TEST(LogQueue, Basic)
 {
 	// Initialise the test environment
 	auto mockSink = std::make_shared<MockLogSink>();
-	std::shared_ptr<CLogQueue> bufferedSink = std::make_shared<CLogQueue>(mockSink);
+	std::shared_ptr<LogQueue> bufferedSink = std::make_shared<LogQueue>(mockSink);
 
 	// Set expectations
 	std::string testString = "This is a test";
-	LogRecord testRecord(bufferedSink.get(), ELogLevel::All, __FUNCTION__, __FILE__, __LINE__);
+	LogRecord testRecord(ELogLevel::All, __FUNCTION__, __FILE__, __LINE__);
 	testRecord.Get() << testString;
 
-	EXPECT_CALL(*mockSink, OutputRecord(testRecord))
-		.RetiresOnSaturation();
+	EXPECT_CALL(*mockSink, OutputRecord(testRecord)).Times(1);
 
 	// Run the test
 	bufferedSink->OutputRecord(testRecord);
@@ -35,10 +34,10 @@ TEST(LogQueue, Basic)
 TEST(LogQueue, MultiThreaded)
 {
 	std::shared_ptr<FakeStringLogSink> stringLog = std::make_shared<FakeStringLogSink>();
-	std::shared_ptr<CLogQueue> bufferedLog = std::make_shared<CLogQueue>(stringLog);
-	CLogCentral logger;
+	std::shared_ptr<LogQueue> bufferedLog = std::make_shared<LogQueue>(stringLog);
+	Logger logger;
 	logger.AddListener(bufferedLog);
-	logger.AddListener(std::make_shared<CLogDebugOutputSink>());
+	logger.AddListener(std::make_shared<LogDebugOutputSink>());
 	logger.SetMinimumLogLevel(ELogLevel::Debug);
 
 	const int numberOfLogsPerThread = 5;

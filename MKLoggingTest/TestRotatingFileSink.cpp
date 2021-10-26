@@ -7,20 +7,20 @@
 using namespace testing;
 
 // make (protected) implementation methods public, so they can be tested
-class TestableLogRotatingFileSink : public CLogRotatingFileSink
+class TestableLogRotatingFileSink : public LogRotatingFileSink
 {
 public:
 	TestableLogRotatingFileSink(const std::wstring& sDirectory)
-		: CLogRotatingFileSink(sDirectory)
+		: LogRotatingFileSink(sDirectory)
 	{
 	}
 	std::filesystem::path GetNextFileName() const
 	{
-		return CLogRotatingFileSink::GetNextFileName();
+		return LogRotatingFileSink::GetNextFileName();
 	}
 	std::wstring GenerateFileName(time_t now = time(nullptr)) const
 	{
-		return CLogRotatingFileSink::GenerateFileName(now);
+		return LogRotatingFileSink::GenerateFileName(now);
 	}
 };
 
