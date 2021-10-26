@@ -64,7 +64,7 @@ A typical log command (e.g. `LOGD("var=" << var)`) has the following properties:
   #define LOGD(x) (void)0
   #include "Logger.h"
   ```
-- the log statement is std::wostream based, to support UTF-x on Windows
+- the log statement is std::ostream based, for UTF-8. Conversion helpers for std::wstring and (wchar_t*) are provided, but they use `std::wstring_convert<std::codecvt_utf8<wchar_t>>` converter which is deprecated. The conversion helpers can be replaced (see Logger.h: `MKL_NO_STD_STRING_HELPERS`).
 
 ## Notes
 

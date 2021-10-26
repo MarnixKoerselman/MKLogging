@@ -47,7 +47,7 @@ TEST(LogQueue, MultiThreaded)
   producers.push_back(std::thread([&logger]
     {
       //DebugBreak();
-      MKL_LOGV(&logger);
+      MKL_LOGV(&logger, "test");
     }));
   producers.push_back(std::thread([&logger, numberOfLogsPerThread]
     {

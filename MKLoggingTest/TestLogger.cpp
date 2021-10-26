@@ -27,7 +27,7 @@ TEST(Functional, DefaultBehaviour)
   std::filesystem::path testOuputDirectoryPath = TEST_OUTPUT_DIRECTORY_PATH;
   DirectoryEntries initialDirectoryEntries = GetDirectoryContents(testOuputDirectoryPath);
 
-  LOGV();
+  LOGV("hello verbose");
   LOGD("hello debug");
   LOGD("hello debug in utf-8");
   LOGI("hello information in utf-8");
@@ -323,8 +323,8 @@ TEST(Logger, ChainOfLoggers)
   EXPECT_CALL(*mockRootSink, OutputRecord).Times(1);
 
   // run the tests
-  MKL_LOGV(&rootLogger);
-  MKL_LOGV(leafLogger.get());
+  MKL_LOGV(&rootLogger, "test");
+  MKL_LOGV(leafLogger.get(), "test");
 }
 
 TEST(Logger, ChainOfLoggers2)
@@ -357,11 +357,11 @@ TEST(Logger, ChainOfLoggers2)
   EXPECT_CALL(*mockErrorSink, OutputRecord).Times(1);
   EXPECT_CALL(*mockVerboseSink, OutputRecord).Times(5);
 
-  MKL_LOGV(myLogCentral.get()); // filtered out by LogCentral
+  MKL_LOGV(myLogCentral.get(), "test"); // filtered out by LogCentral
   MKL_LOGD(myLogCentral.get(), "test"); // sinks in [central,verbose]
   MKL_LOGI(myLogCentral.get(), "test"); // sinks in [central,verbose]
   MKL_LOGW(myLogCentral.get(), "test"); // sinks in [central,verbose]
   MKL_LOGE(myLogCentral.get(), "test"); // sinks in [central,verbose,error]
 
-  MKL_LOGV(myVerboseLog.get()); // sinks in [verbose]
+  MKL_LOGV(myVerboseLog.get(), "test"); // sinks in [verbose]
 }

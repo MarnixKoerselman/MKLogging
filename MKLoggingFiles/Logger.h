@@ -10,7 +10,7 @@
 #endif
 
 #ifndef LOGV
-#define LOGV() MKL_LOGV(LogCentral())
+#define LOGV(mp_Out) MKL_LOGV(LogCentral(), mp_Out)
 #endif
 
 #ifndef LOGD
@@ -43,7 +43,7 @@
 #endif
 
 #ifndef MKL_LOGV
-#define MKL_LOGV(mp_Logger) do { if (MKL_ISLOGGED(mp_Logger, ELogLevel::Verbose)) { LogRecordAutoSink(mp_Logger, ELogLevel::Verbose, __FUNCTION__, __FILE__, __LINE__).Get() << MKL_ENDLINE; } } while (0)
+#define MKL_LOGV(mp_Logger, mp_Out) do { if (MKL_ISLOGGED(mp_Logger, ELogLevel::Verbose)) { LogRecordAutoSink(mp_Logger, ELogLevel::Verbose, __FUNCTION__, __FILE__, __LINE__).Get() << mp_Out << MKL_ENDLINE; } } while (0)
 #endif
 
 #ifndef MKL_LOGD
