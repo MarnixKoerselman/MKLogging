@@ -1,12 +1,14 @@
 #pragma once
 
-#include <string>
+struct LogRecord;
+class LogFormatter;
 
 __interface ILogSink
 {
-    void OutputString(const std::string& text);
+  void OutputRecord(const LogRecord& record);
 };
 
 // Copy/paste:
 //public: // ILogSink
-//void OutputString(const std::string& text);
+//void OutputRecord(const LogRecord& record) override;
+

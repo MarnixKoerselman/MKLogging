@@ -5,51 +5,50 @@
 #include <initializer_list>
 
 template <typename EventNotificationInterface>
-class CEventSource
+class EventSource
 {
-protected:
-    using Mutex = std::recursive_mutex;
-    using Lock = std::lock_guard<std::recursive_mutex>;
-
 public:
-    CEventSource() = default;
-    
-    explicit CEventSource(const std::initializer_list<std::shared_ptr<EventNotificationInterface>>& listeners)
-        : m_Listeners(listeners)
-    {
-    }
-    
-    virtual ~CEventSource() = default;
+  EventSource() = default;
 
-    void AddListener(const std::shared_ptr<EventNotificationInterface>& pListener)
-    {
-        Lock lock(m_AccessListeners);
-        m_Listeners.push_back(pListener);
-    }
-    
-    void RemoveListener(const std::shared_ptr<EventNotificationInterface>& pListener)
-    {
-        Lock lock(m_AccessListeners);
-        auto pos = std::find(m_Listeners.begin(), m_Listeners.end(), pListener);
-        if (pos != m_Listeners.end())
-        {
-            m_Listeners.erase(pos);
-        }
-    }
+  explicit EventSource(std::initializer_list<std::shared_ptr<EventNotificationInterface>> listeners)
+    : m_Listeners(listeners)
+  {
+  }
 
-    void RemoveAllListeners()
-    {
-        Lock lock(m_AccessListeners);
-        m_Listeners.clear();
-    }
+  virtual ~EventSource() = default;
 
-    bool HasListeners() const
+  void AddListener(const std::shared_ptr<EventNotificationInterface>& pListener)
+  {
+    Lock lock(m_AccessListeners);
+    m_Listeners.push_back(pListener);
+  }
+
+  void RemoveListener(const std::shared_ptr<EventNotificationInterface>& pListener)
+  {
+    Lock lock(m_AccessListeners);
+    auto pos = std::find(m_Listeners.begin(), m_Listeners.end(), pListener);
+    if (pos != m_Listeners.end())
     {
-        return !m_Listeners.empty();
+      m_Listeners.erase(pos);
     }
+  }
+
+  void RemoveAllListeners()
+  {
+    Lock lock(m_AccessListeners);
+    m_Listeners.clear();
+  }
+
+  bool HasListeners() const
+  {
+    return !m_Listeners.empty();
+  }
 
 protected:
-    std::vector<std::shared_ptr<EventNotificationInterface>> m_Listeners;
-    Mutex m_AccessListeners;
-};
+  using Mutex = std::recursive_mutex;
+  using Lock = std::lock_guard<std::recursive_mutex>;
 
+protected:
+  std::vector<std::shared_ptr<EventNotificationInterface>> m_Listeners;
+  Mutex m_AccessListeners;
+};

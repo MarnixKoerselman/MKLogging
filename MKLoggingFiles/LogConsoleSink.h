@@ -1,9 +1,9 @@
 #pragma once
 
-#include "ILogSink.h"
+#include "LogSinkWithFormatter.h"
 
-class CLogConsoleSink : public ILogSink
+class LogConsoleSink : public LogSinkWithFormatter
 {
 public: // ILogSink
-    void OutputString(const std::string& text) override;
+  void OutputRecord(const LogRecord& record) override;
 };

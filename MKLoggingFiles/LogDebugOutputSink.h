@@ -1,10 +1,10 @@
 #pragma once
 
-#include "ILogSink.h"
+#include "LogSinkWithFormatter.h"
 
 // Use OutputDebugString for output during debugging
-class CLogDebugOutputSink : public ILogSink
+class LogDebugOutputSink : public LogSinkWithFormatter
 {
 public: // ILogSink
-    void OutputString(const std::string& text) noexcept override;
+  void OutputRecord(const LogRecord& record) override;
 };
