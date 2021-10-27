@@ -7,7 +7,7 @@ void LogFormatter::OutputRecordWithFormatting(std::ostream& os, const LogRecord&
   OutputThreadId(os, record.ThreadId);
   OutputProcessId(os, record.ProcessId);
   OutputLogLevel(os, record.LogLevel);
-  os << record.Function << ": " << record.GetMessage();
+  os << record.Function << ": " << record.GetLogMessage();
 }
 
 void LogFormatter::OutputLogLevel(std::ostream& os, ELogLevel logLevel)

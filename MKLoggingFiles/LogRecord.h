@@ -15,7 +15,7 @@ struct LogRecord
 
   std::ostream& Get();
   void LogHex(const char* szDataHeader, const void* data, int dataSize);
-  std::string GetMessage() const;
+  std::string GetLogMessage() const;
 
   friend bool operator ==(const LogRecord& lhs, const LogRecord& rhs);
 

@@ -29,6 +29,6 @@ void LogSinkWithFormatter::OutputFormattedRecord(std::ostream& os, const LogReco
   }
   else
   {
-    os << record.GetMessage();
+    os << record.GetLogMessage();
   }
 }

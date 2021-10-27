@@ -6,7 +6,10 @@
 #include <thread>
 #include <algorithm>
 
-uintptr_t LogRecord::ProcessId = 0;
+#define NOMINMAX
+#include <Windows.h>
+
+uintptr_t LogRecord::ProcessId = GetCurrentProcessId();
 
 LogRecord::LogRecord(ELogLevel logLevel, const char* szFunction, const char* szFile, long lineNumber)
   : LogLevel(logLevel)
@@ -89,7 +92,7 @@ void LogRecord::LogHex(const char* szDataHeader, const void* data, int dataSize)
   }
 }
 
-std::string LogRecord::GetMessage() const
+std::string LogRecord::GetLogMessage() const
 {
   return m_MessageBuffer.str();
 }

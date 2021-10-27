@@ -28,7 +28,7 @@ void TestFileStream::OutputRecord(const LogRecord& record)
   }
   else
   {
-    m_LogFile << record.GetMessage();
+    m_LogFile << record.GetLogMessage();
   }
 }
 

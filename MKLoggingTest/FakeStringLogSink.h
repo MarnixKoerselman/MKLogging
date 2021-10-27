@@ -15,7 +15,7 @@ public: // ILogSink
     }
     else
     {
-      Buffer.append(record.GetMessage());
+      Buffer.append(record.GetLogMessage());
     }
   }
 };
