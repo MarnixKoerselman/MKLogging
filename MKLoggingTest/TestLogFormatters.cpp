@@ -1,19 +1,12 @@
 #include <Logger.h>
-//#include <LogFileSink.h>
-//#include <LogQueue.h>
-//#include <LogDebugOutputSink.h>
-//#include <LogUnbufferedFileSink.h>
 #include <LogFormatter.h>
-#include <LogEnterLeave.h>
-
-//#include <string>
-//#include <filesystem>
 
 #include <gtest/gtest.h>
-//#include "TestUtils.h"
-//#include "StringUtils.h"
 #include "MockLogSink.h"
 #include "FakeStringLogSink.h"
+
+#define NOMINMAX
+#include <Windows.h>
 
 using testing::_;
 
@@ -33,8 +26,8 @@ TEST(LogFormatters, DefaultLogFormatter)
       EXPECT_EQ(line, record.LineNumber);
       //EXPECT_EQ(_, record.Time);
       EXPECT_EQ(std::this_thread::get_id(), record.ThreadId);
-      //EXPECT_EQ(GetProcessId(), record.ProcessId);
-      EXPECT_STREQ("test", record.GetMessage().c_str());
+      EXPECT_EQ(GetCurrentProcessId(), record.ProcessId);
+      EXPECT_STREQ("test", record.GetLogMessage().c_str());
     });
 
   {
