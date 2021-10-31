@@ -1,7 +1,7 @@
 #include "LogUnbufferedFileSink.h"
+#include "FileSystemUtils.h"
 #include <io.h>
 #include <fcntl.h>
-#include <FileSystemUtils.h>
 #include <sstream>
 
 LogUnbufferedFileSink::~LogUnbufferedFileSink()

@@ -1,7 +1,7 @@
 #pragma once
 
+#include "LogRecord.h"
 #include <string>
-#include <LogRecord.h>
 #include <chrono>
 #include <thread>
 #include <iomanip>
