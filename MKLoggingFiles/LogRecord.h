@@ -20,8 +20,8 @@ struct LogRecord
   friend bool operator ==(const LogRecord& lhs, const LogRecord& rhs);
 
   ELogLevel LogLevel;
-  std::string Function;
-  std::string File;
+  const char* Function; // the function string appears to always be in a constant location (perhaps in the .text segment?) so no string copy required
+  const char* File; // the file string appears to always be in a constant location (perhaps in the .text segment?) so no string copy required
   long LineNumber;
   std::chrono::system_clock::time_point Time;
   std::thread::id ThreadId;
