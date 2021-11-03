@@ -12,7 +12,7 @@ public:
 
     std::ostream& Get(ELogLevel logLevel, const char* szFunction, const char* szFile, long lineNumber);
 
-    void LogHex(ELogLevel logLevel, const char* szFunction, const char* szFile, long lineNumber, const char* szDataHeader, const void* data, int dataSize);
+    void LogHex(ELogLevel logLevel, const char* szFunction, const char* szFile, long lineNumber, const char* szDataHeader, const void* data, int dataSize, int maxTraceValueCount = 128);
 
 private:
     ILogSink* m_LogSink;

@@ -50,54 +50,40 @@ std::ostream& CLogStatement::Get(ELogLevel logLevel, const char* szFunction, [[m
     return os;
 }
 
-void CLogStatement::LogHex(ELogLevel logLevel, const char* szFunction, const char* szFile, long lineNumber, const char* szDataHeader, const void* data, int dataSize)
+void CLogStatement::LogHex(ELogLevel logLevel, const char* szFunction, const char* szFile, long lineNumber, const char* szDataHeader, const void* data, int dataSize, int maxTraceValueCount /* = 128 */)
 {
     std::ostream& os = Get(logLevel, szFunction, szFile, lineNumber);
+
+    auto formatFlags = os.flags(); // remember the original stream formatting, to be restored when this szFunction is done
 
     os << szDataHeader << " Size=" << dataSize << " bytes\n";
 
     if ((data != nullptr) && (dataSize > 0))
     {
-        // trace a maximum of 128 values
-        const int maxTraceValueCount = 128;
-        const std::uint8_t* pByteBuffer(reinterpret_cast<const std::uint8_t*>(data));
+        const std::byte* pByteBuffer(reinterpret_cast<const std::byte*>(data));
 
         // show contents of the buffer as hex values
         os << std::hex << std::uppercase << std::setfill('0');
         for (int i = 0; i < std::min(dataSize, maxTraceValueCount); i++)
         {
-            if (i > 0)
+            os << ' ' << std::setw(2) << static_cast<int>(pByteBuffer[i]);
+            if (((i + 1) % 16) == 0)
             {
-                if ((i % 16) == 0)
-                {
-                    os << "\n";
-                }
-                else if ((i % 8) == 0)
-                {
-                    os << "  ";
-                }
+                os << "\n";
             }
-
-            os << ' ' << std::setw(2) << pByteBuffer[i];
+            else if (((i + 1) % 8) == 0)
+            {
+                os << "  ";
+            }
         }
-
         if (dataSize > maxTraceValueCount)
         {
-            os << "\n...........";
-            for (int i = dataSize - maxTraceValueCount; i < dataSize; i++)
-            {
-                int column = dataSize - i - maxTraceValueCount;
-                if ((column % 16) == 0)
-                {
-                    os << "\n";
-                }
-                else if ((column % 8) == 0)
-                {
-                    os << "  ";
-                }
-                os << ' ' << std::setw(2) << pByteBuffer[i];
-            }
+            os << " .......\n";
         }
-        os << std::endl;
+        else
+        {
+            os << "\n";
+        }
     }
+    os.flags(formatFlags);
 }
