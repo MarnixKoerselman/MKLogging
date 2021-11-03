@@ -8,6 +8,8 @@ class LogSinkWithFormatter : public ILogSink
 {
 public:
   LogSinkWithFormatter(bool useDefaultFormatter = false);
+  virtual ~LogSinkWithFormatter() = default;
+
   void SetFormatter(const std::shared_ptr<LogFormatter>& formatter);
   void OutputFormattedRecord(std::ostream& os, const LogRecord& record);
 

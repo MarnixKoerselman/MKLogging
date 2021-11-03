@@ -5,7 +5,7 @@
 #include <sstream>
 #include <chrono>
 #include <thread>
-#include <optional>
+#include <memory>
 
 struct LogRecord
 {
@@ -26,7 +26,7 @@ struct LogRecord
   std::chrono::system_clock::time_point Time;
   std::thread::id ThreadId;
   static uintptr_t ProcessId;
-  std::optional<std::string> PreformattedMessage;
+  std::shared_ptr<std::string> PreformattedMessage;
 
 protected:
   std::ostringstream m_MessageBuffer;
