@@ -1,22 +1,24 @@
 #pragma once
 
-#include "ILogSink.h"
+#include "LogSinkWithFormatter.h"
+#include <string>
 
-class CLogUnbufferedFileSink : public ILogSink
+class LogUnbufferedFileSink : public LogSinkWithFormatter
 {
 public:
-    CLogUnbufferedFileSink() = default;
-    virtual ~CLogUnbufferedFileSink();
+  LogUnbufferedFileSink() = default;
+  virtual ~LogUnbufferedFileSink();
 
-    bool Create(const std::wstring& filePath);
-    bool OpenToAppend(const std::wstring& filePath);
-    void Close();
+  bool Create(const std::wstring& filePath);
+  bool OpenToAppend(const std::wstring& filePath);
+  void Close();
+
+  void WriteToFile(const std::string& text);
+  void WriteToFile(const void* data, size_t size);
 
 public: // ILogSink
-    void OutputString(const std::string& text) override;
+  void OutputRecord(const LogRecord& record) override;
 
 private:
-    void OutputData(const void* data, size_t size);
-    int m_FileDescriptor = 0;
+  int m_FileDescriptor = 0;
 };
-

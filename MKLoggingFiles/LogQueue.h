@@ -1,29 +1,31 @@
 #pragma once
 
-#include "Logger.h"
+#include "ILogSink.h"
+#include "LogRecord.h"
 #include <queue>
 #include <mutex>
+#include <memory>
 
-class CLogQueue : public ILogSink
+class LogQueue : public ILogSink
 {
 public:
-    CLogQueue(const std::shared_ptr<ILogSink>& logDelegate);
-    virtual ~CLogQueue();
+  LogQueue(const std::shared_ptr<ILogSink>& logDelegate);
+  virtual ~LogQueue();
 
-    void Drain();
-    size_t GetMessageQueueSize();
+  void Drain();
+  size_t GetMessageQueueSize();
 
 public: // ILogSink
-    void OutputString(const std::string& text) override;
+  void OutputRecord(const LogRecord& record) override;
 
 protected:
-    void ConsumerThread();
+  void ConsumerThread();
 
 protected:
-    std::shared_ptr<ILogSink> m_Delegate;
-    std::queue<std::string> m_MessageQueue; // FIFO queue
-    std::mutex m_AccessQueue;
-    std::condition_variable m_QueueChanged;
-    std::thread m_WorkerThread;
-    bool m_IsProcessingStopped;
+  std::shared_ptr<ILogSink> m_Delegate;
+  std::queue<LogRecord> m_MessageQueue; // FIFO queue
+  std::mutex m_AccessQueue;
+  std::condition_variable m_QueueChanged;
+  std::thread m_WorkerThread;
+  bool m_IsProcessingStopped;
 };
