@@ -47,7 +47,7 @@ TestStdFile::~TestStdFile()
   }
 }
 
-void TestStdFile::PrintF(const wchar_t* szFormat, ...)
+void TestStdFile::PrintF(_In_z_ _Printf_format_string_ const wchar_t* szFormat, ...)
 {
   va_list args;
   va_start(args, szFormat);
