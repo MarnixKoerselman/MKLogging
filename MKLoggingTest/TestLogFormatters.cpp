@@ -26,7 +26,7 @@ TEST(LogFormatters, DefaultLogFormatter)
       EXPECT_EQ(line, record.LineNumber);
       //EXPECT_EQ(_, record.Time);
       EXPECT_EQ(std::this_thread::get_id(), record.ThreadId);
-      EXPECT_EQ(GetCurrentProcessId(), record.ProcessId);
+      EXPECT_EQ(GetCurrentProcessId(), record.ProcessId());
       EXPECT_STREQ("test", record.GetLogMessage().c_str());
     });
 

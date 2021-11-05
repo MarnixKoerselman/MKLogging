@@ -2,13 +2,11 @@
 #include "LogSinkWithFormatter.h"
 #include "LogFormatter.h"
 
-std::shared_ptr<LogFormatter> LogSinkWithFormatter::DefaultFormatter = std::make_shared<LogFormatter>();
-
 LogSinkWithFormatter::LogSinkWithFormatter(bool useDefaultFormatter)
 {
   if (useDefaultFormatter)
   {
-    m_Formatter = DefaultFormatter;
+    m_Formatter = GetDefaultFormatter();
   }
 }
 
@@ -31,4 +29,10 @@ void LogSinkWithFormatter::OutputFormattedRecord(std::ostream& os, const LogReco
   {
     os << record.GetLogMessage();
   }
+}
+
+std::shared_ptr<LogFormatter> LogSinkWithFormatter::GetDefaultFormatter()
+{
+  static std::shared_ptr<LogFormatter> g_DefaultFormatter = std::make_shared<LogFormatter>();
+  return g_DefaultFormatter;
 }
