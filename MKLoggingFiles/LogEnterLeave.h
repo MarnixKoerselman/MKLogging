@@ -14,7 +14,7 @@ public:
 
 private:
   Logger* m_Logger;
-  ELogLevel m_LogLevel;
+  const ELogLevel m_LogLevel;
   const char* m_Function;
   const char* m_File;
   const long m_Line;
