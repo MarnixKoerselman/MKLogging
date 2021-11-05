@@ -9,8 +9,6 @@
 #define NOMINMAX
 #include <Windows.h>
 
-uintptr_t LogRecord::ProcessId = GetCurrentProcessId();
-
 LogRecord::LogRecord(ELogLevel logLevel, const char* szFunction, const char* szFile, long lineNumber)
   : LogLevel(logLevel)
   , Function(szFunction)
@@ -77,6 +75,12 @@ std::string LogRecord::GetLogMessage() const
   return m_MessageBuffer.str();
 }
 
+uint32_t LogRecord::ProcessId() const
+{
+  static uint32_t g_ProcessId = GetCurrentProcessId();
+  return g_ProcessId;
+}
+
 bool operator ==(const LogRecord& lhs, const LogRecord& rhs)
 {
   return (lhs.LogLevel == rhs.LogLevel)
@@ -85,6 +89,5 @@ bool operator ==(const LogRecord& lhs, const LogRecord& rhs)
     && (lhs.LineNumber == rhs.LineNumber)
     && (lhs.Time == rhs.Time)
     && (lhs.ThreadId == rhs.ThreadId)
-    && (lhs.ProcessId == rhs.ProcessId)
     && (lhs.m_MessageBuffer.str() == rhs.m_MessageBuffer.str());
 }

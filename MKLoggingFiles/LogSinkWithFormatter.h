@@ -17,6 +17,8 @@ public: // ILogSink
   void OutputRecord(const LogRecord& record) override = 0;
 
 protected:
+  static std::shared_ptr<LogFormatter> GetDefaultFormatter();
+
+protected:
   std::shared_ptr<LogFormatter> m_Formatter;
-  static std::shared_ptr<LogFormatter> DefaultFormatter;
 };
