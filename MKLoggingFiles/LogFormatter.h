@@ -1,11 +1,9 @@
 #pragma once
 
 #include "LogRecord.h"
-#include <string>
 #include <chrono>
 #include <thread>
-#include <iomanip>
-#include <optional>
+#include <ostream>
 
 // a subclass can choose to override either the entrypoint, and/or the partials
 class LogFormatter

@@ -4,6 +4,8 @@
 #include <memory>
 #include <ostream>
 
+class LogFormatter;
+
 class LogSinkWithFormatter : public ILogSink
 {
 public:

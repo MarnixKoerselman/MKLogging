@@ -1,7 +1,9 @@
 #pragma once
 
 #include "ILogSink.h"
-#include "Logger.h"
+#include "ELogLevel.h"
+
+class Logger;
 
 #ifndef MKL_LOG_ENTER_LEAVE
 #define MKL_LOG_ENTER_LEAVE(mp_Logger, mp_LogLevel) LogEnterLeave mgen_LogEnterLeave(mp_Logger, mp_LogLevel, __FUNCTION__, __FILE__, __LINE__);

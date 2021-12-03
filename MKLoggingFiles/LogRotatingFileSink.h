@@ -2,7 +2,7 @@
 
 #include "ILogSink.h"
 #include "LogFileSink.h"
-#include <time.h>
+#include <ctime>
 #include <filesystem>
 
 // Take care: only use this logger if it is used asynchronous, e.g. through LogQueue. Using this directly (i.e. logging to this logger in the main thread)

@@ -1,4 +1,5 @@
 #include "LogFormatter.h"
+#include <iomanip>
 
 void LogFormatter::OutputRecordWithFormatting(std::ostream& os, const LogRecord& record)
 {

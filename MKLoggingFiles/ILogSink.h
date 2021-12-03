@@ -1,7 +1,6 @@
 #pragma once
 
 struct LogRecord;
-class LogFormatter;
 
 __interface ILogSink
 {

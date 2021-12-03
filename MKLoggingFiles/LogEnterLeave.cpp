@@ -1,4 +1,5 @@
 #include "LogEnterLeave.h"
+#include "Logger.h"
 
 LogEnterLeave::LogEnterLeave(Logger* logger, ELogLevel logLevel, const char* function, const char* file, int line)
   : m_Logger(logger)
