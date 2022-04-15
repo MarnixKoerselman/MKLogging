@@ -6,6 +6,7 @@ void LogFormatter::OutputRecordWithFormatting(std::ostream& os, const LogRecord&
   auto flags = os.flags();
   os << record.File << "(" << record.LineNumber << ")\n";
   OutputTime(os, record.Time);
+  os << " ";
   OutputThreadId(os, record.ThreadId);
   os << " ";
   OutputProcessId(os, record.ProcessId());
