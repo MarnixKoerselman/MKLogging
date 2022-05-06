@@ -18,7 +18,7 @@ std::ostream& operator <<(std::ostream& os, const std::wstring& s)
 std::ostream& operator <<(std::ostream& os, const wchar_t* sz)
 {
   static std::wstring_convert<std::codecvt_utf8<wchar_t>> converter;
-  return os << converter.to_bytes(sz);
+  return os << converter.to_bytes(sz ? sz : L"<null>");
 }
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////
