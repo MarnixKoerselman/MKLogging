@@ -15,5 +15,4 @@ public:
   virtual void OutputLogLevel(std::ostream& os, ELogLevel logLevel);
   virtual void OutputTime(std::ostream& os, const std::chrono::system_clock::time_point& time);
   virtual void OutputThreadId(std::ostream& os, std::thread::id threadId);
-  virtual void OutputProcessId(std::ostream& os, uint32_t processId);
 };
