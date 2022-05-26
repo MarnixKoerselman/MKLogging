@@ -5,7 +5,7 @@
 #include "FakeFileLogSink.h"
 #include "FakeStringLogSink.h"
 #include "MockLogSink.h"
-#include <LogDebugOutputSink.h>
+#include <Windows/LogDebugOutputSink.h>
 #include "StringUtils.h"
 #include "TestUtils.h"
 

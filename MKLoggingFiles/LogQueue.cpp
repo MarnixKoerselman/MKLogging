@@ -1,5 +1,4 @@
 #include "LogQueue.h"
-#include <Windows.h> // OutputDebugString
 
 LogQueue::LogQueue(const std::shared_ptr<ILogSink>& logDelegate)
   : m_Delegate(logDelegate)
@@ -65,7 +64,7 @@ void LogQueue::ConsumerThread()
     // check the 'abort' condition
     if (m_IsProcessingStopped)
     {
-      OutputDebugStringW(__FUNCTIONW__ L": Stop Processing\n");
+      //std::cerr << __FUNCTIONW__ L": Stop Processing\n";
       return;
     }
     if (!m_MessageQueue.empty())

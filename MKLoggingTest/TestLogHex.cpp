@@ -1,5 +1,5 @@
 #include <Logger.h>
-#include <LogDebugOutputSink.h>
+#include <Windows/LogDebugOutputSink.h>
 
 #include <gtest/gtest.h>
 

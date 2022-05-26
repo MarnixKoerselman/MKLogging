@@ -25,7 +25,6 @@ struct LogRecord
   long LineNumber;
   std::chrono::system_clock::time_point Time;
   std::thread::id ThreadId;
-  uint32_t ProcessId() const;
   std::shared_ptr<std::string> PreformattedMessage;
 
 protected:

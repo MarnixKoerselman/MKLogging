@@ -1,7 +1,7 @@
 ﻿#include <Logger.h>
 #include <LogFileSink.h>
 #include <LogQueue.h>
-#include <LogDebugOutputSink.h>
+#include <Windows/LogDebugOutputSink.h>
 #include <LogUnbufferedFileSink.h>
 
 #include <string>
