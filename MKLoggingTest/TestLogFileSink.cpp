@@ -6,6 +6,12 @@
 #include "LogRecord.h"
 #include "LogFormatter.h"
 
+TEST(LogFileSink, Failing)
+{
+  // Run 'failing test' scenario in CI pipeline on GitHub
+  GTEST_FATAL_FAILURE_("This test fails intentionally");
+}
+
 TEST(LogFileSink, Basic)
 {
   std::filesystem::path testOuputDirectoryPath = TEST_OUTPUT_DIRECTORY_PATH;
