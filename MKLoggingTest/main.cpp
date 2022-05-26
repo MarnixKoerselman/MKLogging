@@ -5,7 +5,7 @@
 #include <gtest/gtest.h>
 #include <Logger.h>
 #include <Windows.h>
-#include <LogDebugOutputSink.h>
+#include <Windows/LogDebugOutputSink.h>
 
 class TestEnvironment : public testing::Environment
 {
