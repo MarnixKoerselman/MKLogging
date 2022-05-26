@@ -18,7 +18,7 @@ TEST(LogFormatters, DefaultLogFormatter)
   auto line = __LINE__;
 
   MockLogSink mockSink;
-  EXPECT_CALL(mockSink, OutputRecord(_)).WillOnce([function, line] (const LogRecord& record)
+  EXPECT_CALL(mockSink, OutputRecord(_)).WillOnce([function, line](const LogRecord& record)
     {
       EXPECT_EQ(ELogLevel::Info, record.LogLevel);
       EXPECT_STREQ(function, record.Function);
