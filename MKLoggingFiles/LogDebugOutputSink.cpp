@@ -15,7 +15,15 @@ void LogDebugOutputSink::OutputRecord(const LogRecord& record)
     std::ostringstream buffer;
     OutputFormattedRecord(buffer, record);
 
-    static std::wstring_convert<std::codecvt_utf8<wchar_t>> converter;
-    OutputDebugStringW(converter.from_bytes(buffer.str()).c_str());
+    // the converter crashes if unexpected characters are passed in
+    //static std::wstring_convert<std::codecvt_utf8<wchar_t>> converter;
+    //OutputDebugStringW(converter.from_bytes(buffer.str()).c_str());
+
+    // This is a Windows specific method anyway, so let's make use of Windows' transcoding facilities
+    int stringLength = ::MultiByteToWideChar(CP_UTF8, MB_ERR_INVALID_CHARS, buffer.str().c_str(), buffer.str().size(), nullptr, 0);
+    std::wstring display;
+    display.resize(stringLength + 1);
+    stringLength = ::MultiByteToWideChar(CP_UTF8, MB_ERR_INVALID_CHARS, buffer.str().c_str(), buffer.str().size(), display.data(), display.size());
+    OutputDebugStringW(display.data());
   }
 }
