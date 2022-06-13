@@ -54,6 +54,7 @@
   <ItemGroup>
     <ClCompile Include="FakeFileLogSink.cpp" />
     <ClCompile Include="main.cpp" />
+    <ClCompile Include="PerformanceTest.cpp" />
     <ClCompile Include="StringUtils.cpp" />
     <ClCompile Include="TestLogFileSink.cpp" />
     <ClCompile Include="TestLogFormatters.cpp" />

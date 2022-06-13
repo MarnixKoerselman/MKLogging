@@ -40,8 +40,11 @@ A Logger instance has remarkable similarities with LogSink and is in fact derive
 ### LogSink
 Currently available log sinks are:
  - LogDebugOutputSink => OutputDebugString
- - LogConsoleSink => std::wcout
+ - LogOutputStreamSink => std::ostream (user-provided reference)
+ - LogStdOutSink => std::cout
+ - LogStdErrSink => std::cerr
  - LogFileSink => to a text file
+ - LogUnbufferedFileSink => to a text file, without buffer (less performance, better usability to investigate crashes)
  - LogRotatingFileSink => multiple text files, to limit the total size of logs
  - LogQueue => a wrapper that allows each of the aforementioned log sinks to become buffered and asynchronous (NB: not recommended for LogDebugOutputSink)
 

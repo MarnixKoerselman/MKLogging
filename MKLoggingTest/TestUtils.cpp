@@ -25,6 +25,16 @@ std::filesystem::path GetTestOutputDirectoryPath(const wchar_t* szTestCaseName)
   if (pos != std::wstring::npos)
     testCaseName.erase(pos);
 
+  // replace :: (when a test fixture is used)
+  size_t offset = 0;
+  while (offset != std::wstring::npos) {
+    offset = testCaseName.find(L"::", offset);
+    if (offset != std::wstring::npos) {
+      testCaseName.replace(offset, 2, L"_");
+      offset += 1;
+    }
+  }
+
   // turn _ into /
   // std::replace(testCaseName.begin(), testCaseName.end(), L'_', std::filesystem::path::preferred_separator);
 

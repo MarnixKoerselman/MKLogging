@@ -9,8 +9,6 @@ void LogFormatter::OutputRecordWithFormatting(std::ostream& os, const LogRecord&
   os << " ";
   OutputThreadId(os, record.ThreadId);
   os << " ";
-  OutputProcessId(os, record.ProcessId());
-  os << " ";
   OutputLogLevel(os, record.LogLevel);
   os << " " << record.Function << ": " << record.GetLogMessage();
   os.flags(flags);
@@ -36,9 +34,4 @@ void LogFormatter::OutputTime(std::ostream& os, const std::chrono::system_clock:
 void LogFormatter::OutputThreadId(std::ostream& os, std::thread::id threadId)
 {
   os << "T=0x" << std::hex << std::setw(8) << std::setfill('0') << std::uppercase << threadId;
-}
-
-void LogFormatter::OutputProcessId(std::ostream& os, uint32_t processId)
-{
-  os << "P=" << std::left << std::setw(5) << std::setfill(' ') << std::dec << processId;
 }

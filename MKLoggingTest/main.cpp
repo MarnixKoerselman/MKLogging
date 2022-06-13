@@ -5,14 +5,14 @@
 #include <gtest/gtest.h>
 #include <Logger.h>
 #include <Windows.h>
-#include <LogDebugOutputSink.h>
+#include <Windows/LogDebugOutputSink.h>
 
 class TestEnvironment : public testing::Environment
 {
 public:
   void SetUp() override
   {
-    LogCentral()->AddListener(std::make_shared<LogDebugOutputSink>());
+    //LogCentral()->AddListener(std::make_shared<LogDebugOutputSink>());
   }
   void TearDown() override
   {

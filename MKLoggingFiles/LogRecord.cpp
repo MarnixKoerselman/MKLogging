@@ -6,9 +6,6 @@
 #include <thread>
 #include <algorithm>
 
-#define NOMINMAX
-#include <Windows.h>
-
 LogRecord::LogRecord(ELogLevel logLevel, const char* szFunction, const char* szFile, long lineNumber)
   : LogLevel(logLevel)
   , Function(szFunction)
@@ -73,12 +70,6 @@ void LogRecord::LogHex(const char* dataHeader, const void* data, int dataSize, i
 std::string LogRecord::GetLogMessage() const
 {
   return m_MessageBuffer.str();
-}
-
-uint32_t LogRecord::ProcessId() const
-{
-  static uint32_t g_ProcessId = GetCurrentProcessId();
-  return g_ProcessId;
 }
 
 bool operator ==(const LogRecord& lhs, const LogRecord& rhs)

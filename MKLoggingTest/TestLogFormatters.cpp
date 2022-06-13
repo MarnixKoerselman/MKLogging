@@ -18,7 +18,7 @@ TEST(LogFormatters, DefaultLogFormatter)
   auto line = __LINE__;
 
   MockLogSink mockSink;
-  EXPECT_CALL(mockSink, OutputRecord(_)).WillOnce([function, line] (const LogRecord& record)
+  EXPECT_CALL(mockSink, OutputRecord(_)).WillOnce([function, line](const LogRecord& record)
     {
       EXPECT_EQ(ELogLevel::Info, record.LogLevel);
       EXPECT_STREQ(function, record.Function);
@@ -26,7 +26,6 @@ TEST(LogFormatters, DefaultLogFormatter)
       EXPECT_EQ(line, record.LineNumber);
       //EXPECT_EQ(_, record.Time);
       EXPECT_EQ(std::this_thread::get_id(), record.ThreadId);
-      EXPECT_EQ(GetCurrentProcessId(), record.ProcessId());
       EXPECT_STREQ("test", record.GetLogMessage().c_str());
     });
 
