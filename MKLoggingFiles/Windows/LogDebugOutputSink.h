@@ -1,6 +1,6 @@
 #pragma once
 
-#include "LogSinkWithFormatter.h"
+#include "../LogSinkWithFormatter.h"
 
 // Use OutputDebugString for output during debugging
 class LogDebugOutputSink : public LogSinkWithFormatter
