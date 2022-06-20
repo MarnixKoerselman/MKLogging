@@ -39,7 +39,7 @@ void LogRecord::LogHex(const char* dataHeader, const void* data, int dataSize, i
 {
     std::ostream& os = Get();
 
-    auto formatFlags = os.flags(); // remember the original stream formatting, to be restored when this szFunction is done
+    auto formatFlags = os.flags(); // remember the original stream formatting, to be restored when this function is done
 
     os << dataHeader << " Size=" << dataSize << " bytes\n";
 
