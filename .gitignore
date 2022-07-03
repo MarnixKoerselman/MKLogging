@@ -33,7 +33,9 @@
 
 # Visual Studio local configuration folder
 /.vs
+
 *.user
+*.bak
 
 # Output directories
 Debug
