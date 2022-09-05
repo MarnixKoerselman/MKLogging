@@ -11,30 +11,28 @@ bool LogFileSink::Create(const std::wstring& filePath)
 {
   LOGD(L"filePath=" << filePath);
 
-  if (m_File != nullptr)
-  {
-    Close();
-  }
+  Close();
 
   // create the output directory if necessary
   FileSystemUtils::CreateDirectoriesFromFilePath(filePath);
 
   // Open in untranslated mode
   m_File = _wfsopen(filePath.c_str(), L"wb", _SH_DENYWR);
-  const char* szUtf8Bom = "\xEF\xBB\xBF";
-  fwrite(szUtf8Bom, 1, 3, m_File);
-  m_FileSize = 3u;
+  if (IsOpen()) {
+    const char* szUtf8Bom = "\xEF\xBB\xBF";
+    m_FileSize = std::fwrite(szUtf8Bom, 1, 3, m_File);
+  }
 
   // https ://docs.microsoft.com/en-us/cpp/c-runtime-library/reference/fwrite
   // If file is opened with UTF-8 string processing, then only wstring values should be written
   // m_File = _wfsopen(filePath.c_str(), L"wt, ccs=UTF-8", _SH_DENYWR);
 
-  return (m_File != nullptr);
+  return IsOpen();
 }
 
 void LogFileSink::Close()
 {
-  if (m_File != nullptr)
+  if (IsOpen())
   {
     const int result = fclose(m_File);
     m_File = nullptr;
