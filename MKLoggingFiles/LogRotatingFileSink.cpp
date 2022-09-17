@@ -4,7 +4,7 @@
 #include <regex>
 #include <iomanip>
 
-LogRotatingFileSink::LogRotatingFileSink(const std::filesystem::path& logFileDirectoryPath, size_t fileSizeThreshold /*= 10*1024*1024*/, int maxLogFileCount /*= 10*/)
+LogRotatingFileSink::LogRotatingFileSink(const std::filesystem::path& logFileDirectoryPath, size_t fileSizeThreshold /*= 10*1024*1024*/, size_t maxLogFileCount /*= 10*/)
   : m_LogFileDirectoryPath(logFileDirectoryPath)
   , m_FileSizeThreshold(fileSizeThreshold)
   , m_MaxFileCount(maxLogFileCount)
@@ -55,12 +55,12 @@ void LogRotatingFileSink::RollOver()
       }
     }
 
-    if (logFilePaths.size() > static_cast<size_t>(m_MaxFileCount))
+    if (logFilePaths.size() > m_MaxFileCount)
     {
       logFilePaths.sort();
     }
 
-    while (logFilePaths.size() > static_cast<size_t>(m_MaxFileCount))
+    while (logFilePaths.size() > m_MaxFileCount)
     {
       const auto& filePath = logFilePaths.front();
       LOGD(L"Deleting logfile " << filePath);
