@@ -10,7 +10,7 @@
 class LogRotatingFileSink : public LogSinkWithFormatter
 {
 public:
-  LogRotatingFileSink(const std::filesystem::path& logFileDirectoryPath, size_t logFileSizeThreshold = 10 * 1024 * 1024, int maxLogFileCount = 10);
+  LogRotatingFileSink(const std::filesystem::path& logFileDirectoryPath, size_t logFileSizeThreshold = 10 * 1024 * 1024, size_t maxLogFileCount = 10);
   virtual ~LogRotatingFileSink() = default;
 
 public: // ILogSink
@@ -28,5 +28,5 @@ private:
   const std::wstring m_LogFileExtension = L"log"; // NB: should not contain a '.' (because used in regex)
   LogFileSink m_LogFile;
   const size_t m_FileSizeThreshold;
-  const int m_MaxFileCount;
+  const size_t m_MaxFileCount;
 };
