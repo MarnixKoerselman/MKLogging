@@ -1,5 +1,7 @@
 #pragma once
 
+#include <ostream>
+
 enum class ELogLevel
 {
   Verbose,  ///< Verbose debug logging.
@@ -14,7 +16,9 @@ enum class ELogLevel
   All = Min,
 };
 
-const char* ELogLevel_ToString(ELogLevel logLevel) noexcept;
+const char* ELogLevel_ToString(ELogLevel logLevel);
 ELogLevel ELogLevel_FromString(const char* szLogLevel);
 
-void operator++(ELogLevel& eValue);
+void operator++(ELogLevel& logLevel);
+
+std::ostream& operator <<(std::ostream& os, ELogLevel logLevel);

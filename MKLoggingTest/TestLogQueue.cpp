@@ -85,10 +85,7 @@ TEST(LogQueue, MultiThreaded)
   // wait for completion of all threads
   for (auto& t : producers)
   {
-    if (t.joinable())
-    {
-      t.join();
-    }
+    t.join();
   }
 
   // evaluate the output

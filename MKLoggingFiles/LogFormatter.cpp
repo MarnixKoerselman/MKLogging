@@ -4,19 +4,20 @@
 void LogFormatter::OutputRecordWithFormatting(std::ostream& os, const LogRecord& record)
 {
   auto flags = os.flags();
-  os << record.File << "(" << record.LineNumber << ")\n";
+  os << record.File << '(' << record.LineNumber << ")\n";
   OutputTime(os, record.Time);
-  os << " ";
+  os << ' ';
   OutputThreadId(os, record.ThreadId);
-  os << " ";
+  os << ' ';
   OutputLogLevel(os, record.LogLevel);
-  os << " " << record.Function << ": " << record.GetLogMessage();
+  os << ' ';
+  OutputMessage(os, record);
   os.flags(flags);
 }
 
 void LogFormatter::OutputLogLevel(std::ostream& os, ELogLevel logLevel)
 {
-  os << std::left << std::setw(8) << std::setfill(' ') << ELogLevel_ToString(logLevel);
+  os << logLevel;
 }
 
 void LogFormatter::OutputTime(std::ostream& os, const std::chrono::system_clock::time_point& time)
@@ -27,11 +28,16 @@ void LogFormatter::OutputTime(std::ostream& os, const std::chrono::system_clock:
   tm localTime;
   if (localtime_s(&localTime, &time2) == 0)
   {
-    os << std::put_time(&localTime, "%F %T") << "." << std::setw(3) << std::setfill('0') << std::dec << ms.count();
+    os << std::put_time(&localTime, "%F %T") << '.' << std::setw(3) << std::setfill('0') << std::dec << ms.count();
   }
 }
 
 void LogFormatter::OutputThreadId(std::ostream& os, std::thread::id threadId)
 {
   os << "T=0x" << std::hex << std::setw(8) << std::setfill('0') << std::uppercase << threadId;
+}
+
+void LogFormatter::OutputMessage(std::ostream& os, const LogRecord& record)
+{
+  os << record.Function << ": " << record.GetLogMessage();
 }

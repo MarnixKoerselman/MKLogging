@@ -15,10 +15,7 @@ LogQueue::~LogQueue()
   m_QueueChanged.notify_one();
 
   // wait for the thread to complete
-  if (m_WorkerThread.joinable())
-  {
-    m_WorkerThread.join();
-  }
+  m_WorkerThread.join();
 }
 
 void LogQueue::Drain()

@@ -61,19 +61,19 @@ TEST(Logger, LogLevelFilter)
   Logger localLogger;
   localLogger.AddListener(std::make_shared<FakeStringLogSink>());
 
-  for (ELogLevel eSetLogLevel = ELogLevel::Min; eSetLogLevel <= ELogLevel::Max; ++eSetLogLevel)
+  for (ELogLevel actualLogLevel = ELogLevel::Min; actualLogLevel <= ELogLevel::Max; ++actualLogLevel)
   {
-    localLogger.SetMinimumLogLevel(eSetLogLevel);
+    localLogger.SetMinimumLogLevel(actualLogLevel);
 
-    for (ELogLevel eExpectLogLevel = ELogLevel::Min; eExpectLogLevel <= ELogLevel::Max; ++eExpectLogLevel)
+    for (ELogLevel expectedLogLevel = ELogLevel::Min; expectedLogLevel <= ELogLevel::Max; ++expectedLogLevel)
     {
-      if (eExpectLogLevel < eSetLogLevel)
+      if (expectedLogLevel < actualLogLevel)
       {
-        EXPECT_FALSE(localLogger.IsLogged(eExpectLogLevel));
+        EXPECT_FALSE(localLogger.IsLogged(expectedLogLevel));
       }
       else
       {
-        EXPECT_TRUE(localLogger.IsLogged(eExpectLogLevel));
+        EXPECT_TRUE(localLogger.IsLogged(expectedLogLevel));
       }
     }
   }
@@ -83,13 +83,13 @@ TEST(Logger, LogLevelFilterWithNoLogSink)
 {
   Logger localLogger;
 
-  for (ELogLevel eSetLogLevel = ELogLevel::Min; eSetLogLevel <= ELogLevel::Max; ++eSetLogLevel)
+  for (ELogLevel actualLogLevel = ELogLevel::Min; actualLogLevel <= ELogLevel::Max; ++actualLogLevel)
   {
-    localLogger.SetMinimumLogLevel(eSetLogLevel);
+    localLogger.SetMinimumLogLevel(actualLogLevel);
 
-    for (ELogLevel eExpectLogLevel = ELogLevel::Min; eExpectLogLevel <= ELogLevel::Max; ++eExpectLogLevel)
+    for (ELogLevel expectedLogLevel = ELogLevel::Min; expectedLogLevel <= ELogLevel::Max; ++expectedLogLevel)
     {
-      EXPECT_FALSE(localLogger.IsLogged(eExpectLogLevel));
+      EXPECT_FALSE(localLogger.IsLogged(expectedLogLevel));
     }
   }
 }
@@ -260,10 +260,7 @@ TEST(Logger, MultipleThreadsWithDebugOutputAndQueuedLogFile)
   // wait until all the producer threads are done
   for (std::thread& t : logThreads)
   {
-    if (t.joinable())
-    {
-      t.join();
-    }
+    t.join();
   }
   size_t nProducedQueueLength = bufferedFile->GetMessageQueueSize();
   std::chrono::system_clock::time_point producedTime = std::chrono::system_clock::now();

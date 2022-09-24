@@ -3,30 +3,36 @@
 #include <cstring>
 
 // prefix increment operator
-void operator++(ELogLevel& eValue)
+void operator++(ELogLevel& logLevel)
 {
-  eValue = static_cast<ELogLevel>(static_cast<int>(eValue) + 1);
+  logLevel = static_cast<ELogLevel>(static_cast<int>(logLevel) + 1);
 }
-//ELogLevel& operator++(ELogLevel& eValue)
+
+std::ostream& operator<<(std::ostream& os, ELogLevel logLevel)
+{
+  return os << ELogLevel_ToString(logLevel);
+}
+
+//ELogLevel& operator++(ELogLevel& logLevel)
 //{
-//    if (eValue >= ELogLevel::Max) {
-//        eValue = ELogLevel::Min;
+//    if (logLevel >= ELogLevel::Max) {
+//        logLevel = ELogLevel::Min;
 //    }
 //    else {
-//        eValue = static_cast<ELogLevel>(static_cast<int>(eValue) + 1);
+//        logLevel = static_cast<ELogLevel>(static_cast<int>(logLevel) + 1);
 //    }
-//    return eValue;
+//    return logLevel;
 //}
 
 // postfix increment operator
-//ELogLevel operator++(ELogLevel& eValue, int)
+//ELogLevel operator++(ELogLevel& logLevel, int)
 //{
-//    ELogLevel eOldValue = eValue;
-//    ++eValue;
+//    ELogLevel eOldValue = logLevel;
+//    ++logLevel;
 //    return eOldValue;
 //}
 
-const char* ELogLevel_ToString(ELogLevel logLevel) noexcept
+const char* ELogLevel_ToString(ELogLevel logLevel)
 {
   switch (logLevel)
   {
@@ -36,19 +42,18 @@ const char* ELogLevel_ToString(ELogLevel logLevel) noexcept
   case ELogLevel::Warning:    return "WARNING";
   case ELogLevel::Error:      return "ERROR";
   case ELogLevel::None:       return "NONE";
-  default:                    assert(false); return "<invalid log level>";
+  default:                    throw std::runtime_error("invalid log level");
   }
 }
 
 ELogLevel ELogLevel_FromString(const char* szLogLevel)
 {
-  for (ELogLevel value = ELogLevel::Verbose; value <= ELogLevel::None; ++value)
+  for (ELogLevel logLevel = ELogLevel::Verbose; logLevel <= ELogLevel::None; ++logLevel)
   {
-    if (_stricmp(szLogLevel, ELogLevel_ToString(value)) == 0)
+    if (_stricmp(szLogLevel, ELogLevel_ToString(logLevel)) == 0)
     {
-      return value;
+      return logLevel;
     }
   }
-  assert(false);
-  return ELogLevel::None;
+  throw std::runtime_error(std::string("unrecognised log level: ") + szLogLevel);
 }
