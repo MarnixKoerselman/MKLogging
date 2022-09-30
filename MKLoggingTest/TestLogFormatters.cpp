@@ -56,3 +56,23 @@ TEST(LogFormatters, MessageOnlyLogFormatter_LogCentral)
   MKL_LOGD(&logger, "test");
   EXPECT_STREQ("test\n", buffer->Buffer.c_str());
 }
+
+TEST(LogFormatters, DerivedLogFormatter)
+{
+  class DerivedFormatter : public LogFormatter
+  {
+  public:
+    virtual void OutputRecordWithFormatting(std::ostream& os, const LogRecord& record)
+    {
+      os << "DerivedFormatter: " << record.GetLogMessage();
+    }
+  };
+
+  Logger logger;
+  logger.SetFormatter(std::make_shared<DerivedFormatter>());
+  logger.SetMinimumLogLevel(ELogLevel::All);
+  std::shared_ptr<FakeStringLogSink> buffer = std::make_shared<FakeStringLogSink>();
+  logger.AddListener(buffer);
+  MKL_LOGD(&logger, "test");
+  EXPECT_STREQ("DerivedFormatter: test\n", buffer->Buffer.c_str());
+}
