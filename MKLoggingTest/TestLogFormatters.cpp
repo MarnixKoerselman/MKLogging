@@ -62,7 +62,7 @@ TEST(LogFormatters, DerivedLogFormatter)
   class DerivedFormatter : public LogFormatter
   {
   public:
-    virtual void OutputRecordWithFormatting(std::ostream& os, const LogRecord& record)
+    virtual void OutputRecordWithFormatting(std::ostream& os, const LogRecord& record) override
     {
       os << "DerivedFormatter: " << record.GetLogMessage();
     }
@@ -75,4 +75,36 @@ TEST(LogFormatters, DerivedLogFormatter)
   logger.AddListener(buffer);
   MKL_LOGD(&logger, "test");
   EXPECT_STREQ("DerivedFormatter: test\n", buffer->Buffer.c_str());
+}
+
+TEST(LogFormatters, DerivedLogFormatterPartials)
+{
+    class DerivedFormatter : public LogFormatter
+    {
+    public:
+        virtual void OutputLogLevel(std::ostream& os, ELogLevel /*logLevel*/) override
+        {
+            os << "loglevel";
+        }
+        virtual void OutputTime(std::ostream& os, const std::chrono::system_clock::time_point& /*time*/) override
+        {
+            os << "time";
+        }
+        virtual void OutputThreadId(std::ostream& os, std::thread::id /*threadId*/) override
+        {
+            os << "threadid";
+        }
+        virtual void OutputMessage(std::ostream& os, const LogRecord& /*record*/) override
+        {
+            os << "message";
+        }
+    };
+
+    Logger logger;
+    logger.SetFormatter(std::make_shared<DerivedFormatter>());
+    logger.SetMinimumLogLevel(ELogLevel::All);
+    std::shared_ptr<FakeStringLogSink> buffer = std::make_shared<FakeStringLogSink>();
+    logger.AddListener(buffer);
+    MKL_LOGD(&logger, "test");
+    EXPECT_NE(std::string::npos, buffer->Buffer.find("time threadid loglevel message"));
 }
