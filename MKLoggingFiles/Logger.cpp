@@ -4,10 +4,15 @@
 #include <codecvt>
 
 // Global instance; automatically instantiated for each application that references this static library.
+std::shared_ptr<Logger> SharedLogCentral()
+{
+    static auto g_LogCentral = std::make_shared<Logger>();
+    return g_LogCentral;
+}
+
 Logger* LogCentral()
 {
-  static auto g_LogCentral = std::make_shared<Logger>();
-  return g_LogCentral.get();
+  return SharedLogCentral().get();
 }
 
 std::ostream& operator <<(std::ostream& os, const std::wstring& s)

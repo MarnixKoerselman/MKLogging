@@ -93,6 +93,7 @@ private:
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 // LogCentral: the central Logger instance.
 // This global variable is instantiated automatically the first time it is used.
+std::shared_ptr<Logger> SharedLogCentral();
 Logger* LogCentral();
 
 #ifndef MKL_NO_STD_STRING_HELPERS
