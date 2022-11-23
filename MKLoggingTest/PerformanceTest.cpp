@@ -139,11 +139,11 @@ public:
   const int REPETITION_COUNT = SOME_PRODUCER_THREADS * MANY_PRODUCER_THREADS * 2;
 };
 
-template<typename FncSut>
-auto MeasureTime(FncSut sut)
+template<typename TimedFunction>
+auto MeasureTime(TimedFunction func)
 {
   std::chrono::system_clock::time_point startTime = std::chrono::system_clock::now();
-  sut();
+  func();
   std::chrono::system_clock::time_point endTime = std::chrono::system_clock::now();
   auto millis = std::chrono::duration_cast<std::chrono::milliseconds>(endTime - startTime).count();
   //std::cout << millis << " ms" << std::endl;
@@ -160,7 +160,6 @@ TEST_F(PerformanceTest, LogWithAsynchronousFile_ManyProducerThreads)
     });
   VerifyLogFileEntries(GetLogFilePath());
 }
-
 
 TEST_F(PerformanceTest, FilePerformance)
 {
@@ -188,5 +187,5 @@ TEST_F(PerformanceTest, FilePerformance)
       }
     });
 
-  std::cerr << "\033[0;32m[   INFO   ] \033[0;0m" << "Standard file: " << stdDuration << " ms, stream: " << streamDuration << " ms\n";
+  GTEST_INFO("Standard file: " << stdDuration << " ms, stream: " << streamDuration << " ms\n");
 }
