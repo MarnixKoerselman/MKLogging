@@ -2,6 +2,8 @@
 
 #include <filesystem>
 
+#define GTEST_INFO(mp_out) std::cerr << "\033[0;32m[   INFO   ] \033[0;0m" << mp_out;
+
 // type definitions
 struct DirectoryEntry
 {

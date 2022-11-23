@@ -362,3 +362,50 @@ TEST(Logger, ChainOfLoggers2)
 
   MKL_LOGV(myVerboseLog.get(), "test"); // sinks in [verbose]
 }
+
+TEST(Logger, ChainOfLoggers3)
+{
+  class SimpleFormatter : public LogFormatter
+  {
+  public:
+    SimpleFormatter(const char* header) : m_Header(header)
+    {}
+    void OutputRecordWithFormatting(std::ostream& os, const LogRecord& record) override
+    {
+      os << m_Header << ": " << record.GetLogMessage();
+    }
+    const char* m_Header;
+  };
+
+  ASSERT_FALSE(LogCentral()->HasListeners());
+
+  auto mockSink = std::make_shared<MockLogSink>();
+  LogCentral()->AddListener(mockSink);
+  LogCentral()->AddListener(std::make_shared<LogDebugOutputSink>());
+
+  auto mockCentralSink = std::make_shared<MockLogSink>();
+
+  auto systemLog = std::make_shared<Logger>();
+  systemLog->AddListener(SharedLogCentral());
+  systemLog->SetFormatter(std::make_shared<SimpleFormatter>("System"));
+
+  auto userLog = std::make_shared<Logger>();
+  userLog->AddListener(SharedLogCentral());
+  userLog->SetFormatter(std::make_shared<SimpleFormatter>("User"));
+
+  EXPECT_CALL(*mockSink, OutputRecord).WillOnce([](const LogRecord& record)
+  {
+  EXPECT_NE(record.GetLogMessage().find("System: System startup complete"), std::string::npos);
+  EXPECT_GT(record.GetLogMessage().find("System: System startup complete"), 0U);
+  }).RetiresOnSaturation();
+  EXPECT_CALL(*mockSink, OutputRecord).WillOnce([](const LogRecord& record)
+  {
+  EXPECT_NE(record.GetLogMessage().find("User: User x logged on"), std::string::npos);
+  EXPECT_GT(record.GetLogMessage().find("User: User x logged on"), 0U);
+  }).RetiresOnSaturation();
+
+  MKL_LOGI(userLog.get(), "User x logged on");
+  MKL_LOGI(systemLog.get(), "System startup complete");
+
+  LogCentral()->RemoveAllListeners();
+}

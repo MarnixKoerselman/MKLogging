@@ -69,6 +69,10 @@ void LogRecord::LogHex(const char* dataHeader, const void* data, int dataSize, i
 
 std::string LogRecord::GetLogMessage() const
 {
+  if (PreformattedMessage)
+  {
+    return *PreformattedMessage;
+  }
   return m_MessageBuffer.str();
 }
 
