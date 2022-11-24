@@ -31,11 +31,8 @@ std::ostream& operator <<(std::ostream& os, const wchar_t* sz)
 Logger::Logger(std::initializer_list<std::shared_ptr<ILogSink>> sinks)
   : EventSource<ILogSink>(sinks)
   , LogSinkWithFormatter(true)
-  , m_MinimumLogLevel(ELogLevel::Warning)
+  , m_MinimumLogLevel(ELogLevel::All)
 {
-#ifdef _DEBUG
-  m_MinimumLogLevel = ELogLevel::All;
-#endif
 }
 
 void Logger::SetMinimumLogLevel(ELogLevel logLevel)
