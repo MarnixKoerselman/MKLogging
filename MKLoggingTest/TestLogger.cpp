@@ -244,13 +244,13 @@ TEST(Logger, MultipleThreadsWithDebugOutputAndQueuedLogFile)
   for (int i = 0; i < threadCount; i++)
   {
     std::thread t([&logger]
+    {
+      for (int bottlesOfBeer = 99; bottlesOfBeer > 0; bottlesOfBeer--)
       {
-        for (int bottlesOfBeer = 99; bottlesOfBeer > 0; bottlesOfBeer--)
-        {
-          MKL_LOGW(&logger, "\n" << bottlesOfBeer << " bottles of beer on the wall, " << bottlesOfBeer << " bottles of beer.\n"
-            << "Take one down and pass it around, " << bottlesOfBeer - 1 << " bottles of beer on the wall.");
-        }
+        MKL_LOGW(&logger, "\n" << bottlesOfBeer << " bottles of beer on the wall, " << bottlesOfBeer << " bottles of beer.\n"
+                 << "Take one down and pass it around, " << bottlesOfBeer - 1 << " bottles of beer on the wall.");
       }
+    }
     );
     logThreads.push_back(std::move(t));
   }
@@ -270,12 +270,12 @@ TEST(Logger, MultipleThreadsWithDebugOutputAndQueuedLogFile)
 
   // log some statistics
   MKL_LOGW(&logger, ""
-    << "\n\tIt took the main thread " << std::chrono::duration_cast<std::chrono::microseconds>(intermediateTime - startTime).count() << " us to set up the production"
-    << "\n\t and there were " << intermediateQueueLength << " items in the queue at that time"
-    << "\n\tProduction took " << std::chrono::duration_cast<std::chrono::milliseconds>(producedTime - startTime).count() << " ms in total"
-    << "\n\tWhen log production stopped, there were " << nProducedQueueLength << " items in the queue"
-    << "\n\tDraining the queue took " << std::chrono::duration_cast<std::chrono::milliseconds>(endTime - producedTime).count() << " ms"
-    << "\n\tTotal duration=" << std::chrono::duration_cast<std::chrono::milliseconds>(endTime - startTime).count() << " ms"
+           << "\n\tIt took the main thread " << std::chrono::duration_cast<std::chrono::microseconds>(intermediateTime - startTime).count() << " us to set up the production"
+           << "\n\t and there were " << intermediateQueueLength << " items in the queue at that time"
+           << "\n\tProduction took " << std::chrono::duration_cast<std::chrono::milliseconds>(producedTime - startTime).count() << " ms in total"
+           << "\n\tWhen log production stopped, there were " << nProducedQueueLength << " items in the queue"
+           << "\n\tDraining the queue took " << std::chrono::duration_cast<std::chrono::milliseconds>(endTime - producedTime).count() << " ms"
+           << "\n\tTotal duration=" << std::chrono::duration_cast<std::chrono::milliseconds>(endTime - startTime).count() << " ms"
   );
 
   logger.RemoveListener(bufferedFile);
@@ -369,7 +369,7 @@ TEST(Logger, ChainOfLoggers3)
   {
   public:
     SimpleFormatter(const char* header) : m_Header(header)
-    {}
+    { }
     void OutputRecordWithFormatting(std::ostream& os, const LogRecord& record) override
     {
       os << m_Header << ": " << record.GetLogMessage();
@@ -383,8 +383,6 @@ TEST(Logger, ChainOfLoggers3)
   LogCentral()->AddListener(mockSink);
   LogCentral()->AddListener(std::make_shared<LogDebugOutputSink>());
 
-  auto mockCentralSink = std::make_shared<MockLogSink>();
-
   auto systemLog = std::make_shared<Logger>();
   systemLog->AddListener(SharedLogCentral());
   systemLog->SetFormatter(std::make_shared<SimpleFormatter>("System"));
@@ -395,13 +393,11 @@ TEST(Logger, ChainOfLoggers3)
 
   EXPECT_CALL(*mockSink, OutputRecord).WillOnce([](const LogRecord& record)
   {
-  EXPECT_NE(record.GetLogMessage().find("System: System startup complete"), std::string::npos);
-  EXPECT_GT(record.GetLogMessage().find("System: System startup complete"), 0U);
+    EXPECT_NE(record.GetLogMessage().find("System: System startup complete"), std::string::npos);
   }).RetiresOnSaturation();
   EXPECT_CALL(*mockSink, OutputRecord).WillOnce([](const LogRecord& record)
   {
-  EXPECT_NE(record.GetLogMessage().find("User: User x logged on"), std::string::npos);
-  EXPECT_GT(record.GetLogMessage().find("User: User x logged on"), 0U);
+    EXPECT_NE(record.GetLogMessage().find("User: User x logged on"), std::string::npos);
   }).RetiresOnSaturation();
 
   MKL_LOGI(userLog.get(), "User x logged on");
@@ -409,3 +405,4 @@ TEST(Logger, ChainOfLoggers3)
 
   LogCentral()->RemoveAllListeners();
 }
+
