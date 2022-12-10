@@ -81,6 +81,7 @@
     <ClCompile Include="LogUnbufferedFileSink.ixx" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="Logger.ixx" />
+    <ClCompile Include="PerformanceTest.cpp" />
     <ClCompile Include="StreamHelpers.cpp" />
     <ClCompile Include="StringUtils.cpp" />
     <ClCompile Include="TestLogFileSink.cpp" />
