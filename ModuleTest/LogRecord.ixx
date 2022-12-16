@@ -4,6 +4,8 @@ import ELogLevel;
 import <ostream>;
 import <chrono>;
 import <sstream>;
+import <optional>;
+import <string>;
 
 export class LogRecord
 {
@@ -24,7 +26,7 @@ public:
   long LineNumber;
   std::chrono::system_clock::time_point Time;
   std::thread::id ThreadId;
-  std::shared_ptr<std::string> PreformattedMessage;
+  std::optional<std::string> PreformattedMessage;
 
 protected:
   friend bool operator ==(const LogRecord& lhs, const LogRecord& rhs);

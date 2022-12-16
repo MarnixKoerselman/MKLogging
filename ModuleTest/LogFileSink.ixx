@@ -1,5 +1,6 @@
 export module LogFileSink;
 import LogSinkWithFormatter;
+import <string>;
 
 export class LogFileSink : public LogSinkWithFormatter
 {

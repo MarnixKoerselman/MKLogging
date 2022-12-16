@@ -1,5 +1,5 @@
 export module ELogLevel;
-import <iostream>;
+import <ostream>;
 
 export enum class ELogLevel
 {

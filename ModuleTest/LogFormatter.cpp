@@ -25,7 +25,7 @@ void LogFormatter::OutputLogLevel(std::ostream& os, ELogLevel logLevel)
 
 void LogFormatter::OutputTime(std::ostream& os, const std::chrono::system_clock::time_point& time)
 {
-  os << TimeAsLocalTimestampWithMillis(time);
+  os << LocalTimestampWithMillis(time);
 }
 
 void LogFormatter::OutputThreadId(std::ostream& os, std::thread::id threadId)

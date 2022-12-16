@@ -3,6 +3,9 @@ import ILogSink;
 import EventSource;
 import LogSinkWithFormatter;
 import ELogLevel;
+import LogRecord;
+import <memory>;
+import <initializer_list>;
 
 export class Logger : public EventSource<ILogSink>, public LogSinkWithFormatter
 {

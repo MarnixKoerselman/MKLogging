@@ -1,5 +1,4 @@
 module LogOutputStreamSink;
-import <iostream>;
 
 // NB: the owner of the ostream has the responsibility to keep it alive (instantiated) as long as the sink exists.
 LogOutputStreamSink::LogOutputStreamSink(std::ostream& os)

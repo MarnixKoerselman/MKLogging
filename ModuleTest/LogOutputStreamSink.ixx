@@ -1,5 +1,6 @@
 export module LogOutputStreamSink;
 import LogSinkWithFormatter;
+import <iostream>;
 
 export class LogOutputStreamSink : public LogSinkWithFormatter
 {

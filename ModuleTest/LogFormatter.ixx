@@ -1,7 +1,7 @@
 export module LogFormatter;
 import ELogLevel;
 import LogRecord;
-import <iostream>;
+import <ostream>;
 import <chrono>;
 
 // a subclass can choose to override either the entrypoint, and/or the partials

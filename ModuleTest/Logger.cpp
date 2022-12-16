@@ -2,14 +2,6 @@ module;
 #include "LogHelpers.h"
 
 module Logger;
-//import ELogLevel;
-//import EventSource;
-//import ILogSink;
-//import LogSinkWithFormatter;
-//import LogRecordAutoSink;
-//import <iostream>;
-//import <initializer_list>;
-//import <sstream>;
 
 Logger::Logger(std::initializer_list<std::shared_ptr<ILogSink>> sinks)
   : EventSource<ILogSink>(sinks)
@@ -41,7 +33,7 @@ void Logger::OutputRecord(const LogRecord& record)
     OutputFormattedRecord(buffer, record);
 
     recordWithPreformattedMessage = std::make_unique<LogRecord>(record); // Make a temporary log record that contains the preformatted message. Don't change the 'source' record, that would mess with the responsibilities in the log chain.
-    recordWithPreformattedMessage->PreformattedMessage = std::make_shared<std::string>(buffer.str());
+    recordWithPreformattedMessage->PreformattedMessage = std::make_optional<std::string>(std::move(buffer.str()));
     pRecord = recordWithPreformattedMessage.get();
   }
 
