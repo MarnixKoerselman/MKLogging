@@ -39,6 +39,7 @@ pipeline {
         dir('_test_\\x64\\Release') {
           bat 'MKLoggingTest.exe --gtest_output="xml:gtest-results.xml" || exit /b 0'
         }
+        junit '**/gtest-results.xml'
         recordIssues(tools: [junitParser(pattern: '**/gtest-results.xml')])
       }
     }
