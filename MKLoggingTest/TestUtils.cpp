@@ -94,25 +94,17 @@ void EnsureCleanOutputDirectory(const std::filesystem::path& directoryPath)
 
 std::string ReadLogFileAsBinary(const std::filesystem::path& logFilePath)
 {
-  struct _stat statBuffer;
-  if (_wstat(logFilePath.c_str(), &statBuffer) != 0)
-  {
-    return{};
-  }
-  FILE* fileHandle = _wfsopen(logFilePath.c_str(), L"rb", _SH_DENYNO);
-  if (fileHandle == nullptr)
-  {
-    //LOGE("Could not open " << logFilePath);
-    return {};
-  }
+  struct _stat statBuffer = {0};
+  assert(0 == _wstat(logFilePath.c_str(), &statBuffer));
   std::string buffer;
-  buffer.resize(statBuffer.st_size);
-  if (fread(buffer.data(), buffer.size(), 1, fileHandle) != 1)
+  if (statBuffer.st_size > 0)
   {
+    FILE* fileHandle = _wfsopen(logFilePath.c_str(), L"rb", _SH_DENYNO);
+    assert(nullptr != fileHandle);
+    buffer.resize(statBuffer.st_size);
+    assert(fread(buffer.data(), buffer.size(), 1, fileHandle) == 1);
     fclose(fileHandle);
-    return {};
   }
-  fclose(fileHandle);
   return buffer;
 }
 
