@@ -92,20 +92,18 @@ void EnsureCleanOutputDirectory(const std::filesystem::path& directoryPath)
   std::filesystem::remove_all(directoryPath);
 }
 
-std::string ReadLogFileAsBinary(const std::filesystem::path& logFilePath)
+void ReadLogFileAsBinary(const std::filesystem::path& logFilePath, __out std::string& buffer)
 {
   struct _stat statBuffer = {0};
-  assert(0 == _wstat(logFilePath.c_str(), &statBuffer));
-  std::string buffer;
+  ASSERT_EQ(0, _wstat(logFilePath.c_str(), &statBuffer));
   if (statBuffer.st_size > 0)
   {
     FILE* fileHandle = _wfsopen(logFilePath.c_str(), L"rb", _SH_DENYNO);
-    assert(nullptr != fileHandle);
+    ASSERT_NE(nullptr, fileHandle);
     buffer.resize(statBuffer.st_size);
-    assert(fread(buffer.data(), buffer.size(), 1, fileHandle) == 1);
+    ASSERT_EQ(1, fread(buffer.data(), buffer.size(), 1, fileHandle));
     fclose(fileHandle);
   }
-  return buffer;
 }
 
 int CountOccurrence(const std::string& string, const std::string& subString)

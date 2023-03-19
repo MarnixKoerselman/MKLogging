@@ -20,7 +20,8 @@ TEST(LogFileSink, Basic)
   }
   // the log file is now flushed and closed and ready for evaluation
 
-  std::string actualOutput = ReadLogFileAsBinary(logFilePath);
+  std::string actualOutput;
+  ReadLogFileAsBinary(logFilePath, actualOutput);
   // skip the 3 byte BOM
   actualOutput.erase(0, 3);
 
@@ -41,7 +42,8 @@ TEST(LogFileSink, Utf8)
   }
   // the log file is now flushed and closed and ready for evaluation
 
-  std::string actualOutput = ReadLogFileAsBinary(logFilePath);
+  std::string actualOutput;
+  ReadLogFileAsBinary(logFilePath, actualOutput);
   // skip the 3 byte BOM
   actualOutput.erase(0, 3);
 
