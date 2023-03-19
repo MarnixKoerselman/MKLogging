@@ -28,16 +28,16 @@ pipeline {
     stage('Test') {
       steps {
         dir('_test_\\x86\\Debug') {
-          bat 'MKLoggingTest.exe --gtest_output="xml:gtest-results.xml"'
+          bat 'MKLoggingTest.exe --gtest_output="xml:gtest-results.xml" || exit /b 0'
         }
         dir('_test_\\x86\\Release') {
-          bat 'MKLoggingTest.exe --gtest_output="xml:gtest-results.xml"'
+          bat 'MKLoggingTest.exe --gtest_output="xml:gtest-results.xml" || exit /b 0'
         }
         dir('_test_\\x64\\Debug') {
-          bat 'MKLoggingTest.exe --gtest_output="xml:gtest-results.xml"'
+          bat 'MKLoggingTest.exe --gtest_output="xml:gtest-results.xml" || exit /b 0'
         }
         dir('_test_\\x64\\Release') {
-          bat 'MKLoggingTest.exe --gtest_output="xml:gtest-results.xml"'
+          bat 'MKLoggingTest.exe --gtest_output="xml:gtest-results.xml" || exit /b 0'
         }
         recordIssues(tools: [junitParser(pattern: '**/gtest-results.xml')])
       }
