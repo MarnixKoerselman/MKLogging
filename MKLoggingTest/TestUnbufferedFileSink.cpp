@@ -14,7 +14,8 @@ TEST(UnbufferedFileSink, Basic)
   std::string expectedText = "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Duis eget enim nec purus accumsan viverra eu non arcu. Pellentesque congue diam eu justo interdum sagittis. Duis sagittis vehicula suscipit. Aenean condimentum vestibulum porta. In id dignissim massa. Nullam venenatis dui ultricies justo pharetra, nec molestie sapien lobortis. Sed vulputate mi ac neque aliquam consequat. In nec vulputate mauris, in fringilla justo. Mauris rhoncus dignissim ante, commodo pharetra dolor dapibus a.";
   file.WriteToFile(expectedText);
 
-  std::string actualText = ReadLogFileAsBinary(logFilePath);
+  std::string actualText;
+  ReadLogFileAsBinary(logFilePath, actualText);
   // ignore 3 bytes BOM
   actualText.erase(0, 3);
   EXPECT_EQ(expectedText, actualText);
@@ -37,7 +38,8 @@ TEST(UnbufferedFileSink, OpenAppend)
   file.WriteToFile(additionalLogData);
   file.Close();
 
-  std::string actualLog = ReadLogFileAsBinary(logFilePath);
+  std::string actualLog;
+  ReadLogFileAsBinary(logFilePath, actualLog);
   EXPECT_NE(actualLog.find(preExistingLogData), std::string::npos);
   EXPECT_NE(actualLog.find(additionalLogData), std::string::npos);
 }

@@ -4,8 +4,7 @@
 
 #include <gtest/gtest.h>
 #include <Logger.h>
-#include <Windows.h>
-#include <Windows/LogDebugOutputSink.h>
+//#include <Windows/LogDebugOutputSink.h>
 
 class TestEnvironment : public testing::Environment
 {

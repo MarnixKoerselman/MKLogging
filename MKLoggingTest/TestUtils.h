@@ -33,7 +33,7 @@ DirectoryEntries GetDirectoryContents(const std::filesystem::path& directoryPath
 // erase and recreate the specified directory, so that the directory is empty
 void EnsureCleanOutputDirectory(const std::filesystem::path& directoryPath);
 
-std::string ReadLogFileAsBinary(const std::filesystem::path& logFilePath);
+void ReadLogFileAsBinary(const std::filesystem::path& logFilePath, __out std::string& fileContents);
 
 int CountOccurrence(const std::string& string, const std::string& subString);
 

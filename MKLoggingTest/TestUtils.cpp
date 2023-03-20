@@ -1,14 +1,13 @@
 #include "TestUtils.h"
 #include "StringUtils.h"
-#include <atlfile.h>
 #include <gtest/gtest.h>
+#include <Windows.h> // apparently there is no standard way to get the executable's path => GetApplicationPath()
 
 DirectoryEntry::DirectoryEntry(std::wstring path, uintmax_t fileSize, std::filesystem::file_time_type lastModifiedTime)
   : Path(path)
   , FileSize(fileSize)
   , LastModifiedTime(lastModifiedTime)
-{
-}
+{}
 
 bool DirectoryEntry::operator==(const DirectoryEntry& rhs) const
 {
@@ -27,9 +26,11 @@ std::filesystem::path GetTestOutputDirectoryPath(const wchar_t* szTestCaseName)
 
   // replace :: (when a test fixture is used)
   size_t offset = 0;
-  while (offset != std::wstring::npos) {
+  while (offset != std::wstring::npos)
+  {
     offset = testCaseName.find(L"::", offset);
-    if (offset != std::wstring::npos) {
+    if (offset != std::wstring::npos)
+    {
       testCaseName.replace(offset, 2, L"_");
       offset += 1;
     }
@@ -91,16 +92,18 @@ void EnsureCleanOutputDirectory(const std::filesystem::path& directoryPath)
   std::filesystem::remove_all(directoryPath);
 }
 
-std::string ReadLogFileAsBinary(const std::filesystem::path& logFilePath)
+void ReadLogFileAsBinary(const std::filesystem::path& logFilePath, __out std::string& buffer)
 {
-  CAtlFile logFile;
-  EXPECT_HRESULT_SUCCEEDED(logFile.Create(logFilePath.c_str(), GENERIC_READ, FILE_SHARE_WRITE | FILE_SHARE_READ, OPEN_EXISTING));
-  unsigned long long logFileSize = 0;
-  EXPECT_HRESULT_SUCCEEDED(logFile.GetSize(logFileSize));
-  DataBuffer logFileData(static_cast<unsigned int>(logFileSize));
-  EXPECT_HRESULT_SUCCEEDED(logFile.Read(logFileData.data(), static_cast<DWORD>(logFileData.size())));
-  logFile.Close();
-  return std::string(reinterpret_cast<const char*>(logFileData.data()), logFileData.size());
+  struct _stat statBuffer = {0};
+  ASSERT_EQ(0, _wstat(logFilePath.c_str(), &statBuffer));
+  if (statBuffer.st_size > 0)
+  {
+    FILE* fileHandle = _wfsopen(logFilePath.c_str(), L"rb", _SH_DENYNO);
+    ASSERT_NE(nullptr, fileHandle);
+    buffer.resize(statBuffer.st_size);
+    ASSERT_EQ(1u, fread(buffer.data(), buffer.size(), 1, fileHandle));
+    fclose(fileHandle);
+  }
 }
 
 int CountOccurrence(const std::string& string, const std::string& subString)

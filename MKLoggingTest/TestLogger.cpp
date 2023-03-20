@@ -198,11 +198,12 @@ TEST(Logger, CombineStringTypes)
   EXPECT_EQ(54u, stringSink->Buffer.find(helloWorldChinese, 41));
 
   // buffered log file
-  std::string actualBufferedData = ReadLogFileAsBinary(bufferedLogPath);
+  std::string actualBufferedData;
+  ReadLogFileAsBinary(bufferedLogPath, actualBufferedData);
   EXPECT_TRUE(actualBufferedData.empty());
   // flush/close the buffered log file
   bufferedLogFile->Close();
-  actualBufferedData = ReadLogFileAsBinary(bufferedLogPath);
+  ReadLogFileAsBinary(bufferedLogPath, actualBufferedData);
   actualBufferedData.erase(0, 3); // remove the UTF8 BOM
   EXPECT_EQ(0u, actualBufferedData.find("\n\tHello world"));
   EXPECT_EQ(13u, actualBufferedData.find("\n\tHello world", 1));
@@ -210,7 +211,8 @@ TEST(Logger, CombineStringTypes)
   EXPECT_EQ(40u, actualBufferedData.find(helloWorldChinese, 27));
   EXPECT_EQ(54u, actualBufferedData.find(helloWorldChinese, 41));
 
-  std::string actualUnbufferedData = ReadLogFileAsBinary(unbufferedLogPath);
+  std::string actualUnbufferedData;
+  ReadLogFileAsBinary(unbufferedLogPath, actualUnbufferedData);
   actualUnbufferedData.erase(0, 3); // remove the UTF8 BOM
   EXPECT_EQ(0u, actualUnbufferedData.find("\n\tHello world"));
   EXPECT_EQ(13u, actualUnbufferedData.find("\n\tHello world", 1));
@@ -284,7 +286,8 @@ TEST(Logger, MultipleThreadsWithDebugOutputAndQueuedLogFile)
   bufferedFile.reset();
 
   // Check the contents of the log file
-  std::string logFileText = ReadLogFileAsBinary(logFilePath);
+  std::string logFileText;
+  ReadLogFileAsBinary(logFilePath, logFileText);
   EXPECT_EQ(threadCount, CountOccurrence(logFileText, "Take one down and pass it around, 0 bottles of beer on the wall."));
 
   // do the same test using a FILE structure
