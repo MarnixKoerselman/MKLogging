@@ -101,7 +101,7 @@ void ReadLogFileAsBinary(const std::filesystem::path& logFilePath, __out std::st
     FILE* fileHandle = _wfsopen(logFilePath.c_str(), L"rb", _SH_DENYNO);
     ASSERT_NE(nullptr, fileHandle);
     buffer.resize(statBuffer.st_size);
-    ASSERT_EQ(1, fread(buffer.data(), buffer.size(), 1, fileHandle));
+    ASSERT_EQ(1u, fread(buffer.data(), buffer.size(), 1, fileHandle));
     fclose(fileHandle);
   }
 }
