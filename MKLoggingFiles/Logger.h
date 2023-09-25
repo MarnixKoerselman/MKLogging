@@ -78,7 +78,7 @@ class Logger : public EventSource<ILogSink>, public LogSinkWithFormatter
 {
 public:
   //Logger();
-  Logger(std::initializer_list< std::shared_ptr<ILogSink>> sinks = {});
+  Logger(std::initializer_list<std::shared_ptr<ILogSink>> sinks = {});
 
   void SetMinimumLogLevel(ELogLevel logLevel);
   bool IsLogged(ELogLevel logLevel);
