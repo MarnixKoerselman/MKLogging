@@ -53,16 +53,16 @@ std::string FormatString(_In_z_ _Printf_format_string_ const char* szFormat, ...
   return value;
 }
 
-void StringReplaceAll(std::string& s, const std::string& sFrom, const std::string& sTo)
+void StringReplaceAll(std::string& s, const std::string& from, const std::string& to)
 {
-  if (sFrom.empty())
+  if (from.empty())
     return;
 
   size_t nStartIndex = 0;
-  while (nStartIndex = s.find(sFrom, nStartIndex), nStartIndex != std::wstring::npos)
+  while (nStartIndex = s.find(from, nStartIndex), nStartIndex != std::wstring::npos)
   {
-    s.replace(nStartIndex, sFrom.length(), sTo);
-    nStartIndex += sTo.length();
+    s.replace(nStartIndex, from.length(), to);
+    nStartIndex += to.length();
   }
 }
 
