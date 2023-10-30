@@ -38,7 +38,7 @@ add_library(${LIBRARY_NAME} STATIC
 target_include_directories(${LIBRARY_NAME} PUBLIC "./")
 
 IF (WIN32)
-target_sources(${LIBRARY_NAME} 
+target_sources(${LIBRARY_NAME}
   PRIVATE "Windows\\LogDebugOutputSink.cpp"
   PRIVATE "Windows\\LogDebugOutputSink.h")
 ENDIF()

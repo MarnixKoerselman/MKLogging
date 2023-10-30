@@ -14,8 +14,6 @@ set(CMAKE_CXX_EXTENSIONS        OFF)
 set(LIBRARY_NAME MKLogging)
 set(TEST_EXECUTABLE_NAME MKLoggingTest)
 
-set(CMAKE_MODULE_PATH "${PROJECT_SOURCE_DIR}/cmake/")
-
 FetchContent_Declare(GSL
     GIT_REPOSITORY "https://github.com/microsoft/GSL"
     GIT_TAG "v4.0.0"
@@ -29,6 +27,7 @@ FetchContent_Declare(
   GIT_TAG        v1.14.0
 )
 set(gtest_force_shared_crt ON CACHE BOOL "" FORCE)
+set(INSTALL_GTEST OFF)
 FetchContent_MakeAvailable(googletest)
 
 add_subdirectory(MKLoggingFiles)
