@@ -2,8 +2,8 @@
 
 #include <string>
 
-std::wstring FormatString(_In_z_ _Printf_format_string_ const wchar_t* szFormat, ...);
-std::string FormatString(_In_z_ _Printf_format_string_ const char* szFormat, ...);
+//std::wstring FormatString(const wchar_t* szFormat, ...);
+std::string FormatString(const char* szFormat, ...);
 
 void StringReplaceAll(std::string& s, const std::string& from, const std::string& to);
 

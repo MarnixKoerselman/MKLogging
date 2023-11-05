@@ -1,9 +1,9 @@
 #pragma once
 
-#include <string>
+#include <filesystem>
 
 namespace FileSystemUtils
 {
-  void CreateDirectoriesFromFilePath(const std::wstring& filePath);
+  void CreateDirectoriesFromFilePath(const std::filesystem::path& filePath);
 };
 

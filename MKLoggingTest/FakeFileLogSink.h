@@ -23,7 +23,7 @@ class TestStdFile
 public:
   TestStdFile(std::filesystem::path filePath);
   virtual ~TestStdFile();
-  void PrintF(_In_z_ _Printf_format_string_ const wchar_t* szFormat, ...);
+  void PrintF(const wchar_t* szFormat, ...);
 
 private:
   FILE* m_File;

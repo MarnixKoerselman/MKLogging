@@ -5,8 +5,10 @@
 #include "MockLogSink.h"
 #include "FakeStringLogSink.h"
 
+#ifdef WIN32
 #define NOMINMAX
 #include <Windows.h>
+#endif
 
 using testing::_;
 

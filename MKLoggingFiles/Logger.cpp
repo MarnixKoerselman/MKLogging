@@ -1,7 +1,8 @@
-#define _SILENCE_CXX17_CODECVT_HEADER_DEPRECATION_WARNING
+//#define _SILENCE_CXX17_CODECVT_HEADER_DEPRECATION_WARNING
 
 #include "Logger.h"
 #include <codecvt>
+#include <locale>
 
 // Global instance; automatically instantiated for each application that references this static library.
 std::shared_ptr<Logger> SharedLogCentral()

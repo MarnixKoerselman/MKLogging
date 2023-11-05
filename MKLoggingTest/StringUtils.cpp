@@ -5,35 +5,35 @@
 #include <locale>
 #include <codecvt>
 
-std::wstring FormatString(_In_z_ _Printf_format_string_ const wchar_t* szFormat, ...)
+//std::wstring FormatString(const wchar_t* szFormat, ...)
+//{
+//  va_list args;
+//  va_start(args, szFormat);
+//  const int length = std::vsnprintf(nullptr, 0, szFormat, args);
+//  va_end(args);
+//
+//  if (length < 0)
+//  {
+//    return std::wstring();
+//  }
+//
+//  const size_t nBufferLength = size_t(length) + 1;
+//  std::wstring sValue(nBufferLength, L'\00'); // include terminating \00
+//
+//  va_start(args, szFormat);
+//  std::vswprintf(sValue.data(), sValue.size(), szFormat, args);
+//  va_end(args);
+//
+//  sValue.pop_back(); // remove terminating \00
+//
+//  return sValue;
+//}
+
+std::string FormatString(const char* szFormat, ...)
 {
   va_list args;
   va_start(args, szFormat);
-  const int length = _vscwprintf(szFormat, args);
-  va_end(args);
-
-  if (length < 0)
-  {
-    return std::wstring();
-  }
-
-  const size_t nBufferLength = size_t(length) + 1;
-  std::wstring sValue(nBufferLength, L'\00'); // include terminating \00
-
-  va_start(args, szFormat);
-  std::vswprintf(sValue.data(), sValue.size(), szFormat, args);
-  va_end(args);
-
-  sValue.pop_back(); // remove terminating \00
-
-  return sValue;
-}
-
-std::string FormatString(_In_z_ _Printf_format_string_ const char* szFormat, ...)
-{
-  va_list args;
-  va_start(args, szFormat);
-  const int length = _vscprintf(szFormat, args);
+  const int length = std::vsnprintf(nullptr, 0, szFormat, args);
   va_end(args);
 
   if (length < 0)

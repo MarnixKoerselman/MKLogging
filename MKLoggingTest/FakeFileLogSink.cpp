@@ -34,8 +34,8 @@ void TestFileStream::OutputRecord(const LogRecord& record)
 
 TestStdFile::TestStdFile(std::filesystem::path filePath)
 {
-  errno_t errorCode = _wfopen_s(&m_File, filePath.c_str(), L"w, ccs=UTF-8");
-  EXPECT_EQ(0, errorCode);
+  m_File = std::fopen(filePath.c_str(), "w, ccs=UTF-8");
+  EXPECT_NE(nullptr, m_File);
 }
 
 TestStdFile::~TestStdFile()
@@ -47,7 +47,7 @@ TestStdFile::~TestStdFile()
   }
 }
 
-void TestStdFile::PrintF(_In_z_ _Printf_format_string_ const wchar_t* szFormat, ...)
+void TestStdFile::PrintF(const wchar_t* szFormat, ...)
 {
   va_list args;
   va_start(args, szFormat);

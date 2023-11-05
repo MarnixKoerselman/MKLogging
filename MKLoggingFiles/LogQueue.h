@@ -5,6 +5,7 @@
 #include <queue>
 #include <mutex>
 #include <memory>
+#include <condition_variable>
 
 class LogQueue : public ILogSink
 {

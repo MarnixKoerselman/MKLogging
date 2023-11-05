@@ -2,9 +2,10 @@
 
 struct LogRecord;
 
-__interface ILogSink
+class ILogSink
 {
-  void OutputRecord(const LogRecord& record);
+public: // ILogSink
+  virtual void OutputRecord(const LogRecord& record) = 0;
 };
 
 // Copy/paste:
