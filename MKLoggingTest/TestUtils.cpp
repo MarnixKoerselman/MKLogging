@@ -1,6 +1,7 @@
 #include "TestUtils.h"
 #include "StringUtils.h"
 #include <gtest/gtest.h>
+#include <fstream>
 
 #ifdef WIN32
 #include <Windows.h> // apparently there is no standard way to get the executable's path => GetApplicationPath()
@@ -53,17 +54,17 @@ std::filesystem::path GetApplicationPath()
 {
   bool fileNameComplete = false;
   size_t bufferSize = 260;
-  std::string sFilePath;
+  std::wstring sFilePath;
   do
   {
     sFilePath.resize(bufferSize);
 #ifdef WIN32
-    DWORD length = ::GetModuleFileNameA(nullptr, sFilePath.data(), static_cast<DWORD>(sFilePath.size()));
+    DWORD length = ::GetModuleFileNameW(nullptr, sFilePath.data(), static_cast<DWORD>(sFilePath.size()));
     fileNameComplete = (GetLastError() != ERROR_INSUFFICIENT_BUFFER);
 #else
-    char* buffer = getcwd(sFilePath.data(), sFilePath.size());
-    size_t length = (buffer != NULL) ? strlen(buffer) : 0;
-    fileNameComplete = (buffer != NULL);
+    sFilePath = std::filesystem::current_path().wstring();
+    size_t length = sFilePath.size();
+    fileNameComplete = true;
 #endif
     if (fileNameComplete)
     {
@@ -99,19 +100,17 @@ DirectoryEntries GetDirectoryContents(const std::filesystem::path& directoryPath
 void EnsureCleanOutputDirectory(const std::filesystem::path& directoryPath)
 {
   std::filesystem::remove_all(directoryPath);
+  std::filesystem::create_directories(directoryPath);
 }
 
 void ReadLogFileAsBinary(const std::filesystem::path& logFilePath, std::string& buffer)
 {
-  struct _stat statBuffer = {0};
-  ASSERT_EQ(0, _wstat(logFilePath.c_str(), &statBuffer));
-  if (statBuffer.st_size > 0)
+  auto fileSize = std::filesystem::file_size(logFilePath);
+  if (fileSize > 0)
   {
-    FILE* fileHandle = fopen(logFilePath.c_str(), "r");
-    ASSERT_NE(nullptr, fileHandle);
-    buffer.resize(statBuffer.st_size);
-    ASSERT_EQ(1u, fread(buffer.data(), buffer.size(), 1, fileHandle));
-    fclose(fileHandle);
+    std::ifstream input(logFilePath, std::ios::binary);
+    // copies all data into buffer
+    buffer.assign(std::istreambuf_iterator<char>(input), {});
   }
 }
 

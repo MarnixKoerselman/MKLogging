@@ -5,9 +5,12 @@
 #include "FakeFileLogSink.h"
 #include "FakeStringLogSink.h"
 #include "MockLogSink.h"
+#ifdef WIN32
 #include <Windows/LogDebugOutputSink.h>
+#endif
 #include "StringUtils.h"
 #include "TestUtils.h"
+#include <list>
 
 TEST(LogQueue, Basic)
 {
@@ -38,49 +41,52 @@ TEST(LogQueue, MultiThreaded)
   Logger logger;
   logger.SetMinimumLogLevel(ELogLevel::Debug); // set before listeners to avoid irrelevant warnings in the log
   logger.AddListener(bufferedLog);
+
+#ifdef WIN32
   logger.AddListener(std::make_shared<LogDebugOutputSink>());
+#endif
 
   const int numberOfLogsPerThread = 5;
 
   // create a number of of log producers
   std::list<std::thread> producers;
   producers.push_back(std::thread([&logger]
-    {
-      //DebugBreak();
-      MKL_LOGV(&logger, "test");
-    }));
+  {
+    //DebugBreak();
+    MKL_LOGV(&logger, "test");
+  }));
   producers.push_back(std::thread([&logger, numberOfLogsPerThread]
+  {
+    //DebugBreak();
+    for (int i = 0; i < numberOfLogsPerThread; i++)
     {
-      //DebugBreak();
-      for (int i = 0; i < numberOfLogsPerThread; i++)
-      {
-        MKL_LOGD(&logger, "This is test " << i << " in thread 0x" << std::hex << std::this_thread::get_id());
-      }
-    }));
+      MKL_LOGD(&logger, "This is test " << i << " in thread 0x" << std::hex << std::this_thread::get_id());
+    }
+  }));
   producers.push_back(std::thread([&logger, numberOfLogsPerThread]
+  {
+    //DebugBreak();
+    for (int i = 0; i < numberOfLogsPerThread; i++)
     {
-      //DebugBreak();
-      for (int i = 0; i < numberOfLogsPerThread; i++)
-      {
-        MKL_LOGI(&logger, "This is test " << i << " in thread 0x" << std::hex << std::this_thread::get_id());
-      }
-    }));
+      MKL_LOGI(&logger, "This is test " << i << " in thread 0x" << std::hex << std::this_thread::get_id());
+    }
+  }));
   producers.push_back(std::thread([&logger, numberOfLogsPerThread]
+  {
+    //DebugBreak();
+    for (int i = 0; i < numberOfLogsPerThread; i++)
     {
-      //DebugBreak();
-      for (int i = 0; i < numberOfLogsPerThread; i++)
-      {
-        MKL_LOGW(&logger, "This is test " << i << " in thread 0x" << std::hex << std::this_thread::get_id());
-      }
-    }));
+      MKL_LOGW(&logger, "This is test " << i << " in thread 0x" << std::hex << std::this_thread::get_id());
+    }
+  }));
   producers.push_back(std::thread([&logger, numberOfLogsPerThread]
+  {
+    //DebugBreak();
+    for (int i = 0; i < numberOfLogsPerThread; i++)
     {
-      //DebugBreak();
-      for (int i = 0; i < numberOfLogsPerThread; i++)
-      {
-        MKL_LOGE(&logger, "This is test " << i << " in thread 0x" << std::hex << std::this_thread::get_id());
-      }
-    }));
+      MKL_LOGE(&logger, "This is test " << i << " in thread 0x" << std::hex << std::this_thread::get_id());
+    }
+  }));
 
   // wait for completion of all threads
   for (auto& t : producers)

@@ -34,7 +34,7 @@ void TestFileStream::OutputRecord(const LogRecord& record)
 
 TestStdFile::TestStdFile(std::filesystem::path filePath)
 {
-  m_File = std::fopen(filePath.c_str(), "w, ccs=UTF-8");
+  m_File = std::fopen(filePath.string().c_str(), "w, ccs=UTF-8");
   EXPECT_NE(nullptr, m_File);
 }
 

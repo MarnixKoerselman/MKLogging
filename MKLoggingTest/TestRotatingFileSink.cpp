@@ -18,7 +18,7 @@ public:
   {
     return LogRotatingFileSink::GetNextFileName();
   }
-  std::wstring GenerateFileName(time_t now = time(nullptr)) const
+  std::wstring GenerateFileName(const std::chrono::system_clock::time_point now = std::chrono::system_clock::now()) const
   {
     return LogRotatingFileSink::GenerateFileName(now);
   }
@@ -30,11 +30,11 @@ TEST(RotatingLogFile, GenerateFileName)
 
   TestableLogRotatingFileSink sink(L"");
 
-  time_t now;
-  time(&now);
+  std::chrono::system_clock::time_point now = std::chrono::system_clock::now();
+  auto then = now + std::chrono::seconds(1);
 
-  EXPECT_NE(sink.GenerateFileName(now), sink.GenerateFileName(now + 1));
+  EXPECT_NE(sink.GenerateFileName(now), sink.GenerateFileName(then));
   // also test that the file names are generated in an alphabetically sortable way, i.e. the filename generated at t=T should be lower in rank than for t=(T+1)
-  EXPECT_LT(sink.GenerateFileName(now), sink.GenerateFileName(now + 1));
+  EXPECT_LT(sink.GenerateFileName(now), sink.GenerateFileName(then));
   EXPECT_EQ(sink.GenerateFileName(now), sink.GenerateFileName(now));
 }

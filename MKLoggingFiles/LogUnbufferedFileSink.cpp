@@ -25,8 +25,8 @@ bool LogUnbufferedFileSink::Create(const std::filesystem::path& filePath)
   std::setbuf(m_File, nullptr); // if BUF is NULL, make stream unbuffered
   // write UTF-8 BOM
   const char* szUtf8Bom = "\xEF\xBB\xBF";
-  auto bytesWritten = std::fwrite(szUtf8Bom, 3, 1, m_File);
-  return (3 == bytesWritten);
+  auto countWritten = std::fwrite(szUtf8Bom, sizeof(char), 3, m_File);
+  return (3 == countWritten);
 }
 
 bool LogUnbufferedFileSink::OpenToAppend(const std::filesystem::path& filePath)

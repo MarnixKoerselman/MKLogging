@@ -1,8 +1,8 @@
 #include "LogRotatingFileSink.h"
 #include "Logger.h"
-#include <map>
 #include <regex>
 #include <iomanip>
+#include <list>
 
 LogRotatingFileSink::LogRotatingFileSink(const std::filesystem::path& logFileDirectoryPath, size_t fileSizeThreshold /*= 10*1024*1024*/, size_t maxLogFileCount /*= 10*/)
   : m_LogFileDirectoryPath(logFileDirectoryPath)
@@ -48,7 +48,7 @@ void LogRotatingFileSink::RollOver()
 
     for (auto& dirEntry : std::filesystem::directory_iterator(m_LogFileDirectoryPath))
     {
-      if (std::regex_match(dirEntry.path().filename().c_str(), wideMatch, matcher))
+      if (std::regex_match(dirEntry.path().filename().wstring().c_str(), wideMatch, matcher))
       {
         LOGD(L"Found logfile " << dirEntry.path());
         logFilePaths.push_back(dirEntry.path());
@@ -81,16 +81,16 @@ std::filesystem::path LogRotatingFileSink::GetNextFileName() const
   return logFileName;
 }
 
-std::wstring LogRotatingFileSink::GenerateFileName(time_t timeStamp /*= time(nullptr)*/) const
+std::wstring LogRotatingFileSink::GenerateFileName(const std::chrono::system_clock::time_point timeStamp) const
 {
-  tm gmtStamp;
-  gmtime_s(&gmtStamp, &timeStamp);
+  const auto currentDateTimeTimeT = std::chrono::system_clock::to_time_t(timeStamp);
+  const auto currentDateTimeLocalTime = *std::gmtime(&currentDateTimeTimeT);
 
   std::wstringstream fileNameStream;
   fileNameStream
     << m_sLogFileName
     << L'-'
-    << std::put_time(&gmtStamp, L"%Y-%m-%d-%H-%M-%S");
+    << std::put_time(&currentDateTimeLocalTime, L"%Y-%m-%d-%H-%M-%S");
 
   return fileNameStream.str();
 }

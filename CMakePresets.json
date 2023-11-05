@@ -6,8 +6,8 @@
       "displayName": "Linux Debug",
       "description": "Target the Windows Subsystem for Linux (WSL) or a remote Linux system.",
       "generator": "Ninja",
-      "binaryDir": "${sourceDir}/_out_/build/${presetName}",
-      "installDir": "${sourceDir}/_out_/install/${presetName}",
+      "binaryDir": "${sourceDir}/_build_/${presetName}",
+      "installDir": "${sourceDir}/_install_/${presetName}",
       "cacheVariables": {
         "CMAKE_BUILD_TYPE": "Debug"
       },
@@ -27,8 +27,8 @@
       "description": "Target Windows with the Visual Studio development environment.",
       "hidden": true,
       "generator": "Ninja",
-      "binaryDir": "${sourceDir}/_out_/build/${presetName}",
-      "installDir": "${sourceDir}/_out_/install/${presetName}",
+      "binaryDir": "${sourceDir}/_build_/${presetName}",
+      "installDir": "${sourceDir}/_install_/${presetName}",
       "cacheVariables": {
         "CMAKE_C_COMPILER": "cl.exe",
         "CMAKE_CXX_COMPILER": "cl.exe"
