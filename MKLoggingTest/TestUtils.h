@@ -22,11 +22,13 @@ using DataBuffer = std::vector<std::byte>; // requires C++17
 
 // methods
 
-// create a directory path based on the current directory, and the name of the testcase function : __FUNCTION__
-#define TEST_OUTPUT_DIRECTORY_PATH GetTestOutputDirectoryPath(__FUNCTION__)
-std::filesystem::path GetTestOutputDirectoryPath(const char* szTestCaseName);
+// create a directory path based on the current directory, and the name of the testcase function
+std::filesystem::path GetTestOutputDirectoryPath(std::string_view testCaseNameRaw);
 
+#ifdef WIN32
 std::filesystem::path GetApplicationPath();
+#endif
+std::filesystem::path GetCurrentDirectoryPath();
 
 // get the contents (files) of the specified directory
 DirectoryEntries GetDirectoryContents(const std::filesystem::path& directoryPath);

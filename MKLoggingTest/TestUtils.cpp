@@ -18,10 +18,10 @@ bool DirectoryEntry::operator==(const DirectoryEntry& rhs) const
   return (Path == rhs.Path) && (FileSize == rhs.FileSize) && (LastModifiedTime == rhs.LastModifiedTime);
 }
 
-std::filesystem::path GetTestOutputDirectoryPath(const char* szTestCaseName)
+std::filesystem::path GetTestOutputDirectoryPath(std::string_view testCaseNameRaw)
 {
   // transform the test case name into something that can be used to construct a directory path
-  std::string testCaseName(szTestCaseName);
+  std::string testCaseName(testCaseNameRaw);
 
   // remove everything from _Test - not needed to create a good name
   auto pos = testCaseName.rfind("_Test");
@@ -43,13 +43,18 @@ std::filesystem::path GetTestOutputDirectoryPath(const char* szTestCaseName)
   // turn _ into /
   // std::replace(testCaseName.begin(), testCaseName.end(), L'_', std::filesystem::path::preferred_separator);
 
+#ifdef WIN32
   // the output is a subdirectory of the directory that holds the test executable
   return GetApplicationPath().replace_filename(testCaseName);
+#else
+  return GetCurrentDirectoryPath().replace_filename(testCaseName);
+#endif
 
   // NB: if an exception is thrown, let it pass - this will crash the test, leading to the most sensible problem detection.
   // Helpers are not allowed to go wrong, so it is not necessary to recover from partial failure!
 }
 
+#ifdef WIN32
 std::filesystem::path GetApplicationPath()
 {
   bool fileNameComplete = false;
@@ -58,14 +63,8 @@ std::filesystem::path GetApplicationPath()
   do
   {
     sFilePath.resize(bufferSize);
-#ifdef WIN32
     DWORD length = ::GetModuleFileNameW(nullptr, sFilePath.data(), static_cast<DWORD>(sFilePath.size()));
     fileNameComplete = (GetLastError() != ERROR_INSUFFICIENT_BUFFER);
-#else
-    sFilePath = std::filesystem::current_path().wstring();
-    size_t length = sFilePath.size();
-    fileNameComplete = true;
-#endif
     if (fileNameComplete)
     {
       sFilePath.resize(length);
@@ -77,6 +76,12 @@ std::filesystem::path GetApplicationPath()
     }
   } while (!fileNameComplete);
   return sFilePath;
+}
+#endif
+
+std::filesystem::path GetCurrentDirectoryPath()
+{
+  return std::filesystem::current_path();
 }
 
 // get the contents (files) of the specified directory

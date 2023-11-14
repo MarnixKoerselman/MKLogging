@@ -27,6 +27,6 @@ protected:
   std::queue<LogRecord> m_MessageQueue; // FIFO queue
   std::mutex m_AccessQueue;
   std::condition_variable m_QueueChanged;
-  std::thread m_WorkerThread;
   bool m_IsProcessingStopped;
+  std::thread m_WorkerThread;
 };

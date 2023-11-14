@@ -4,18 +4,18 @@
 
 TestFileStream::TestFileStream(std::filesystem::path filePath)
 {
-  m_LogFile.open(filePath);
-  EXPECT_TRUE(m_LogFile.good()) << L"Info: FilePath=" << filePath;
+  m_File.open(filePath);
+  EXPECT_TRUE(m_File.good()) << L"Info: FilePath=" << filePath;
 }
 
 TestFileStream::~TestFileStream()
 {
-  m_LogFile.close();
+  m_File.close();
 }
 
 std::ostream& TestFileStream::GetStream()
 {
-  return m_LogFile;
+  return m_File;
 }
 
 // ILogSink
@@ -24,11 +24,11 @@ void TestFileStream::OutputRecord(const LogRecord& record)
 {
   if (record.PreformattedMessage)
   {
-    m_LogFile << *record.PreformattedMessage;
+    m_File << *record.PreformattedMessage;
   }
   else
   {
-    m_LogFile << record.GetLogMessage();
+    m_File << record.GetLogMessage();
   }
 }
 

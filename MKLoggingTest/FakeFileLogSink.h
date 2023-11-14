@@ -15,7 +15,7 @@ public: // ILogSink
   virtual void OutputRecord(const LogRecord& record) override;
 
 private:
-  std::ofstream m_LogFile;
+  std::ofstream m_File;
 };
 
 class TestStdFile

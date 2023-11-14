@@ -5,7 +5,7 @@
 
 TEST(UnbufferedFileSink, Basic)
 {
-  std::filesystem::path logFilePath = TEST_OUTPUT_DIRECTORY_PATH;
+  std::filesystem::path logFilePath = GetTestOutputDirectoryPath("UnbufferedFileSink.Basic");
   logFilePath /= "test.log";
 
   LogUnbufferedFileSink file;
@@ -23,7 +23,7 @@ TEST(UnbufferedFileSink, Basic)
 
 TEST(UnbufferedFileSink, OpenAppend)
 {
-  std::filesystem::path logFilePath = TEST_OUTPUT_DIRECTORY_PATH;
+  std::filesystem::path logFilePath = GetTestOutputDirectoryPath("UnbufferedFileSink.OpenAppend");
   logFilePath /= "test.log";
 
   std::string preExistingLogData = "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Duis eget enim nec purus accumsan viverra eu non arcu. Pellentesque congue diam eu justo interdum sagittis. Duis sagittis vehicula suscipit. Aenean condimentum vestibulum porta. In id dignissim massa. Nullam venenatis dui ultricies justo pharetra, nec molestie sapien lobortis. Sed vulputate mi ac neque aliquam consequat. In nec vulputate mauris, in fringilla justo. Mauris rhoncus dignissim ante, commodo pharetra dolor dapibus a.";

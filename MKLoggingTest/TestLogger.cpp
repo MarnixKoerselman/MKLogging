@@ -28,7 +28,7 @@ TEST(Functional, DefaultBehaviour)
   // - in release build: min log level is Warning
 
   // Test that there are no log files in the output directory
-  std::filesystem::path testOuputDirectoryPath = TEST_OUTPUT_DIRECTORY_PATH;
+  std::filesystem::path testOuputDirectoryPath = GetTestOutputDirectoryPath("Functional.DefaultBehaviour");
   DirectoryEntries initialDirectoryEntries = GetDirectoryContents(testOuputDirectoryPath);
 
   LOGV("hello verbose");
@@ -170,7 +170,7 @@ TEST(Logger, UCS2)
 
 TEST(Logger, CombineStringTypes)
 {
-  std::filesystem::path testOuputDirectoryPath = TEST_OUTPUT_DIRECTORY_PATH;
+  std::filesystem::path testOuputDirectoryPath = GetTestOutputDirectoryPath("Logger.CombineStringTypes");
   EnsureCleanOutputDirectory(testOuputDirectoryPath);
   auto unbufferedLogPath = testOuputDirectoryPath / "unbuffered.log";
   auto unbufferedLogFile = std::make_shared<LogUnbufferedFileSink>();
@@ -228,7 +228,7 @@ TEST(Logger, CombineStringTypes)
 
 TEST(Logger, MultipleThreadsWithDebugOutputAndQueuedLogFile)
 {
-  std::filesystem::path testOuputDirectoryPath = TEST_OUTPUT_DIRECTORY_PATH;
+  std::filesystem::path testOuputDirectoryPath = GetTestOutputDirectoryPath("Logger.MultipleThreadsWithDebugOutputAndQueuedLogFile");
   EnsureCleanOutputDirectory(testOuputDirectoryPath);
   std::filesystem::path logFilePath = testOuputDirectoryPath / L"test.log";
 
