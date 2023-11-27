@@ -6,6 +6,7 @@
 *.bak
 
 # Output directories
+out/
 _build_/
 _test_/
 _tmp_/
