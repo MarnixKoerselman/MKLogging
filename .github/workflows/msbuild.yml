@@ -26,8 +26,13 @@ jobs:
         submodules: recursive
 
     # https://github.com/marketplace/actions/setup-msbuild
-    - name: Add MSBuild to PATH
-      uses: microsoft/setup-msbuild@v1.3.1
+    # - name: Add MSBuild to PATH
+    #   uses: microsoft/setup-msbuild@v1.3.1
+
+    # https://github.com/microsoft/setup-msbuild/issues/32
+    # https://github.com/marketplace/actions/enable-developer-command-prompt
+    - name: Enable Developer Command Prompt
+      uses: ilammy/msvc-dev-cmd@v1.12.1
 
     - name: Build
       working-directory: ${{env.GITHUB_WORKSPACE}}
