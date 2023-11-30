@@ -25,8 +25,11 @@ jobs:
       with:
         submodules: recursive
 
+    # https://github.com/marketplace/actions/setup-msbuild
     - name: Add MSBuild to PATH
-      uses: microsoft/setup-msbuild@v1.0.2
+      uses: microsoft/setup-msbuild@v1.3.1
+      with:
+        vs-version: '[15]'  # latest VS2017
 
     - name: Restore NuGet packages
       working-directory: ${{env.GITHUB_WORKSPACE}}
