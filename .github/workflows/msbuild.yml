@@ -43,6 +43,8 @@ jobs:
       # - name: Run tests
       #   run: _test_/${{matrix.platform}}/${{matrix.configuration}}/MKLoggingTest.exe
 
+# cmake example: https://github.com/madler/zlib/blob/develop/.github/workflows/cmake.yml
+
       - name: Build CMake
         uses: ashutoshvarma/action-cmake-build@v1
         with:
