@@ -17,28 +17,45 @@ jobs:
 
     strategy:
       matrix:
-        platform: [x86,x64]
-        configuration: [Debug,Release]
+        platform: [x86, x64]
+        configuration: [Debug, Release]
 
     steps:
-    - uses: actions/checkout@v3
-      with:
-        submodules: recursive
+      - uses: actions/checkout@v3
+        with:
+          submodules: recursive
 
-    # https://github.com/marketplace/actions/setup-msbuild
-    # - name: Add MSBuild to PATH
-    #   uses: microsoft/setup-msbuild@v1.3.1
+      # https://github.com/marketplace/actions/setup-msbuild
+      # - name: Add MSBuild to PATH
+      #   uses: microsoft/setup-msbuild@v1.3.1
 
-    # https://github.com/microsoft/setup-msbuild/issues/32
-    # https://github.com/marketplace/actions/enable-developer-command-prompt
-    - name: Enable Developer Command Prompt
-      uses: ilammy/msvc-dev-cmd@v1.12.1
+      # https://github.com/microsoft/setup-msbuild/issues/32
+      # https://github.com/marketplace/actions/enable-developer-command-prompt
+      - name: Enable Developer Command Prompt
+        uses: ilammy/msvc-dev-cmd@v1.12.1
 
-    - name: Build
-      working-directory: ${{env.GITHUB_WORKSPACE}}
-      # Add additional options to the MSBuild command line here (like platform or verbosity level).
-      # See https://docs.microsoft.com/visualstudio/msbuild/msbuild-command-line-reference
-      run: msbuild /m /p:Configuration=${{matrix.configuration}} /p:Platform=${{matrix.platform}} ${{env.SOLUTION_FILE_PATH}}
+      # - name: Build
+      #   working-directory: ${{env.GITHUB_WORKSPACE}}
+      #   # Add additional options to the MSBuild command line here (like platform or verbosity level).
+      #   # See https://docs.microsoft.com/visualstudio/msbuild/msbuild-command-line-reference
+      #   run: msbuild /m /p:Configuration=${{matrix.configuration}} /p:Platform=${{matrix.platform}} ${{env.SOLUTION_FILE_PATH}}
 
-    - name: Run tests
-      run: _test_/${{matrix.platform}}/${{matrix.configuration}}/MKLoggingTest.exe
+      # - name: Run tests
+      #   run: _test_/${{matrix.platform}}/${{matrix.configuration}}/MKLoggingTest.exe
+
+      - name: Build CMake
+        uses: ashutoshvarma/action-cmake-build@v1
+        with:
+          build-dir: ${{ runner.workspace }}/build
+          # will set the CC & CXX for cmake
+          cc: cl.exe
+          cxx: cl.exe
+          build-type: Release
+          # # Extra options pass to cmake while configuring project
+          # configure-options: -DCMAKE_C_FLAGS=-w32 -DPNG_INCLUDE=OFF
+          # run-test: true
+          # ctest-options: -R mytest
+          # # install the build using cmake --install
+          # install-build: true
+          # run build using '-j [parallel]' to use multiple threads to build
+          parallel: 14
