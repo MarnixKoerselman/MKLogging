@@ -1,3 +1,5 @@
+cmake_minimum_required(VERSION 3.14)
+
 set(LIBRARY_SOURCES
   "ELogLevel.cpp"
   "FileSystemUtils.cpp"
