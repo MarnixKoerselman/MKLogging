@@ -1,63 +1,39 @@
+# based on: https://github.com/actions/starter-workflows/blob/main/ci/cmake-multi-platform.yml
+# https://docs.github.com/actions/learn-github-actions/managing-complex-workflows#using-a-build-matrix
+
 name: MSBuild
 
 on: [push]
 
-env:
-  # Path to the solution file relative to the root of the project.
-  SOLUTION_FILE_PATH: .
-
-  # Configuration type to build.
-  # You can convert this to a build matrix if you need coverage of multiple configuration types.
-  # https://docs.github.com/actions/learn-github-actions/managing-complex-workflows#using-a-build-matrix
-  # BUILD_CONFIGURATION: Release
-
 jobs:
   build:
-    runs-on: windows-latest
+    runs-on: ${{ matrix.os }}
 
     strategy:
       matrix:
-        platform: [x86, x64]
-        configuration: [Debug, Release]
+        os: [windows-latest]
+        build_architecture: [x86, x64]
+        build_configuration: [Debug, Release]
 
     steps:
       - uses: actions/checkout@v3
         with:
           submodules: recursive
 
-      # https://github.com/marketplace/actions/setup-msbuild
-      # - name: Add MSBuild to PATH
-      #   uses: microsoft/setup-msbuild@v1.3.1
+      # cmake examples:
+      #  - https://github.com/madler/zlib/blob/develop/.github/workflows/cmake.yml
+      #  - https://github.com/actions/starter-workflows/blob/main/ci/cmake-multi-platform.yml
 
-      # https://github.com/microsoft/setup-msbuild/issues/32
-      # https://github.com/marketplace/actions/enable-developer-command-prompt
-      - name: Enable Developer Command Prompt
-        uses: ilammy/msvc-dev-cmd@v1.12.1
+      - name: Configure CMake
+        working-directory: ${{ github.workspace }}
+        run: cmake --preset ${{ matrix.build_architecture }}
 
-      # - name: Build
-      #   working-directory: ${{env.GITHUB_WORKSPACE}}
-      #   # Add additional options to the MSBuild command line here (like platform or verbosity level).
-      #   # See https://docs.microsoft.com/visualstudio/msbuild/msbuild-command-line-reference
-      #   run: msbuild /m /p:Configuration=${{matrix.configuration}} /p:Platform=${{matrix.platform}} ${{env.SOLUTION_FILE_PATH}}
+      - name: Build
+        working-directory: ${{ github.workspace }}
+        run: cmake --build --preset ${{ matrix.build_architecture }}-${{ matrix.build_configuration }} --parallel
 
-      # - name: Run tests
-      #   run: _test_/${{matrix.platform}}/${{matrix.configuration}}/MKLoggingTest.exe
-
-# cmake example: https://github.com/madler/zlib/blob/develop/.github/workflows/cmake.yml
-
-      - name: Build CMake
-        uses: ashutoshvarma/action-cmake-build@v1
-        with:
-          build-dir: ${{ runner.workspace }}/build
-          # will set the CC & CXX for cmake
-          cc: cl.exe
-          cxx: cl.exe
-          build-type: Release
-          # # Extra options pass to cmake while configuring project
-          # configure-options: -DCMAKE_C_FLAGS=-w32 -DPNG_INCLUDE=OFF
-          # run-test: true
-          # ctest-options: -R mytest
-          # # install the build using cmake --install
-          # install-build: true
-          # run build using '-j [parallel]' to use multiple threads to build
-          parallel: 14
+      - name: Test
+        working-directory: ${{ github.workspace }}
+        # See https://cmake.org/cmake/help/latest/manual/ctest.1.html for more detail
+        # run: ctest --build-config ${{ matrix.build_configuration }}
+        run: ctest --test-dir _build_\${{ matrix.build_architecture }} --build-config ${{ matrix.build_configuration }}
