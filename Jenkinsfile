@@ -18,6 +18,8 @@ pipeline {
           cmake --version
           cmake --preset x86-debug
           cmake --build _build_\\x86-debug
+          cmake --preset x86-release
+          cmake --build _build_\\x86-release
         """
         // bat """
         //   call "C:\\Program Files (x86)\\Microsoft Visual Studio\\2022\\BuildTools\\Common7\\Tools\\VsMSBuildCmd.bat"
@@ -29,22 +31,16 @@ pipeline {
       }
       post {
         always {
-          recordIssues(tools: [msBuild(pattern: '_build_\\*.log', reportEncoding: 'UTF-8')])
+          recordIssues(tools: [msBuild()])
         }
       }
     }
     stage('Test') {
       steps {
-        dir('_test_\\x86\\Debug') {
+        dir('_build_\\x86-debug') {
           bat 'MKLoggingTest.exe --gtest_output="xml:gtest-results.xml" || exit /b 0'
         }
-        dir('_test_\\x86\\Release') {
-          bat 'MKLoggingTest.exe --gtest_output="xml:gtest-results.xml" || exit /b 0'
-        }
-        dir('_test_\\x64\\Debug') {
-          bat 'MKLoggingTest.exe --gtest_output="xml:gtest-results.xml" || exit /b 0'
-        }
-        dir('_test_\\x64\\Release') {
+        dir('_build_\\x86-release') {
           bat 'MKLoggingTest.exe --gtest_output="xml:gtest-results.xml" || exit /b 0'
         }
         junit '**/gtest-results.xml'
