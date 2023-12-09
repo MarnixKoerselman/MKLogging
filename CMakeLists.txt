@@ -2,6 +2,10 @@ cmake_minimum_required(VERSION 3.19)
 
 project(MKLogging CXX)
 
+if(MSVC)
+  add_definitions(/MP)
+endif()
+
 include(FetchContent)
 include(GoogleTest)
 
