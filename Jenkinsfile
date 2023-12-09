@@ -20,6 +20,10 @@ pipeline {
           cmake --build _build_\\x86-debug
           cmake --preset x86-release
           cmake --build _build_\\x86-release
+          cmake --preset x64-debug
+          cmake --build _build_\\x64-debug
+          cmake --preset x64-release
+          cmake --build _build_\\x64-release
         """
         // bat """
         //   call "C:\\Program Files (x86)\\Microsoft Visual Studio\\2022\\BuildTools\\Common7\\Tools\\VsMSBuildCmd.bat"
@@ -41,6 +45,12 @@ pipeline {
           bat 'MKLoggingTest.exe --gtest_output="xml:gtest-results.xml" || exit /b 0'
         }
         dir('_build_\\x86-release\\MKLoggingTest') {
+          bat 'MKLoggingTest.exe --gtest_output="xml:gtest-results.xml" || exit /b 0'
+        }
+        dir('_build_\\x64-debug\\MKLoggingTest') {
+          bat 'MKLoggingTest.exe --gtest_output="xml:gtest-results.xml" || exit /b 0'
+        }
+        dir('_build_\\x64-release\\MKLoggingTest') {
           bat 'MKLoggingTest.exe --gtest_output="xml:gtest-results.xml" || exit /b 0'
         }
         junit '**/gtest-results.xml'
