@@ -16,14 +16,12 @@ pipeline {
           @REM call "C:\\Program Files (x86)\\Microsoft Visual Studio\\2022\\BuildTools\\Common7\\Tools\\VsDevCmd.bat"
           call "C:\\Program Files (x86)\\Microsoft Visual Studio\\2022\\BuildTools\\VC\\Auxiliary\\Build\\vcvarsamd64_x86.bat"
           cmake --version
-          cmake --preset x86-debug
-          cmake --build _build_\\x86-debug
-          cmake --preset x86-release
-          cmake --build _build_\\x86-release
-          cmake --preset x64-debug
-          cmake --build _build_\\x64-debug
-          cmake --preset x64-release
-          cmake --build _build_\\x64-release
+          cmake --preset x86
+          cmake --build --preset x86-debug
+          cmake --build --preset x86-release
+          cmake --preset x64
+          cmake --build --preset x64-debug
+          cmake --build --preset x64-release
         """
         // bat """
         //   call "C:\\Program Files (x86)\\Microsoft Visual Studio\\2022\\BuildTools\\Common7\\Tools\\VsMSBuildCmd.bat"
