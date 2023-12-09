@@ -13,8 +13,8 @@ pipeline {
         // as Jenkins runs these steps like 'docker exec ... container ...', the container's entrypoint is circumvented which forces us to call VsMSBuildCmd explicitly
         // cmake is mot msbuild, use VsDevCmd.bat instead of VsMSBuildCmd.bat
         bat """
-          @REM call "C:\\Program Files (x86)\\Microsoft Visual Studio\\2022\\BuildTools\\Common7\\Tools\\VsDevCmd.bat"
-          call "C:\\Program Files (x86)\\Microsoft Visual Studio\\2022\\BuildTools\\VC\\Auxiliary\\Build\\vcvarsamd64_x86.bat"
+          call "C:\\Program Files (x86)\\Microsoft Visual Studio\\2022\\BuildTools\\Common7\\Tools\\VsDevCmd.bat"
+          @REM call "C:\\Program Files (x86)\\Microsoft Visual Studio\\2022\\BuildTools\\VC\\Auxiliary\\Build\\vcvarsamd64_x86.bat"
           cmake --version
           cmake --preset x86
           cmake --build --preset x86-debug
