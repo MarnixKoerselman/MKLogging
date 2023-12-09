@@ -81,7 +81,7 @@
       "name": "x64-release",
       "displayName": "Release (x64)",
       "description": "Release configuration for Windows 64-bit target.",
-      "configuration": "RelWithDebInfo",
+      "configuration": "Release",
       "configurePreset": "x64"
     },
     {
@@ -95,7 +95,7 @@
       "name": "x86-release",
       "description": "Release configuration for Windows 32-bit target",
       "displayName": "Release (x86)",
-      "configuration": "RelWithDebInfo",
+      "configuration": "Release",
       "configurePreset": "x86"
     }
   ]

@@ -39,16 +39,16 @@ pipeline {
     }
     stage('Test') {
       steps {
-        dir('_build_\\x86-debug\\MKLoggingTest') {
+        dir('_build_\\x86\\MKLoggingTest\\Debug') {
           bat 'MKLoggingTest.exe --gtest_output="xml:gtest-results.xml" || exit /b 0'
         }
-        dir('_build_\\x86-release\\MKLoggingTest') {
+        dir('_build_\\x86\\MKLoggingTest\\Release') {
           bat 'MKLoggingTest.exe --gtest_output="xml:gtest-results.xml" || exit /b 0'
         }
-        dir('_build_\\x64-debug\\MKLoggingTest') {
+        dir('_build_\\x64\\MKLoggingTest\\Debug') {
           bat 'MKLoggingTest.exe --gtest_output="xml:gtest-results.xml" || exit /b 0'
         }
-        dir('_build_\\x64-release\\MKLoggingTest') {
+        dir('_build_\\x64\\MKLoggingTest\\Release') {
           bat 'MKLoggingTest.exe --gtest_output="xml:gtest-results.xml" || exit /b 0'
         }
         junit '**/gtest-results.xml'
