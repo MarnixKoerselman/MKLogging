@@ -20,6 +20,10 @@ RUN C:\TEMP\vs_buildtools.exe --quiet --wait --norestart --nocache --includeReco
   --installChannelUri C:\TEMP\channel.cham `
   --add Microsoft.VisualStudio.Workload.VCTools
 
+# https://github.com/git-for-windows/git/wiki/Silent-or-Unattended-Installation
+RUN PowerShell -Command "& {$ProgressPreference='SilentlyContinue' ; Invoke-WebRequest -UseBasicParsing https://github.com/git-for-windows/git/releases/download/v2.43.0.windows.1/Git-2.43.0-64-bit.exe -OutFile C:\TEMP\git-installer.exe}" `
+&& start /wait C:\TEMP\git-installer.exe /VERYSILENT /NORESTART /NOCANCEL /SP- /CLOSEAPPLICATIONS /NOICONS /NORESTARTAPPLICATIONS
+
 # "C:\Program Files (x86)\Microsoft Visual Studio\2022\BuildTools\Common7\Tools\VsMSBuildCmd.bat"
 
 # ADD https://dist.nuget.org/win-x86-commandline/latest/nuget.exe C:\Tools\nuget.exe
