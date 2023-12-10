@@ -14,6 +14,8 @@ jobs:
         configuration_preset: [linux-debug]
 
     steps:
+      - uses: lukka/get-cmake@latest  # using 'latest' branch, the most recent CMake and ninja are installed.
+
       - uses: actions/checkout@v3
         with:
           submodules: recursive
