@@ -42,12 +42,3 @@ jobs:
         if: success() || failure() # always run even if the previous step fails
         with:
           report_paths: _build_/**/TEST-*.xml
-
-      - name: Test Reporter
-        uses: dorny/test-reporter@v1.7.0
-        if: success() || failure() # always run even if the previous step fails
-        with:
-          name: My Tests
-          path: _build_/**/TEST-*.xml
-          reporter: jest-junit
-          fail-on-error: true
