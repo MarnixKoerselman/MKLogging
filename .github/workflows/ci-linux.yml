@@ -1,0 +1,37 @@
+# based on: https://github.com/actions/starter-workflows/blob/main/ci/cmake-multi-platform.yml
+# https://docs.github.com/actions/learn-github-actions/managing-complex-workflows#using-a-build-matrix
+
+name: CI Linux
+
+on: [push]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    strategy:
+      matrix:
+        configuration_preset: [linux-debug]
+
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          submodules: recursive
+
+      - name: Configure CMake
+        working-directory: ${{ github.workspace }}
+        run: cmake --preset ${{ matrix.configuration_preset }}
+
+      - name: Build
+        working-directory: ${{ github.workspace }}
+        run: cmake --build _build_/${{ matrix.configuration_preset }} --parallel
+
+      - name: Test
+        working-directory: ${{ github.workspace }}
+        run: ctest --test-dir _build_/${{ matrix.configuration_preset }} --output-junit TEST-${{ matrix.configuration_preset }}.xml
+
+      - name: JUnit Report
+        uses: mikepenz/action-junit-report@v4
+        if: success() || failure() # always run even if the previous step fails
+        with:
+          report_paths: _build_/**/TEST-*.xml

@@ -1,17 +1,16 @@
 # based on: https://github.com/actions/starter-workflows/blob/main/ci/cmake-multi-platform.yml
 # https://docs.github.com/actions/learn-github-actions/managing-complex-workflows#using-a-build-matrix
 
-name: CI
+name: CI Windows
 
 on: [push]
 
 jobs:
   build:
-    runs-on: ${{ matrix.os }}
+    runs-on: windows-latest
 
     strategy:
       matrix:
-        os: [windows-latest]
         preset_build_architecture: [x86, x64]
         preset_build_configuration: [debug, release]
 
