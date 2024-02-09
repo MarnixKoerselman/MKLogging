@@ -11,7 +11,7 @@ jobs:
 
     strategy:
       matrix:
-        preset_build_architecture: [x86, x64]
+        preset_build_architecture: [windows-x86, windows-x64]
         preset_build_configuration: [debug, release]
 
     steps:
