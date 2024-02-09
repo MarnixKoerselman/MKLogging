@@ -49,7 +49,7 @@
       }
     },
     {
-      "name": "x64",
+      "name": "windows-x64",
       "displayName": "x64",
       "description": "Target Windows (64-bit).",
       "inherits": "windows-base",
@@ -59,7 +59,7 @@
       }
     },
     {
-      "name": "x86",
+      "name": "windows-x86",
       "displayName": "x86",
       "description": "Target Windows (32-bit).",
       "inherits": "windows-base",
@@ -71,32 +71,32 @@
   ],
   "buildPresets": [
     {
-      "name": "x64-debug",
+      "name": "windows-x64-debug",
       "displayName": "Debug (x64)",
       "description": "Debug configuration for Windows 64-bit target.",
       "configuration": "Debug",
-      "configurePreset": "x64"
+      "configurePreset": "windows-x64"
     },
     {
-      "name": "x64-release",
+      "name": "windows-x64-release",
       "displayName": "Release (x64)",
       "description": "Release configuration for Windows 64-bit target.",
       "configuration": "Release",
-      "configurePreset": "x64"
+      "configurePreset": "windows-x64"
     },
     {
-      "name": "x86-debug",
+      "name": "windows-x86-debug",
       "description": "Debug configuration for Windows 32-bit target.",
       "displayName": "Debug (x86)",
       "configuration": "Debug",
-      "configurePreset": "x86"
+      "configurePreset": "windows-x86"
     },
     {
-      "name": "x86-release",
+      "name": "windows-x86-release",
       "description": "Release configuration for Windows 32-bit target",
       "displayName": "Release (x86)",
       "configuration": "Release",
-      "configurePreset": "x86"
+      "configurePreset": "windows-x86"
     }
   ]
 }

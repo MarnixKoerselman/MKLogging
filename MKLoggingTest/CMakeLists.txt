@@ -1,10 +1,14 @@
 cmake_minimum_required(VERSION 3.14)
 
-set(EXE_SOURCES
+add_executable(${TEST_EXECUTABLE_NAME}
   "FakeFileLogSink.cpp"
+  "FakeFileLogSink.h"
+  "FakeStringLogSink.h"
   "main.cpp"
+  "MockLogSink.h"
   "PerformanceTest.cpp"
   "StringUtils.cpp"
+  "StringUtils.h"
   "TestLogFileSink.cpp"
   "TestLogFormatters.cpp"
   "TestLogger.cpp"
@@ -13,17 +17,9 @@ set(EXE_SOURCES
   "TestRotatingFileSink.cpp"
   "TestUnbufferedFileSink.cpp"
   "TestUtils.cpp"
-)
-
-set(EXE_HEADERS
-  "FakeFileLogSink.h"
-  "FakeStringLogSink.h"
-  "MockLogSink.h"
-  "StringUtils.h"
   "TestUtils.h"
 )
-
-add_executable(${TEST_EXECUTABLE_NAME} ${EXE_SOURCES} ${EXE_HEADERS})
 target_link_libraries(${TEST_EXECUTABLE_NAME} PUBLIC ${LIBRARY_NAME} gmock_main)
 
+include(GoogleTest)
 gtest_discover_tests(${TEST_EXECUTABLE_NAME})

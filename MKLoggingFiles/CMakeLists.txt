@@ -1,41 +1,34 @@
 cmake_minimum_required(VERSION 3.14)
 
-set(LIBRARY_SOURCES
+add_library(${LIBRARY_NAME} STATIC
   "ELogLevel.cpp"
-  "FileSystemUtils.cpp"
-  "LogEnterLeave.cpp"
-  "LogFileSink.cpp"
-  "LogFormatter.cpp"
-  "Logger.cpp"
-  "LogOutputStreamSink.cpp"
-  "LogQueue.cpp"
-  "LogRecord.cpp"
-  "LogRecordAutoSink.cpp"
-  "LogRotatingFileSink.cpp"
-  "LogSinkWithFormatter.cpp"
-  "LogUnbufferedFileSink.cpp"
-)
-set(LIBRARY_HEADERS
   "ELogLevel.h"
   "EventSource.h"
+  "FileSystemUtils.cpp"
   "FileSystemUtils.h"
   "ILogSink.h"
+  "LogEnterLeave.cpp"
   "LogEnterLeave.h"
+  "LogFileSink.cpp"
   "LogFileSink.h"
+  "LogFormatter.cpp"
   "LogFormatter.h"
+  "Logger.cpp"
   "Logger.h"
+  "LogOutputStreamSink.cpp"
   "LogOutputStreamSink.h"
+  "LogQueue.cpp"
   "LogQueue.h"
+  "LogRecord.cpp"
   "LogRecord.h"
+  "LogRecordAutoSink.cpp"
   "LogRecordAutoSink.h"
+  "LogRotatingFileSink.cpp"
   "LogRotatingFileSink.h"
+  "LogSinkWithFormatter.cpp"
   "LogSinkWithFormatter.h"
+  "LogUnbufferedFileSink.cpp"
   "LogUnbufferedFileSink.h"
-)
-
-add_library(${LIBRARY_NAME} STATIC
-  ${LIBRARY_SOURCES}
-  ${LIBRARY_HEADERS}
 )
 target_include_directories(${LIBRARY_NAME} PUBLIC "./")
 
