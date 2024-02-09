@@ -2,7 +2,7 @@ pipeline {
   agent {
     dockerfile {
       additionalBuildArgs '--tag mklogging-builder'
-      customWorkspace 'mklogging'
+      customWorkspace 'workspace\\mklogging'
       dir 'build-container'
       label 'windows && docker'
     }
@@ -11,32 +11,44 @@ pipeline {
     stage('Build') {
       steps {
         // as Jenkins runs these steps like 'docker exec ... container ...', the container's entrypoint is circumvented which forces us to call VsMSBuildCmd explicitly
+        // cmake is mot msbuild, use VsDevCmd.bat instead of VsMSBuildCmd.bat
         bat """
-          call "C:\\Program Files (x86)\\Microsoft Visual Studio\\2019\\BuildTools\\Common7\\Tools\\VsMSBuildCmd.bat"
-          MSBuild MkLogging.sln -nologo -target:Restore,Build -property:RestorePackagesConfig=true;Platform=x86;Configuration=Debug -maxCpuCount:1 -fileLogger -fileLoggerParameters:LogFile=_build_\\msbuild-x86-Debug.log;Encoding=UTF-8
-          MSBuild MkLogging.sln -nologo -target:Build -property:Platform=x86;Configuration=Release -maxCpuCount:1 -fileLogger -fileLoggerParameters:LogFile=_build_\\msbuild-x86-Release.log;Encoding=UTF-8
-          MSBuild MkLogging.sln -nologo -target:Build -property:Platform=x64;Configuration=Debug -maxCpuCount:1 -fileLogger -fileLoggerParameters:LogFile=_build_\\msbuild-x64-Debug.log;Encoding=UTF-8
-          MSBuild MkLogging.sln -nologo -target:Build -property:Platform=x64;Configuration=Release -maxCpuCount:1 -fileLogger -fileLoggerParameters:LogFile=_build_\\msbuild-x64-Release.log;Encoding=UTF-8
+          call "C:\\Program Files (x86)\\Microsoft Visual Studio\\2022\\BuildTools\\Common7\\Tools\\VsDevCmd.bat"
+          @REM call "C:\\Program Files (x86)\\Microsoft Visual Studio\\2022\\BuildTools\\VC\\Auxiliary\\Build\\vcvarsamd64_x86.bat"
+          cmake --version
+          cmake --preset x86
+          cmake --build --preset x86-debug --parallel
+          cmake --build --preset x86-release --parallel
+          cmake --preset x64
+          cmake --build --preset x64-debug --parallel
+          cmake --build --preset x64-release --parallel
         """
+        // bat """
+        //   call "C:\\Program Files (x86)\\Microsoft Visual Studio\\2022\\BuildTools\\Common7\\Tools\\VsMSBuildCmd.bat"
+        //   MSBuild MkLogging.sln -nologo -target:Restore,Build -property:RestorePackagesConfig=true;Platform=x86;Configuration=Debug -maxCpuCount:1 -fileLogger -fileLoggerParameters:LogFile=_build_\\msbuild-x86-Debug.log;Encoding=UTF-8
+        //   MSBuild MkLogging.sln -nologo -target:Build -property:Platform=x86;Configuration=Release -maxCpuCount:1 -fileLogger -fileLoggerParameters:LogFile=_build_\\msbuild-x86-Release.log;Encoding=UTF-8
+        //   MSBuild MkLogging.sln -nologo -target:Build -property:Platform=x64;Configuration=Debug -maxCpuCount:1 -fileLogger -fileLoggerParameters:LogFile=_build_\\msbuild-x64-Debug.log;Encoding=UTF-8
+        //   MSBuild MkLogging.sln -nologo -target:Build -property:Platform=x64;Configuration=Release -maxCpuCount:1 -fileLogger -fileLoggerParameters:LogFile=_build_\\msbuild-x64-Release.log;Encoding=UTF-8
+        // """
       }
       post {
         always {
-          recordIssues(tools: [msBuild(pattern: '_build_\\*.log', reportEncoding: 'UTF-8')])
+          recordIssues(tools: [msBuild()])
         }
       }
     }
     stage('Test') {
       steps {
-        dir('_test_\\x86\\Debug') {
+        dir('_build_\\x86\\MKLoggingTest\\Debug') {
           bat 'MKLoggingTest.exe --gtest_output="xml:gtest-results.xml" || exit /b 0'
         }
-        dir('_test_\\x86\\Release') {
+        dir('_build_\\x86\\MKLoggingTest\\Release') {
           bat 'MKLoggingTest.exe --gtest_output="xml:gtest-results.xml" || exit /b 0'
         }
-        dir('_test_\\x64\\Debug') {
+        dir('_build_\\x64\\MKLoggingTest\\Debug') {
           bat 'MKLoggingTest.exe --gtest_output="xml:gtest-results.xml" || exit /b 0'
         }
-        dir('_test_\\x64\\Release') {
+        dir('_build_\\x64\\MKLoggingTest\\Release') {
           bat 'MKLoggingTest.exe --gtest_output="xml:gtest-results.xml" || exit /b 0'
         }
         junit '**/gtest-results.xml'

@@ -7,7 +7,7 @@ LogFileSink::~LogFileSink()
   Close();
 }
 
-bool LogFileSink::Create(const std::wstring& filePath)
+bool LogFileSink::Create(const std::filesystem::path& filePath)
 {
   LOGD(L"filePath=" << filePath);
 
@@ -17,7 +17,7 @@ bool LogFileSink::Create(const std::wstring& filePath)
   FileSystemUtils::CreateDirectoriesFromFilePath(filePath);
 
   // Open in untranslated mode
-  m_File = _wfsopen(filePath.c_str(), L"wb", _SH_DENYWR);
+  m_File = std::fopen(std::filesystem::path(filePath).string().c_str(), "wb");
   if (IsOpen()) {
     const char* szUtf8Bom = "\xEF\xBB\xBF";
     m_FileSize = std::fwrite(szUtf8Bom, 1, 3, m_File);

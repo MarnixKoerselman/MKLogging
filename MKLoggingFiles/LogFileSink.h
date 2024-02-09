@@ -1,14 +1,14 @@
 #pragma once
 
 #include "LogSinkWithFormatter.h"
-#include <string>
+#include <filesystem>
 
 class LogFileSink : public LogSinkWithFormatter
 {
 public:
   LogFileSink() = default;
   virtual ~LogFileSink();
-  bool Create(const std::wstring& filePath);
+  bool Create(const std::filesystem::path& filePath);
   void Close();
 
   size_t GetFileSize() const;

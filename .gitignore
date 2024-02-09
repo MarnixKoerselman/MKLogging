@@ -6,9 +6,11 @@
 *.bak
 
 # Output directories
+out/
 _build_/
 _test_/
 _tmp_/
+_out_/
 
 # Nuget packages are not (yet?) stored in this git repo
 packages/

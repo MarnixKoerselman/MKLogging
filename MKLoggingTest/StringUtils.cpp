@@ -5,35 +5,35 @@
 #include <locale>
 #include <codecvt>
 
-std::wstring FormatString(_In_z_ _Printf_format_string_ const wchar_t* szFormat, ...)
+//std::wstring FormatString(const wchar_t* szFormat, ...)
+//{
+//  va_list args;
+//  va_start(args, szFormat);
+//  const int length = std::vsnprintf(nullptr, 0, szFormat, args);
+//  va_end(args);
+//
+//  if (length < 0)
+//  {
+//    return std::wstring();
+//  }
+//
+//  const size_t nBufferLength = size_t(length) + 1;
+//  std::wstring sValue(nBufferLength, L'\00'); // include terminating \00
+//
+//  va_start(args, szFormat);
+//  std::vswprintf(sValue.data(), sValue.size(), szFormat, args);
+//  va_end(args);
+//
+//  sValue.pop_back(); // remove terminating \00
+//
+//  return sValue;
+//}
+
+std::string FormatString(const char* szFormat, ...)
 {
   va_list args;
   va_start(args, szFormat);
-  const int length = _vscwprintf(szFormat, args);
-  va_end(args);
-
-  if (length < 0)
-  {
-    return std::wstring();
-  }
-
-  const size_t nBufferLength = size_t(length) + 1;
-  std::wstring sValue(nBufferLength, L'\00'); // include terminating \00
-
-  va_start(args, szFormat);
-  std::vswprintf(sValue.data(), sValue.size(), szFormat, args);
-  va_end(args);
-
-  sValue.pop_back(); // remove terminating \00
-
-  return sValue;
-}
-
-std::string FormatString(_In_z_ _Printf_format_string_ const char* szFormat, ...)
-{
-  va_list args;
-  va_start(args, szFormat);
-  const int length = _vscprintf(szFormat, args);
+  const int length = std::vsnprintf(nullptr, 0, szFormat, args);
   va_end(args);
 
   if (length < 0)
@@ -53,16 +53,16 @@ std::string FormatString(_In_z_ _Printf_format_string_ const char* szFormat, ...
   return value;
 }
 
-void StringReplaceAll(std::string& s, const std::string& sFrom, const std::string& sTo)
+void StringReplaceAll(std::string& s, const std::string& from, const std::string& to)
 {
-  if (sFrom.empty())
+  if (from.empty())
     return;
 
   size_t nStartIndex = 0;
-  while (nStartIndex = s.find(sFrom, nStartIndex), nStartIndex != std::wstring::npos)
+  while (nStartIndex = s.find(from, nStartIndex), nStartIndex != std::wstring::npos)
   {
-    s.replace(nStartIndex, sFrom.length(), sTo);
-    nStartIndex += sTo.length();
+    s.replace(nStartIndex, from.length(), to);
+    nStartIndex += to.length();
   }
 }
 

@@ -2,8 +2,8 @@
 
 LogQueue::LogQueue(const std::shared_ptr<ILogSink>& logDelegate)
   : m_Delegate(logDelegate)
-  , m_WorkerThread(&LogQueue::ConsumerThread, this)
   , m_IsProcessingStopped(false)
+  , m_WorkerThread(&LogQueue::ConsumerThread, this)
 {
 }
 
@@ -61,7 +61,6 @@ void LogQueue::ConsumerThread()
     // check the 'abort' condition
     if (m_IsProcessingStopped)
     {
-      //std::cerr << __FUNCTIONW__ L": Stop Processing\n";
       return;
     }
     if (!m_MessageQueue.empty())

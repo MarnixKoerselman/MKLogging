@@ -1,0 +1,43 @@
+# based on: https://github.com/actions/starter-workflows/blob/main/ci/cmake-multi-platform.yml
+# https://docs.github.com/actions/learn-github-actions/managing-complex-workflows#using-a-build-matrix
+
+name: CI Windows
+
+on: [push]
+
+jobs:
+  build:
+    runs-on: windows-latest
+
+    strategy:
+      matrix:
+        preset_build_architecture: [windows-x86, windows-x64]
+        preset_build_configuration: [debug, release]
+
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          submodules: recursive
+
+      # cmake examples:
+      #  - https://github.com/madler/zlib/blob/develop/.github/workflows/cmake.yml
+      #  - https://github.com/actions/starter-workflows/blob/main/ci/cmake-multi-platform.yml
+
+      - name: Configure CMake
+        working-directory: ${{ github.workspace }}
+        run: cmake --preset ${{ matrix.preset_build_architecture }}
+
+      - name: Build
+        working-directory: ${{ github.workspace }}
+        run: cmake --build --preset ${{ matrix.preset_build_architecture }}-${{ matrix.preset_build_configuration }} --parallel
+
+      - name: Test
+        working-directory: ${{ github.workspace }}
+        # See https://cmake.org/cmake/help/latest/manual/ctest.1.html for more detail
+        run: ctest --test-dir _build_/${{ matrix.preset_build_architecture }} --build-config ${{ matrix.preset_build_configuration }} --output-junit TEST-${{ matrix.preset_build_architecture }}-${{ matrix.preset_build_configuration }}.xml
+
+      - name: JUnit Report
+        uses: mikepenz/action-junit-report@v4
+        if: success() || failure() # always run even if the previous step fails
+        with:
+          report_paths: _build_/**/TEST-*.xml

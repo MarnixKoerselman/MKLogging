@@ -1,7 +1,11 @@
 ﻿#include <Logger.h>
 #include <LogFileSink.h>
 #include <LogQueue.h>
+
+#ifdef WIN32
 #include <Windows/LogDebugOutputSink.h>
+#endif
+
 #include <LogUnbufferedFileSink.h>
 
 #include <string>
@@ -24,7 +28,7 @@ TEST(Functional, DefaultBehaviour)
   // - in release build: min log level is Warning
 
   // Test that there are no log files in the output directory
-  std::filesystem::path testOuputDirectoryPath = TEST_OUTPUT_DIRECTORY_PATH;
+  std::filesystem::path testOuputDirectoryPath = GetTestOutputDirectoryPath("Functional.DefaultBehaviour");
   DirectoryEntries initialDirectoryEntries = GetDirectoryContents(testOuputDirectoryPath);
 
   LOGV("hello verbose");
@@ -166,7 +170,7 @@ TEST(Logger, UCS2)
 
 TEST(Logger, CombineStringTypes)
 {
-  std::filesystem::path testOuputDirectoryPath = TEST_OUTPUT_DIRECTORY_PATH;
+  std::filesystem::path testOuputDirectoryPath = GetTestOutputDirectoryPath("Logger.CombineStringTypes");
   EnsureCleanOutputDirectory(testOuputDirectoryPath);
   auto unbufferedLogPath = testOuputDirectoryPath / "unbuffered.log";
   auto unbufferedLogFile = std::make_shared<LogUnbufferedFileSink>();
@@ -184,8 +188,9 @@ TEST(Logger, CombineStringTypes)
   logger.AddListener(stringSink);
   logger.AddListener(bufferedLogFile);
   logger.AddListener(unbufferedLogFile);
+#ifdef WIN32
   logger.AddListener(std::make_shared<LogDebugOutputSink>());
-
+#endif
   MKL_LOGI(&logger, "\n\tHello world" << L"\n\tHello world" << u8"\n\t你好世界" << L"\n\t你好世界" << L"\n\t\x4f60\x597d\x4e16\x754c");
 
   auto helloWorldChinese = u8"\n\t你好世界";
@@ -223,7 +228,7 @@ TEST(Logger, CombineStringTypes)
 
 TEST(Logger, MultipleThreadsWithDebugOutputAndQueuedLogFile)
 {
-  std::filesystem::path testOuputDirectoryPath = TEST_OUTPUT_DIRECTORY_PATH;
+  std::filesystem::path testOuputDirectoryPath = GetTestOutputDirectoryPath("Logger.MultipleThreadsWithDebugOutputAndQueuedLogFile");
   EnsureCleanOutputDirectory(testOuputDirectoryPath);
   std::filesystem::path logFilePath = testOuputDirectoryPath / L"test.log";
 
@@ -232,11 +237,12 @@ TEST(Logger, MultipleThreadsWithDebugOutputAndQueuedLogFile)
   EXPECT_TRUE(logFile->Create(logFilePath));
   std::shared_ptr<LogQueue> bufferedFile = std::make_shared<LogQueue>(logFile);
 
-  std::shared_ptr<LogDebugOutputSink> debugOutput = std::make_shared<LogDebugOutputSink>();
-
   Logger logger;
   logger.SetMinimumLogLevel(ELogLevel::Info); // set before listeners to avoid irrelevant warnings in the log
+#ifdef WIN32
+  std::shared_ptr<LogDebugOutputSink> debugOutput = std::make_shared<LogDebugOutputSink>();
   logger.AddListener(debugOutput);
+#endif
   logger.AddListener(bufferedFile);
 
   std::chrono::system_clock::time_point startTime = std::chrono::system_clock::now();
@@ -291,14 +297,14 @@ TEST(Logger, MultipleThreadsWithDebugOutputAndQueuedLogFile)
   EXPECT_EQ(threadCount, CountOccurrence(logFileText, "Take one down and pass it around, 0 bottles of beer on the wall."));
 
   // do the same test using a FILE structure
-  std::FILE* file = _wfsopen(logFilePath.c_str(), L"rt", _SH_DENYWR);
+  std::FILE* file = std::fopen(logFilePath.string().c_str(), "rt");
   ASSERT_NE(nullptr, file);
-  fseek(file, 0, SEEK_END);
+  std::fseek(file, 0, SEEK_END);
   long fileSize = ftell(file);
-  fseek(file, 0, SEEK_SET);
+  std::fseek(file, 0, SEEK_SET);
   std::string newLogFileText(fileSize, '\0');
-  size_t nReadItemCount = fread_s(newLogFileText.data(), sizeof(char) * newLogFileText.size(), sizeof(char), newLogFileText.size(), file);
-  fclose(file);
+  size_t nReadItemCount = std::fread(newLogFileText.data(), sizeof(char), newLogFileText.size(), file);
+  std::fclose(file);
   ASSERT_EQ(nReadItemCount, newLogFileText.size()); // newline translation in effect - number of characters in buffer should be less than the file size
   newLogFileText.resize(nReadItemCount);
   EXPECT_EQ(logFileText, newLogFileText);
@@ -316,8 +322,9 @@ TEST(Logger, ChainOfLoggers)
   rootLogger.SetMinimumLogLevel(ELogLevel::All); // set before listeners to avoid irrelevant warnings in the log
   rootLogger.AddListener(leafLogger);
   rootLogger.AddListener(mockRootSink);
+#ifdef WIN32
   rootLogger.AddListener(std::make_shared<LogDebugOutputSink>());
-
+#endif
   // set expectations
   EXPECT_CALL(*mockLeafSink, OutputRecord).Times(2);
   EXPECT_CALL(*mockRootSink, OutputRecord).Times(1);
@@ -337,8 +344,9 @@ TEST(Logger, ChainOfLoggers2)
   auto myErrorLog = std::make_shared<Logger>();
   myErrorLog->SetFormatter(nullptr);
   myErrorLog->SetMinimumLogLevel(ELogLevel::Error);
-
+#ifdef WIN32
   myLogCentral->AddListener(std::make_shared<LogDebugOutputSink>());
+#endif
   auto mockCentralSink = std::make_shared<MockLogSink>();
   myLogCentral->AddListener(mockCentralSink);
 
@@ -372,7 +380,7 @@ TEST(Logger, ChainOfLoggers3)
   {
   public:
     SimpleFormatter(const char* header) : m_Header(header)
-    { }
+    {}
     void OutputRecordWithFormatting(std::ostream& os, const LogRecord& record) override
     {
       os << m_Header << ": " << record.GetLogMessage();
@@ -384,7 +392,9 @@ TEST(Logger, ChainOfLoggers3)
 
   auto mockSink = std::make_shared<MockLogSink>();
   LogCentral()->AddListener(mockSink);
+#ifdef WIN32
   LogCentral()->AddListener(std::make_shared<LogDebugOutputSink>());
+#endif
 
   auto systemLog = std::make_shared<Logger>();
   systemLog->AddListener(SharedLogCentral());
@@ -408,4 +418,3 @@ TEST(Logger, ChainOfLoggers3)
 
   LogCentral()->RemoveAllListeners();
 }
-

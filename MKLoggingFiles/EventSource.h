@@ -26,10 +26,13 @@ public:
   void RemoveListener(const std::shared_ptr<EventNotificationInterface>& pListener)
   {
     Lock lock(m_AccessListeners);
-    auto pos = std::find(m_Listeners.begin(), m_Listeners.end(), pListener);
-    if (pos != m_Listeners.end())
+    for (auto iter = m_Listeners.begin(); iter != m_Listeners.end(); iter++)
     {
-      m_Listeners.erase(pos);
+      if (*iter == pListener)
+      {
+        m_Listeners.erase(iter);
+        return;
+      }
     }
   }
 

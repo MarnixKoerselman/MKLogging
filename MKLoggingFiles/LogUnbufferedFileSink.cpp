@@ -1,48 +1,51 @@
 #include "LogUnbufferedFileSink.h"
 #include "FileSystemUtils.h"
-#include <io.h>
-#include <fcntl.h>
 #include <sstream>
+#include <cstdio>
+#include <fstream>
+#include <string.h> // strerror
 
 LogUnbufferedFileSink::~LogUnbufferedFileSink()
 {
   Close();
 }
 
-bool LogUnbufferedFileSink::Create(const std::wstring& filePath)
+bool LogUnbufferedFileSink::Create(const std::filesystem::path& filePath)
 {
   FileSystemUtils::CreateDirectoriesFromFilePath(filePath);
 
-  int fileDescriptor = 0;
-  errno_t result = _wsopen_s(&fileDescriptor, filePath.c_str(), _O_BINARY | _O_WRONLY | _O_CREAT | _O_TRUNC, _SH_DENYWR, _S_IWRITE);
-  if (result == 0)
-  {
-    m_FileDescriptor = fileDescriptor;
+  Close();
 
-    // write UTF-8 BOM
-    const char* szUtf8Bom = "\xEF\xBB\xBF";
-    _write(m_FileDescriptor, szUtf8Bom, 3);
+  m_File = std::fopen(filePath.string().c_str(), "wb");
+  if (m_File == nullptr)
+  {
+    std::string error = strerror(errno);
+    return false;
   }
-  return (result == 0);
+  std::setbuf(m_File, nullptr); // if BUF is NULL, make stream unbuffered
+  // write UTF-8 BOM
+  const char* szUtf8Bom = "\xEF\xBB\xBF";
+  auto countWritten = std::fwrite(szUtf8Bom, sizeof(char), 3, m_File);
+  return (3 == countWritten);
 }
 
-bool LogUnbufferedFileSink::OpenToAppend(const std::wstring& filePath)
+bool LogUnbufferedFileSink::OpenToAppend(const std::filesystem::path& filePath)
 {
-  int fileDescriptor = 0;
-  errno_t result = _wsopen_s(&fileDescriptor, filePath.c_str(), _O_BINARY | _O_WRONLY | _O_CREAT | _O_APPEND, _SH_DENYWR, _S_IWRITE);
-  if (result == 0)
+  Close();
+  m_File = std::fopen(filePath.string().c_str(), "ab");
+  if (m_File != nullptr)
   {
-    m_FileDescriptor = fileDescriptor;
+    std::setbuf(m_File, nullptr); // if BUF is NULL, make stream unbuffered
   }
-  return (result == 0);
+  return (m_File != nullptr);
 }
 
 void LogUnbufferedFileSink::Close()
 {
-  if (m_FileDescriptor != 0)
+  if (m_File != nullptr)
   {
-    _close(m_FileDescriptor);
-    m_FileDescriptor = 0;
+    std::fclose(m_File);
+    m_File = nullptr;
   }
 }
 
@@ -66,9 +69,8 @@ void LogUnbufferedFileSink::OutputRecord(const LogRecord& record)
 
 void LogUnbufferedFileSink::WriteToFile(const void* data, size_t size)
 {
-  if (m_FileDescriptor != 0)
+  if (std::fwrite(data, size, 1, m_File) != size)
   {
-    _write(m_FileDescriptor, data, static_cast<unsigned int>(size));
-    _commit(m_FileDescriptor);
+    std::string error = strerror(errno);
   }
 }

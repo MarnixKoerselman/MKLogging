@@ -1,9 +1,13 @@
 #include "TestUtils.h"
 #include "StringUtils.h"
 #include <gtest/gtest.h>
-#include <Windows.h> // apparently there is no standard way to get the executable's path => GetApplicationPath()
+#include <fstream>
 
-DirectoryEntry::DirectoryEntry(std::wstring path, uintmax_t fileSize, std::filesystem::file_time_type lastModifiedTime)
+#ifdef WIN32
+#include <Windows.h> // apparently there is no standard way to get the executable's path => GetApplicationPath()
+#endif
+
+DirectoryEntry::DirectoryEntry(std::filesystem::path path, uintmax_t fileSize, std::filesystem::file_time_type lastModifiedTime)
   : Path(path)
   , FileSize(fileSize)
   , LastModifiedTime(lastModifiedTime)
@@ -14,13 +18,13 @@ bool DirectoryEntry::operator==(const DirectoryEntry& rhs) const
   return (Path == rhs.Path) && (FileSize == rhs.FileSize) && (LastModifiedTime == rhs.LastModifiedTime);
 }
 
-std::filesystem::path GetTestOutputDirectoryPath(const wchar_t* szTestCaseName)
+std::filesystem::path GetTestOutputDirectoryPath(std::string_view testCaseNameRaw)
 {
   // transform the test case name into something that can be used to construct a directory path
-  std::wstring testCaseName(szTestCaseName);
+  std::string testCaseName(testCaseNameRaw);
 
   // remove everything from _Test - not needed to create a good name
-  auto pos = testCaseName.rfind(L"_Test");
+  auto pos = testCaseName.rfind("_Test");
   if (pos != std::wstring::npos)
     testCaseName.erase(pos);
 
@@ -28,10 +32,10 @@ std::filesystem::path GetTestOutputDirectoryPath(const wchar_t* szTestCaseName)
   size_t offset = 0;
   while (offset != std::wstring::npos)
   {
-    offset = testCaseName.find(L"::", offset);
+    offset = testCaseName.find("::", offset);
     if (offset != std::wstring::npos)
     {
-      testCaseName.replace(offset, 2, L"_");
+      testCaseName.replace(offset, 2, "_");
       offset += 1;
     }
   }
@@ -39,17 +43,22 @@ std::filesystem::path GetTestOutputDirectoryPath(const wchar_t* szTestCaseName)
   // turn _ into /
   // std::replace(testCaseName.begin(), testCaseName.end(), L'_', std::filesystem::path::preferred_separator);
 
+#ifdef WIN32
   // the output is a subdirectory of the directory that holds the test executable
   return GetApplicationPath().replace_filename(testCaseName);
+#else
+  return GetCurrentDirectoryPath().replace_filename(testCaseName);
+#endif
 
   // NB: if an exception is thrown, let it pass - this will crash the test, leading to the most sensible problem detection.
   // Helpers are not allowed to go wrong, so it is not necessary to recover from partial failure!
 }
 
+#ifdef WIN32
 std::filesystem::path GetApplicationPath()
 {
   bool fileNameComplete = false;
-  size_t bufferSize = _MAX_PATH;
+  size_t bufferSize = 260;
   std::wstring sFilePath;
   do
   {
@@ -67,6 +76,12 @@ std::filesystem::path GetApplicationPath()
     }
   } while (!fileNameComplete);
   return sFilePath;
+}
+#endif
+
+std::filesystem::path GetCurrentDirectoryPath()
+{
+  return std::filesystem::current_path();
 }
 
 // get the contents (files) of the specified directory
@@ -90,19 +105,17 @@ DirectoryEntries GetDirectoryContents(const std::filesystem::path& directoryPath
 void EnsureCleanOutputDirectory(const std::filesystem::path& directoryPath)
 {
   std::filesystem::remove_all(directoryPath);
+  std::filesystem::create_directories(directoryPath);
 }
 
-void ReadLogFileAsBinary(const std::filesystem::path& logFilePath, __out std::string& buffer)
+void ReadLogFileAsBinary(const std::filesystem::path& logFilePath, std::string& buffer)
 {
-  struct _stat statBuffer = {0};
-  ASSERT_EQ(0, _wstat(logFilePath.c_str(), &statBuffer));
-  if (statBuffer.st_size > 0)
+  auto fileSize = std::filesystem::file_size(logFilePath);
+  if (fileSize > 0)
   {
-    FILE* fileHandle = _wfsopen(logFilePath.c_str(), L"rb", _SH_DENYNO);
-    ASSERT_NE(nullptr, fileHandle);
-    buffer.resize(statBuffer.st_size);
-    ASSERT_EQ(1u, fread(buffer.data(), buffer.size(), 1, fileHandle));
-    fclose(fileHandle);
+    std::ifstream input(logFilePath, std::ios::binary);
+    // copies all data into buffer
+    buffer.assign(std::istreambuf_iterator<char>(input), {});
   }
 }
 

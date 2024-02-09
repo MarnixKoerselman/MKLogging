@@ -99,20 +99,20 @@ public:
 
   static const char* GetLogFileName()
   {
-    return "TestMKLoggingPerformance.log";
+    return "PerformanceTest.log";
   }
 
-  static std::filesystem::path GetLogFilePath()
+  static std::filesystem::path GetLogFilePath(const char* testName)
   {
-    return TEST_OUTPUT_DIRECTORY_PATH / GetLogFileName();
+    return GetTestOutputDirectoryPath(testName) / GetLogFileName();
   }
 
-  void SetUpLogWithAsynchronousFile()
+  void SetUpLogWithAsynchronousFile(const std::filesystem::path& logFilePath)
   {
-    EnsureCleanOutputDirectory(TEST_OUTPUT_DIRECTORY_PATH);
+    EnsureCleanOutputDirectory(logFilePath.parent_path());
 
     auto fileSink = std::make_shared<LogFileSink>();
-    ASSERT_TRUE(fileSink->Create(GetLogFilePath()));
+    ASSERT_TRUE(fileSink->Create(logFilePath));
     auto asyncFileSink = std::make_shared<LogQueue>(fileSink);
     LogCentral()->AddListener(asyncFileSink);
   }
@@ -152,19 +152,21 @@ auto MeasureTime(TimedFunction func)
 
 TEST_F(PerformanceTest, LogWithAsynchronousFile_ManyProducerThreads)
 {
-  SetUpLogWithAsynchronousFile();
+  auto logFilePath = GetLogFilePath("LogWithAsynchronousFile.ManyProducerThreads");
+  SetUpLogWithAsynchronousFile(logFilePath);
   MeasureTime([this]()
     {
       Sing(REPETITION_COUNT, MANY_PRODUCER_THREADS);
       LogCentral()->RemoveAllListeners(); // drain queue & flush file
     });
-  VerifyLogFileEntries(GetLogFilePath());
+  VerifyLogFileEntries(logFilePath);
 }
 
 TEST_F(PerformanceTest, FilePerformance)
 {
-  auto path = GetLogFilePath();
+  auto path = GetLogFilePath("PerformanceTest.FilePerformance");
   path.replace_filename(L"std.log");
+  EnsureCleanOutputDirectory(path.parent_path());
   TestStdFile stdFile(path);
   path.replace_filename(L"stream.log");
   TestFileStream streamFile(path);

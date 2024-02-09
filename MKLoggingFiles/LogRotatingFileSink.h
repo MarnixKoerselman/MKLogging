@@ -2,7 +2,7 @@
 
 #include "ILogSink.h"
 #include "LogFileSink.h"
-#include <ctime>
+#include <chrono>
 #include <filesystem>
 
 // Take care: only use this logger if it is used asynchronous, e.g. through LogQueue. Using this directly (i.e. logging to this logger in the main thread)
@@ -19,7 +19,7 @@ public: // ILogSink
 protected: // methods made protected instead of private to improve testability
   void RollOver();
   std::filesystem::path GetNextFileName() const;
-  std::wstring GenerateFileName(time_t now = time(nullptr)) const;
+  std::wstring GenerateFileName(const std::chrono::system_clock::time_point timeStamp = std::chrono::system_clock::now()) const;
   std::wstring GetLogFileNameRegex() const;
 
 private:

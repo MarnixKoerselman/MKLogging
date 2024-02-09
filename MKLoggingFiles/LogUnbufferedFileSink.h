@@ -2,6 +2,7 @@
 
 #include "LogSinkWithFormatter.h"
 #include <string>
+#include <filesystem>
 
 class LogUnbufferedFileSink : public LogSinkWithFormatter
 {
@@ -9,8 +10,8 @@ public:
   LogUnbufferedFileSink() = default;
   virtual ~LogUnbufferedFileSink();
 
-  bool Create(const std::wstring& filePath);
-  bool OpenToAppend(const std::wstring& filePath);
+  bool Create(const std::filesystem::path& filePath);
+  bool OpenToAppend(const std::filesystem::path& filePath);
   void Close();
 
   void WriteToFile(const std::string& text);
@@ -20,5 +21,5 @@ public: // ILogSink
   void OutputRecord(const LogRecord& record) override;
 
 private:
-  int m_FileDescriptor = 0;
+  FILE* m_File = nullptr;
 };

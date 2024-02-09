@@ -8,7 +8,7 @@
 
 TEST(LogFileSink, Basic)
 {
-  std::filesystem::path testOuputDirectoryPath = TEST_OUTPUT_DIRECTORY_PATH;
+  std::filesystem::path testOuputDirectoryPath = GetTestOutputDirectoryPath("LogFileSink.Basic");
   EnsureCleanOutputDirectory(testOuputDirectoryPath);
 
   std::filesystem::path logFilePath = testOuputDirectoryPath / "test.log";
@@ -30,7 +30,7 @@ TEST(LogFileSink, Basic)
 
 TEST(LogFileSink, Utf8)
 {
-  std::filesystem::path testOuputDirectoryPath = TEST_OUTPUT_DIRECTORY_PATH;
+  std::filesystem::path testOuputDirectoryPath = GetTestOutputDirectoryPath("LogFileSink.Utf8");
   EnsureCleanOutputDirectory(testOuputDirectoryPath);
 
   std::filesystem::path logFilePath = testOuputDirectoryPath / "test.log";

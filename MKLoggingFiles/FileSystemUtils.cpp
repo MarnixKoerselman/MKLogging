@@ -2,9 +2,9 @@
 #include <filesystem>
 #include "Logger.h"
 
-void FileSystemUtils::CreateDirectoriesFromFilePath(const std::wstring& filePath)
+void FileSystemUtils::CreateDirectoriesFromFilePath(const std::filesystem::path& filePath)
 {
-  std::filesystem::path directoryPath = std::filesystem::path(filePath).parent_path();
+  std::filesystem::path directoryPath = filePath.parent_path();
 
   if (!directoryPath.empty() && !std::filesystem::exists(directoryPath))
   {
