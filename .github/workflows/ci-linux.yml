@@ -16,7 +16,7 @@ jobs:
     steps:
       - uses: lukka/get-cmake@latest  # using 'latest' branch, the most recent CMake and ninja are installed.
 
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
         with:
           submodules: recursive
 
