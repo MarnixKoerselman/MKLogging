@@ -27,7 +27,7 @@ jobs:
       - name: experiment
         uses: devcontainers/ci@v0.3 # https://github.com/marketplace/actions/dev-container-build-and-run-action
         with:
-          runCmd: env
+          runCmd: pwd
 
       - name: Configure CMake
         uses: devcontainers/ci@v0.3 # https://github.com/marketplace/actions/dev-container-build-and-run-action
