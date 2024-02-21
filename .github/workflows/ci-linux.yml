@@ -24,15 +24,18 @@ jobs:
       # - name: Configure CMake
       #   working-directory: ${{ github.workspace }}
       #   run: cmake --preset ${{ matrix.configuration_preset }}
+      - name: Configure CMake
+        uses: devcontainers/ci@v0.3 # https://github.com/marketplace/actions/dev-container-build-and-run-action
+        with:
+          runCmd: cmake --preset ${{ matrix.configuration_preset }}
 
       # - name: Build
       #   working-directory: ${{ github.workspace }}
       #   run: cmake --build _build_/${{ matrix.configuration_preset }} --parallel
-      - name: Build in dev container
+      - name: Build
         uses: devcontainers/ci@v0.3 # https://github.com/marketplace/actions/dev-container-build-and-run-action
         with:
-          runCmd: cmake --preset ${{ matrix.configuration_preset }} &&
-            cmake --build _build_/${{ matrix.configuration_preset }} --parallel
+          runCmd: cmake --build _build_/${{ matrix.configuration_preset }} --parallel
 
       - name: Test in dev container
         uses: devcontainers/ci@v0.3
