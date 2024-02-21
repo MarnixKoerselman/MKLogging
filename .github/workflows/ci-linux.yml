@@ -29,7 +29,7 @@ jobs:
       #   working-directory: ${{ github.workspace }}
       #   run: cmake --build _build_/${{ matrix.configuration_preset }} --parallel
       - name: Build in dev container
-        uses: devcontainers/ci@v0.3
+        uses: devcontainers/ci@v0.3  # https://github.com/marketplace/actions/dev-container-build-and-run-action
         with:
           runCmd:
             cmake --preset ${{ matrix.configuration_preset }}
