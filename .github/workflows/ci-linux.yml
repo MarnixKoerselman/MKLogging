@@ -5,11 +5,6 @@ name: CI Linux
 
 on: [push]
 
-defaults:
-  run:
-    shell: bash
-    working-directory: ${{ github.workspace }}
-
 jobs:
   build:
     runs-on: ubuntu-latest
@@ -32,7 +27,7 @@ jobs:
       - name: experiment
         uses: devcontainers/ci@v0.3 # https://github.com/marketplace/actions/dev-container-build-and-run-action
         with:
-          runCmd: ls -al
+          runCmd: env
 
       - name: Configure CMake
         uses: devcontainers/ci@v0.3 # https://github.com/marketplace/actions/dev-container-build-and-run-action
