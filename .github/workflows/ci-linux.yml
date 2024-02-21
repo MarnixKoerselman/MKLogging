@@ -29,17 +29,15 @@ jobs:
       #   working-directory: ${{ github.workspace }}
       #   run: cmake --build _build_/${{ matrix.configuration_preset }} --parallel
       - name: Build in dev container
-        uses: devcontainers/ci@v0.3  # https://github.com/marketplace/actions/dev-container-build-and-run-action
+        uses: devcontainers/ci@v0.3 # https://github.com/marketplace/actions/dev-container-build-and-run-action
         with:
-          runCmd:
-            cmake --preset ${{ matrix.configuration_preset }}
+          runCmd: cmake --preset ${{ matrix.configuration_preset }} &&
             cmake --build _build_/${{ matrix.configuration_preset }} --parallel
 
       - name: Test in dev container
         uses: devcontainers/ci@v0.3
         with:
-          runCmd:
-            ctest --test-dir _build_/${{ matrix.configuration_preset }} --output-junit TEST-${{ matrix.configuration_preset }}.xml
+          runCmd: ctest --test-dir _build_/${{ matrix.configuration_preset }} --output-junit TEST-${{ matrix.configuration_preset }}.xml
 
       # - name: Test
       #   working-directory: ${{ github.workspace }}
