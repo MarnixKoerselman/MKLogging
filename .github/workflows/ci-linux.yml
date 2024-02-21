@@ -5,6 +5,11 @@ name: CI Linux
 
 on: [push]
 
+defaults:
+  run:
+    shell: bash
+    working-directory: ${{ github.workspace }}
+
 jobs:
   build:
     runs-on: ubuntu-latest
