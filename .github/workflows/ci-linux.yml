@@ -14,23 +14,36 @@ jobs:
         configuration_preset: [linux-debug]
 
     steps:
-      - uses: lukka/get-cmake@latest  # using 'latest' branch, the most recent CMake and ninja are installed.
+      # - uses: lukka/get-cmake@latest  # using 'latest' branch, the most recent CMake and ninja are installed.
 
-      - uses: actions/checkout@v4
+      - name: Checkout
+        uses: actions/checkout@v4
         with:
           submodules: recursive
 
-      - name: Configure CMake
-        working-directory: ${{ github.workspace }}
-        run: cmake --preset ${{ matrix.configuration_preset }}
+      # - name: Configure CMake
+      #   working-directory: ${{ github.workspace }}
+      #   run: cmake --preset ${{ matrix.configuration_preset }}
 
-      - name: Build
-        working-directory: ${{ github.workspace }}
-        run: cmake --build _build_/${{ matrix.configuration_preset }} --parallel
+      # - name: Build
+      #   working-directory: ${{ github.workspace }}
+      #   run: cmake --build _build_/${{ matrix.configuration_preset }} --parallel
+      - name: Build in dev container
+        uses: devcontainers/ci@v0.3
+        with:
+          runCmd:
+            cmake --preset ${{ matrix.configuration_preset }}
+            cmake --build _build_/${{ matrix.configuration_preset }} --parallel
 
-      - name: Test
-        working-directory: ${{ github.workspace }}
-        run: ctest --test-dir _build_/${{ matrix.configuration_preset }} --output-junit TEST-${{ matrix.configuration_preset }}.xml
+      - name: Test in dev container
+        uses: devcontainers/ci@v0.3
+        with:
+          runCmd:
+            ctest --test-dir _build_/${{ matrix.configuration_preset }} --output-junit TEST-${{ matrix.configuration_preset }}.xml
+
+      # - name: Test
+      #   working-directory: ${{ github.workspace }}
+      #   run: ctest --test-dir _build_/${{ matrix.configuration_preset }} --output-junit TEST-${{ matrix.configuration_preset }}.xml
 
       - name: JUnit Report
         uses: mikepenz/action-junit-report@v4
