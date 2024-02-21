@@ -32,7 +32,7 @@ jobs:
       - name: Configure CMake
         uses: devcontainers/ci@v0.3 # https://github.com/marketplace/actions/dev-container-build-and-run-action
         with:
-          runCmd: cmake --preset ${{ matrix.configuration_preset }}
+          runCmd: cd ${{ github.workspace }} && cmake --preset ${{ matrix.configuration_preset }}
 
       # - name: Build
       #   working-directory: ${{ github.workspace }}
