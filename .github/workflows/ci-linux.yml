@@ -14,42 +14,36 @@ jobs:
         configuration_preset: [linux-debug]
 
     steps:
-      # - uses: lukka/get-cmake@latest  # using 'latest' branch, the most recent CMake and ninja are installed.
+      - uses: lukka/get-cmake@latest  # using 'latest' branch, the most recent CMake and ninja are installed.
 
       - name: Checkout
         uses: actions/checkout@v4
         with:
           submodules: recursive
 
-      # - name: Configure CMake
-      #   working-directory: ${{ github.workspace }}
-      #   run: cmake --preset ${{ matrix.configuration_preset }}
-      - name: experiment
-        uses: devcontainers/ci@v0.3 # https://github.com/marketplace/actions/dev-container-build-and-run-action
-        with:
-          runCmd: pwd
-
       - name: Configure CMake
-        uses: devcontainers/ci@v0.3 # https://github.com/marketplace/actions/dev-container-build-and-run-action
-        with:
-          runCmd: cd ${{ github.workspace }} && cmake --preset ${{ matrix.configuration_preset }}
+        working-directory: ${{ github.workspace }}
+        run: cmake --preset ${{ matrix.configuration_preset }}
+      # - name: Configure CMake
+      #   uses: devcontainers/ci@v0.3 # https://github.com/marketplace/actions/dev-container-build-and-run-action
+      #   with:
+      #     runCmd: cmake --preset ${{ matrix.configuration_preset }}
 
-      # - name: Build
-      #   working-directory: ${{ github.workspace }}
-      #   run: cmake --build _build_/${{ matrix.configuration_preset }} --parallel
       - name: Build
-        uses: devcontainers/ci@v0.3 # https://github.com/marketplace/actions/dev-container-build-and-run-action
-        with:
-          runCmd: cmake --build _build_/${{ matrix.configuration_preset }} --parallel
+        working-directory: ${{ github.workspace }}
+        run: cmake --build _build_/${{ matrix.configuration_preset }} --parallel
+      # - name: Build
+      #   uses: devcontainers/ci@v0.3 # https://github.com/marketplace/actions/dev-container-build-and-run-action
+      #   with:
+      #     runCmd: cmake --build _build_/${{ matrix.configuration_preset }} --parallel
 
-      - name: Test in dev container
-        uses: devcontainers/ci@v0.3
-        with:
-          runCmd: ctest --test-dir _build_/${{ matrix.configuration_preset }} --output-junit TEST-${{ matrix.configuration_preset }}.xml
-
-      # - name: Test
-      #   working-directory: ${{ github.workspace }}
-      #   run: ctest --test-dir _build_/${{ matrix.configuration_preset }} --output-junit TEST-${{ matrix.configuration_preset }}.xml
+      - name: Test
+        working-directory: ${{ github.workspace }}
+        run: ctest --test-dir _build_/${{ matrix.configuration_preset }} --output-junit TEST-${{ matrix.configuration_preset }}.xml
+      # - name: Test in dev container
+      #   uses: devcontainers/ci@v0.3
+      #   with:
+      #     runCmd: ctest --test-dir _build_/${{ matrix.configuration_preset }} --output-junit TEST-${{ matrix.configuration_preset }}.xml
 
       - name: JUnit Report
         uses: mikepenz/action-junit-report@v4
