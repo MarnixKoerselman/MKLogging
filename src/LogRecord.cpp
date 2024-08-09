@@ -76,7 +76,12 @@ std::string LogRecord::GetLogMessage() const
   return m_MessageBuffer.str();
 }
 
-bool operator ==(const LogRecord& lhs, const LogRecord& rhs)
+std::string LogRecord::UnformattedMessage() const
+{
+  return m_MessageBuffer.str();
+}
+
+bool operator ==(const LogRecord & lhs, const LogRecord & rhs)
 {
   return (lhs.LogLevel == rhs.LogLevel)
     && (lhs.Function == rhs.Function)

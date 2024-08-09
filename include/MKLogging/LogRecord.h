@@ -26,8 +26,8 @@ struct LogRecord
   std::chrono::system_clock::time_point Time;
   std::thread::id ThreadId;
   std::shared_ptr<std::string> PreformattedMessage;
+  std::string UnformattedMessage() const;
 
 protected:
   std::ostringstream m_MessageBuffer;
 };
-
