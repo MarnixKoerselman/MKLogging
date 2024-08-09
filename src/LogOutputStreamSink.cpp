@@ -20,3 +20,8 @@ LogStdErrSink::LogStdErrSink()
 	: LogOutputStreamSink(std::cerr)
 {
 }
+
+LogStdLogSink::LogStdLogSink()
+	: LogOutputStreamSink(std::clog)
+{
+}

@@ -27,3 +27,8 @@ public:
 	LogStdErrSink();
 };
 
+class LogStdLogSink : public LogOutputStreamSink
+{
+public:
+	LogStdLogSink();
+};
