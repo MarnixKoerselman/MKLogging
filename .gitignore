@@ -1,6 +1,8 @@
 # Visual Studio local configuration folder
 /.vs
 
+/.vscode
+
 # User files
 *.user
 *.bak
