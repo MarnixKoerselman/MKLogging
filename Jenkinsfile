@@ -3,7 +3,7 @@ pipeline {
     dockerfile {
       additionalBuildArgs '--tag mklogging-builder'
       customWorkspace 'workspace\\mklogging'
-      dir 'build-container'
+      dir 'jenkins-windows-build-container'
       label 'windows && docker'
     }
   }
