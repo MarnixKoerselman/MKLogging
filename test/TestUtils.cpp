@@ -11,7 +11,8 @@ DirectoryEntry::DirectoryEntry(std::filesystem::path path, uintmax_t fileSize, s
   : Path(path)
   , FileSize(fileSize)
   , LastModifiedTime(lastModifiedTime)
-{}
+{
+}
 
 bool DirectoryEntry::operator==(const DirectoryEntry& rhs) const
 {
@@ -59,23 +60,23 @@ std::filesystem::path GetApplicationPath()
 {
   bool fileNameComplete = false;
   size_t bufferSize = 260;
-  std::wstring sFilePath;
+  std::wstring filePath;
   do
   {
-    sFilePath.resize(bufferSize);
-    DWORD length = ::GetModuleFileNameW(nullptr, sFilePath.data(), static_cast<DWORD>(sFilePath.size()));
+    filePath.resize(bufferSize);
+    DWORD length = ::GetModuleFileNameW(nullptr, filePath.data(), static_cast<DWORD>(filePath.size()));
     fileNameComplete = (GetLastError() != ERROR_INSUFFICIENT_BUFFER);
     if (fileNameComplete)
     {
-      sFilePath.resize(length);
-      sFilePath.shrink_to_fit();
+      filePath.resize(length);
+      filePath.shrink_to_fit();
     }
     else
     {
       bufferSize *= 2;
     }
   } while (!fileNameComplete);
-  return sFilePath;
+  return filePath;
 }
 #endif
 
