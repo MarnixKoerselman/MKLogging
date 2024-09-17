@@ -83,6 +83,13 @@ public:
   void SetMinimumLogLevel(ELogLevel logLevel);
   bool IsLogged(ELogLevel logLevel);
 
+  template <typename LogSink>
+  auto AddListener(const std::shared_ptr<LogSink>& pListener)
+  {
+    EventSource::AddListener(pListener);
+    return pListener;
+  };
+
 public: // ILogSink
   void OutputRecord(const LogRecord& record) override;
 

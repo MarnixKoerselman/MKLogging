@@ -25,7 +25,7 @@ bool LogFileSink::Create(const std::filesystem::path& filePath)
     m_FileSize = std::fwrite(szUtf8Bom, 1, 3, m_File);
   }
 
-  // https ://docs.microsoft.com/en-us/cpp/c-runtime-library/reference/fwrite
+  // https://docs.microsoft.com/en-us/cpp/c-runtime-library/reference/fwrite
   // If file is opened with UTF-8 string processing, then only wstring values should be written
   // m_File = _wfsopen(filePath.c_str(), L"wt, ccs=UTF-8", _SH_DENYWR);
 
