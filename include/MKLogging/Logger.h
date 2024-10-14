@@ -88,7 +88,7 @@ public:
   {
     EventSource::AddListener(pListener);
     return pListener;
-  };
+  }
 
 public: // ILogSink
   void OutputRecord(const LogRecord& record) override;

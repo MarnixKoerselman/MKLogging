@@ -33,21 +33,26 @@ if (MKLOGGING_STANDALONE_PROJECT)
   # speed up compilation
   if(MSVC)
     add_compile_options(/MP)
+
+  add_link_options(
+    $<$<NOT:$<CONFIG:DEBUG>>:/INCREMENTAL:NO> # Disable incremental linking.
+    $<$<NOT:$<CONFIG:DEBUG>>:/OPT:REF> # Remove unreferenced functions and data.
+    $<$<NOT:$<CONFIG:DEBUG>>:/OPT:ICF> # Identical COMDAT folding.
+    $<$<CONFIG:DEBUG>:/INCREMENTAL:NO> # Disable incremental linking.
+    $<$<CONFIG:DEBUG>:/OPT:NOREF> # No unreferenced data elimination.
+    $<$<CONFIG:DEBUG>:/OPT:NOICF> # No Identical COMDAT folding.
+  )
   endif()
 endif()
 
 if(MKLOGGING_ENABLE_WARNINGS)
-  if(MSVC)
-    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /W4")
-  elseif(CMAKE_CXX_COMPILER_ID MATCHES "[Cc]lang" OR CMAKE_CXX_COMPILER_ID MATCHES "GNU")
-    # if (CMAKE_CXX_COMPILER_ID MATCHES "GNU")
-    #   if (${CMAKE_CXX_COMPILER_VERSION} VERSION_GREATER_EQUAL 5.0)
-    #     set(COMPILER_SPECIFIC_FLAGS "-Wsuggest-override")
-    #   endif()
-    # endif()
-
-    # set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -Werror -Wextra -Wshadow -Weffc++ -Wsign-compare -Wshadow -Wwrite-strings -Wpointer-arith -Winit-self -Wconversion -Wno-sign-conversion ${COMPILER_SPECIFIC_FLAGS}")
-    # set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -Wextra -Wshadow -Wsign-compare -Wshadow -Wwrite-strings -Wpointer-arith -Winit-self -Wconversion -Wno-sign-conversion ${COMPILER_SPECIFIC_FLAGS}")
+  if (MSVC)
+    # set compiler warning level
+    add_compile_options("/W4")
+  else()
+    # set compiler warning level
+    # add_compile_options(-Wall -Werror -Wextra -Wshadow -Weffc++ -Wsign-compare -Wshadow -Wwrite-strings -Wpointer-arith -Winit-self -Wconversion -Wno-sign-conversion)
+    add_compile_options(-Wall -Wno-unknown-pragmas -Wextra -Wpedantic)
   endif()
 endif()
 
