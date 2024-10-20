@@ -18,6 +18,7 @@ add_executable(${PROJECT_NAME}
   "TestUnbufferedFileSink.cpp"
   "TestUtils.cpp"
   "TestUtils.h"
+  "TestELogLevel.cpp"
 )
 
 include(FetchContent)

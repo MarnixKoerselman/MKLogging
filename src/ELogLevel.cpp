@@ -1,6 +1,19 @@
 #include "MKLogging/ELogLevel.h"
 #include <cstring>
 
+namespace
+{
+  bool isEqualCharCaseInsensitive(char a, char b)
+  {
+    return std::tolower(static_cast<unsigned char>(a)) == std::tolower(static_cast<unsigned char>(b));
+  }
+
+  bool isEqualCaseInsentitive(std::string_view lhs, std::string_view rhs)
+  {
+    return std::equal(lhs.begin(), lhs.end(), rhs.begin(), rhs.end(), isEqualCharCaseInsensitive);
+  }
+}
+
 // prefix increment operator
 void operator++(ELogLevel& logLevel)
 {
@@ -45,21 +58,11 @@ const char* ELogLevel_ToString(ELogLevel logLevel)
   }
 }
 
-bool isEqualCharCaseInsensitive(char a, char b)
-{
-  return std::tolower(static_cast<unsigned char>(a)) == std::tolower(static_cast<unsigned char>(b));
-}
-
-int isEqualCaseInsentitive(std::string_view lhs, std::string_view rhs)
-{
-  return std::equal(lhs.begin(), lhs.end(), rhs.begin(), rhs.end(), isEqualCharCaseInsensitive);
-}
-
 ELogLevel ELogLevel_FromString(const char* szLogLevel)
 {
   for (ELogLevel logLevel = ELogLevel::Verbose; logLevel <= ELogLevel::None; ++logLevel)
   {
-    if (isEqualCaseInsentitive(szLogLevel, ELogLevel_ToString(logLevel)) == 0)
+    if (isEqualCaseInsentitive(szLogLevel, ELogLevel_ToString(logLevel)))
     {
       return logLevel;
     }
