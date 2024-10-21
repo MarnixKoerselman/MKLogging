@@ -15,11 +15,10 @@ public:
   void SetFormatter(const std::shared_ptr<LogFormatter>& formatter);
   void OutputFormattedRecord(std::ostream& os, const LogRecord& record);
 
+  static std::shared_ptr<LogFormatter> GetDefaultFormatter();
+
 public: // ILogSink
   void OutputRecord(const LogRecord& record) override = 0;
-
-protected:
-  static std::shared_ptr<LogFormatter> GetDefaultFormatter();
 
 protected:
   std::shared_ptr<LogFormatter> m_Formatter;
