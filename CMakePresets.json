@@ -1,11 +1,62 @@
 {
-  "version": 6,
-  "cmakeMinimumRequired": {
-    "major": 3,
-    "minor": 23,
-    "patch": 0
-  },
+  "version": 8,
   "configurePresets": [
+    {
+      "name": "windows-base-ninja",
+      "hidden": true,
+      "generator": "Ninja",
+      "binaryDir": "${sourceDir}/_build_/${presetName}",
+      "installDir": "${sourceDir}/_install_/${presetName}",
+      "cacheVariables": {
+        "CMAKE_C_COMPILER": "cl.exe",
+        "CMAKE_CXX_COMPILER": "cl.exe"
+      },
+      "condition": {
+        "type": "equals",
+        "lhs": "${hostSystemName}",
+        "rhs": "Windows"
+      }
+    },
+    {
+      "name": "windows-ninja-x64-debug",
+      "displayName": "Debug (x64) (Ninja)",
+      "inherits": "windows-base-ninja",
+      "architecture": {
+        "value": "x64",
+        "strategy": "external"
+      },
+      "cacheVariables": {
+        "CMAKE_BUILD_TYPE": "Debug"
+      }
+    },
+    {
+      "name": "windows-ninja-x64-release",
+      "displayName": "Release (x64) (Ninja)",
+      "inherits": "windows-ninja-x64-debug",
+      "cacheVariables": {
+        "CMAKE_BUILD_TYPE": "RelWithDebInfo"
+      }
+    },
+    {
+      "name": "windows-ninja-x86-debug",
+      "displayName": "Debug (x86) (Ninja)",
+      "inherits": "windows-base-ninja",
+      "architecture": {
+        "value": "x86",
+        "strategy": "external"
+      },
+      "cacheVariables": {
+        "CMAKE_BUILD_TYPE": "Debug"
+      }
+    },
+    {
+      "name": "windows-ninja-x86-release",
+      "displayName": "Release (x86) (Ninja)",
+      "inherits": "windows-ninja-x86-debug",
+      "cacheVariables": {
+        "CMAKE_BUILD_TYPE": "RelWithDebInfo"
+      }
+    },
     {
       "name": "linux-debug",
       "displayName": "Linux Debug",
@@ -28,7 +79,7 @@
       }
     },
     {
-      "name": "windows-base",
+      "name": "windows-base-vs2022",
       "description": "Target Windows with the Visual Studio development environment.",
       "hidden": true,
       "generator": "Visual Studio 17 2022",
@@ -49,20 +100,20 @@
       }
     },
     {
-      "name": "windows-x64",
+      "name": "windows-x64-vs2022",
       "displayName": "x64",
       "description": "Target Windows (64-bit).",
-      "inherits": "windows-base",
+      "inherits": "windows-base-vs2022",
       "architecture": {
         "value": "x64",
         "strategy": "set"
       }
     },
     {
-      "name": "windows-x86",
+      "name": "windows-x86-vs2022",
       "displayName": "x86",
       "description": "Target Windows (32-bit).",
-      "inherits": "windows-base",
+      "inherits": "windows-base-vs2022",
       "architecture": {
         "value": "Win32",
         "strategy": "set"
@@ -75,28 +126,28 @@
       "displayName": "Debug (x64)",
       "description": "Debug configuration for Windows 64-bit target.",
       "configuration": "Debug",
-      "configurePreset": "windows-x64"
+      "configurePreset": "windows-x64-vs2022"
     },
     {
       "name": "windows-x64-release",
       "displayName": "Release (x64)",
       "description": "Release configuration for Windows 64-bit target.",
       "configuration": "Release",
-      "configurePreset": "windows-x64"
+      "configurePreset": "windows-x64-vs2022"
     },
     {
       "name": "windows-x86-debug",
       "description": "Debug configuration for Windows 32-bit target.",
       "displayName": "Debug (x86)",
       "configuration": "Debug",
-      "configurePreset": "windows-x86"
+      "configurePreset": "windows-x86-vs2022"
     },
     {
       "name": "windows-x86-release",
       "description": "Release configuration for Windows 32-bit target",
       "displayName": "Release (x86)",
       "configuration": "Release",
-      "configurePreset": "windows-x86"
+      "configurePreset": "windows-x86-vs2022"
     }
   ]
 }
