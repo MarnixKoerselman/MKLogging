@@ -43,7 +43,8 @@ void LogQueue::OutputRecord(const LogRecord& record)
   // make the change while locked, and unlock before signalling the changed condition
   std::unique_lock<std::mutex> lock(m_AccessQueue);
   m_MessageQueue.push(record);
-  lock.unlock();
+  // keep locked until signalled, see https://stackoverflow.com/questions/52503361/unlock-the-mutex-after-condition-variablenotify-all-or-before/66162551#66162551
+  // lock.unlock();
   // signal new message
   m_QueueChanged.notify_one();
 }
