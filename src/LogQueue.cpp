@@ -67,14 +67,12 @@ void LogQueue::ConsumerThread()
     if (!m_MessageQueue.empty())
     {
       LogRecord record = m_MessageQueue.front();
+      m_MessageQueue.pop();
       lock.unlock(); // release the queue for access by log producers
       if (m_Delegate)
       {
         m_Delegate->OutputRecord(record);
       }
-      lock.lock();
-      m_MessageQueue.pop();
-      lock.unlock(); // release the queue for access by log producers
     }
   }
 }
