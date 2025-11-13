@@ -20,6 +20,8 @@ RUN apt-get update && export DEBIAN_FRONTEND=noninteractive \
         ccache \
         ninja-build \
         distcc \
+        gcc-multilib \
+        g++-multilib \
     && rm -rf /var/lib/apt/lists/*
 
 # Configure ccache

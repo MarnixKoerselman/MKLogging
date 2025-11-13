@@ -17,12 +17,7 @@ bool LogFileSink::Create(const std::filesystem::path& filePath)
   FileSystemUtils::CreateDirectoriesFromFilePath(filePath);
 
   // Open in untranslated mode
-#ifdef _WIN32
-  errno_t err = fopen_s(&m_File, std::filesystem::path(filePath).string().c_str(), "wb");
-  if (err != 0) m_File = nullptr;
-#else
   m_File = std::fopen(std::filesystem::path(filePath).string().c_str(), "wb");
-#endif
   if (IsOpen()) {
     const char* szUtf8Bom = "\xEF\xBB\xBF";
     m_FileSize = std::fwrite(szUtf8Bom, 1, 3, m_File);

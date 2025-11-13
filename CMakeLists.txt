@@ -82,6 +82,9 @@ endfunction()
 set(CMAKE_UNITY_BUILD OFF)
 set(CMAKE_UNITY_BUILD_BATCH_SIZE 10)
 
+# Enable parallel builds by default
+set(CMAKE_BUILD_PARALLEL_LEVEL 0)  # 0 = use all available cores
+
 # Use ccache for compilation caching
 find_program(CCACHE_PROGRAM ccache)
 if(CCACHE_PROGRAM)
@@ -116,7 +119,7 @@ if (MKLOGGING_STANDALONE_PROJECT)
   # speed up compilation
   if(MSVC)
     add_compile_options(/MP)
-    add_compile_definitions(_SILENCE_CXX17_CODECVT_HEADER_DEPRECATION_WARNING)
+    add_compile_definitions(_SILENCE_CXX17_CODECVT_HEADER_DEPRECATION_WARNING _CRT_SECURE_NO_WARNINGS)
 
   add_link_options(
     $<$<NOT:$<CONFIG:DEBUG>>:/INCREMENTAL:NO> # Disable incremental linking.

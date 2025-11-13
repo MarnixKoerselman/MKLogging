@@ -60,6 +60,39 @@
       }
     },
     {
+      "name": "linux-x86-debug",
+      "inherits": "base",
+      "displayName": "Linux x86 Debug",
+      "description": "Linux 32-bit debug build",
+      "condition": {
+        "type": "equals",
+        "lhs": "${hostSystemName}",
+        "rhs": "Linux"
+      },
+      "cacheVariables": {
+        "CMAKE_BUILD_TYPE": "Debug",
+        "CMAKE_C_FLAGS": "-m32",
+        "CMAKE_CXX_FLAGS": "-m32"
+      }
+    },
+    {
+      "name": "linux-x86-release",
+      "inherits": "base",
+      "displayName": "Linux x86 Release",
+      "description": "Linux 32-bit release build",
+      "condition": {
+        "type": "equals",
+        "lhs": "${hostSystemName}",
+        "rhs": "Linux"
+      },
+      "cacheVariables": {
+        "CMAKE_BUILD_TYPE": "Release",
+        "CMAKE_C_FLAGS": "-m32",
+        "CMAKE_CXX_FLAGS": "-m32",
+        "CMAKE_INTERPROCEDURAL_OPTIMIZATION": "ON"
+      }
+    },
+    {
       "name": "windows-base",
       "inherits": "base",
       "hidden": true,
@@ -196,6 +229,18 @@
       "description": "Release configuration for Windows 64-bit target.",
       "configuration": "Release",
       "configurePreset": "windows-x64-vs2022"
+    },
+    {
+      "name": "linux-x86-debug",
+      "displayName": "Linux x86 Debug",
+      "description": "Debug configuration for Linux 32-bit target.",
+      "configurePreset": "linux-x86-debug"
+    },
+    {
+      "name": "linux-x86-release",
+      "displayName": "Linux x86 Release",
+      "description": "Release configuration for Linux 32-bit target.",
+      "configurePreset": "linux-x86-release"
     }
   ]
 }
