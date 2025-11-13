@@ -11,32 +11,30 @@ jobs:
 
     strategy:
       matrix:
-        configuration_preset: [win-x86-debug, win-x86-release, win-x64-debug, win-x64-release, windows-x86-vs2022, windows-x64-vs2022]
-        build_preset: [windows-x86-debug, windows-x86-release, windows-x64-debug, windows-x64-release]
+        preset: [windows-x86-vs2022, windows-x64-vs2022]
+        config: [Debug, Release]
 
     steps:
       - uses: actions/checkout@v4
         with:
           submodules: recursive
 
-      # cmake examples:
-      #  - https://github.com/madler/zlib/blob/develop/.github/workflows/cmake.yml
-      #  - https://github.com/actions/starter-workflows/blob/main/ci/cmake-multi-platform.yml
+      - name: Setup MSVC
+        uses: ilammy/msvc-dev-cmd@v1
+        with:
+          arch: ${{ contains(matrix.preset, 'x86') && 'x86' || 'x64' }}
 
       - name: Configure CMake
-        working-directory: ${{ github.workspace }}
-        run: cmake --preset ${{ matrix.configuration_preset }}
+        run: cmake --preset ${{ matrix.preset }}
 
       - name: Build
-        working-directory: ${{ github.workspace }}
-        run: cmake --build --preset ${{ matrix.build_preset }} --parallel
+        run: cmake --build build/${{ matrix.preset }} --config ${{ matrix.config }} --parallel
 
       - name: Test
-        working-directory: ${{ github.workspace }}
-        run: ctest --test-dir build/${{ matrix.configuration_preset }} --output-junit TEST-${{ matrix.build_preset }}.xml
+        run: ctest --test-dir build/${{ matrix.preset }} --build-config ${{ matrix.config }} --output-junit TEST-${{ matrix.preset }}-${{ matrix.config }}.xml
 
       - name: JUnit Report
         uses: mikepenz/action-junit-report@v4
-        if: success() || failure() # always run even if the previous step fails
+        if: success() || failure()
         with:
-          report_paths: _build_/**/TEST-*.xml
+          report_paths: build/**/TEST-*.xml
