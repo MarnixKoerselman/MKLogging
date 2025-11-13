@@ -11,8 +11,8 @@ jobs:
 
     strategy:
       matrix:
-        preset_build_architecture: [windows-x86, windows-x64]
-        preset_build_configuration: [debug, release]
+        configuration_preset: [win-x86-debug, win-x86-release, win-x64-debug, win-x64-release, windows-x86-vs2022, windows-x64-vs2022]
+        build_preset: [windows-x86-debug, windows-x86-release, windows-x64-debug, windows-x64-release]
 
     steps:
       - uses: actions/checkout@v4
@@ -25,16 +25,15 @@ jobs:
 
       - name: Configure CMake
         working-directory: ${{ github.workspace }}
-        run: cmake --preset ${{ matrix.preset_build_architecture }}
+        run: cmake --preset ${{ matrix.configuration_preset }}
 
       - name: Build
         working-directory: ${{ github.workspace }}
-        run: cmake --build --preset ${{ matrix.preset_build_architecture }}-${{ matrix.preset_build_configuration }} --parallel
+        run: cmake --build --preset ${{ matrix.build_preset }} --parallel
 
       - name: Test
         working-directory: ${{ github.workspace }}
-        # See https://cmake.org/cmake/help/latest/manual/ctest.1.html for more detail
-        run: ctest --test-dir _build_/${{ matrix.preset_build_architecture }} --build-config ${{ matrix.preset_build_configuration }} --output-junit TEST-${{ matrix.preset_build_architecture }}-${{ matrix.preset_build_configuration }}.xml
+        run: ctest --test-dir build/${{ matrix.configuration_preset }} --output-junit TEST-${{ matrix.build_preset }}.xml
 
       - name: JUnit Report
         uses: mikepenz/action-junit-report@v4

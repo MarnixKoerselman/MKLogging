@@ -11,7 +11,7 @@ jobs:
 
     strategy:
       matrix:
-        configuration_preset: [linux-debug]
+        configuration_preset: [linux-debug, linux-release, linux-relwithdebinfo, linux-x86-debug, linux-x86-release]
 
     steps:
       - uses: lukka/get-cmake@latest  # using 'latest' branch, the most recent CMake and ninja are installed.
@@ -31,22 +31,22 @@ jobs:
 
       - name: Build
         working-directory: ${{ github.workspace }}
-        run: cmake --build _build_/${{ matrix.configuration_preset }} --parallel
+        run: cmake --build build/${{ matrix.configuration_preset }} --parallel
       # - name: Build
       #   uses: devcontainers/ci@v0.3 # https://github.com/marketplace/actions/dev-container-build-and-run-action
       #   with:
-      #     runCmd: cmake --build _build_/${{ matrix.configuration_preset }} --parallel
+      #     runCmd: cmake --build build/${{ matrix.configuration_preset }} --parallel
 
       - name: Test
         working-directory: ${{ github.workspace }}
-        run: ctest --test-dir _build_/${{ matrix.configuration_preset }} --output-junit TEST-${{ matrix.configuration_preset }}.xml
+        run: ctest --test-dir build/${{ matrix.configuration_preset }} --output-junit TEST-${{ matrix.configuration_preset }}.xml
       # - name: Test in dev container
       #   uses: devcontainers/ci@v0.3
       #   with:
-      #     runCmd: ctest --test-dir _build_/${{ matrix.configuration_preset }} --output-junit TEST-${{ matrix.configuration_preset }}.xml
+      #     runCmd: ctest --test-dir build/${{ matrix.configuration_preset }} --output-junit TEST-${{ matrix.configuration_preset }}.xml
 
       - name: JUnit Report
         uses: mikepenz/action-junit-report@v4
         if: success() || failure() # always run even if the previous step fails
         with:
-          report_paths: _build_/**/TEST-*.xml
+          report_paths: build/**/TEST-*.xml
