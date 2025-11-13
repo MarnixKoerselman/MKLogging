@@ -1,14 +1,14 @@
 # Visual Studio local configuration folder
 /.vs
 
-/.vscode
-
 # User files
 *.user
 *.bak
 
 # Output directories
 out/
+build/
+dist/
 _build_/
 _test_/
 _tmp_/

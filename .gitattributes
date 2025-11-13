@@ -1,0 +1,41 @@
+# Auto detect text files and perform LF normalization
+* text=auto
+
+# Source code files - always use LF
+*.cpp text eol=lf
+*.h text eol=lf
+*.hpp text eol=lf
+*.c text eol=lf
+*.cc text eol=lf
+*.cxx text eol=lf
+
+# CMake files - always use LF
+*.cmake text eol=lf
+CMakeLists.txt text eol=lf
+
+# Documentation and config files - always use LF
+*.md text eol=lf
+*.txt text eol=lf
+*.json text eol=lf
+*.yml text eol=lf
+*.yaml text eol=lf
+
+# Shell scripts - always use LF
+*.sh text eol=lf
+
+# Windows specific files - use CRLF
+*.bat text eol=crlf
+*.cmd text eol=crlf
+*.ps1 text eol=crlf
+
+# Binary files - don't modify
+*.exe binary
+*.dll binary
+*.so binary
+*.a binary
+*.lib binary
+*.obj binary
+*.o binary
+*.pdb binary
+*.ilk binary
+*.exp binary

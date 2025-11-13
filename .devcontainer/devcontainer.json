@@ -1,23 +1,37 @@
 // For format details, see https://aka.ms/devcontainer.json. For config options, see the
 // README at: https://github.com/devcontainers/templates/tree/main/src/cpp
 {
-	"name": "C++",
-	"build": {
-		"dockerfile": "Dockerfile"
-	}
+  "name": "C++",
+  "build": {
+    "dockerfile": "Dockerfile"
+  },
 
-	// Features to add to the dev container. More info: https://containers.dev/features.
-	// "features": {},
+  // Configure environment variables for build optimization
+  "remoteEnv": {
+    "CCACHE_DIR": "/ccache"
+  },
 
-	// Use 'forwardPorts' to make a list of ports inside the container available locally.
-	// "forwardPorts": [],
+  // Mount ccache directory to persist the cache between container rebuilds
+  "mounts": ["source=ccache,target=/ccache,type=volume"],
 
-	// Use 'postCreateCommand' to run commands after the container is created.
-	// "postCreateCommand": "gcc -v",
-
-	// Configure tool-specific properties.
-	// "customizations": {},
-
-	// Uncomment to connect as root instead. More info: https://aka.ms/dev-containers-non-root.
-	, "remoteUser": "root"
+  // Configure VS Code settings
+  "customizations": {
+    "vscode": {
+      "settings": {
+        "cmake.configureOnOpen": true,
+        "cmake.parallelJobs": 0 // Use all available cores
+      },
+      "extensions": [
+        "ms-vscode.cmake-tools",
+        "mhutchie.git-graph",
+        "esbenp.prettier-vscode",
+        "amazonwebservices.amazon-q-vscode",
+        "docker.docker",
+        "ms-azuretools.vscode-containers",
+        "github.vscode-github-actions"
+      ]
+    }
+  },
+  // Uncomment to connect as root instead. More info: https://aka.ms/dev-containers-non-root.
+  "remoteUser": "root"
 }
