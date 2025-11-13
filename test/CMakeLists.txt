@@ -4,7 +4,6 @@ add_executable(${PROJECT_NAME}
   "FakeFileLogSink.cpp"
   "FakeFileLogSink.h"
   "FakeStringLogSink.h"
-  "main.cpp"
   "MockLogSink.h"
   "PerformanceTest.cpp"
   "StringUtils.cpp"

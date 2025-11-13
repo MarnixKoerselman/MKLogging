@@ -88,7 +88,12 @@ std::filesystem::path LogRotatingFileSink::GetNextFileName() const
 std::wstring LogRotatingFileSink::GenerateFileName(const std::chrono::system_clock::time_point timeStamp) const
 {
   const auto currentDateTimeTimeT = std::chrono::system_clock::to_time_t(timeStamp);
-  const auto currentDateTimeLocalTime = *std::gmtime(&currentDateTimeTimeT);
+  std::tm currentDateTimeLocalTime;
+#ifdef _WIN32
+  gmtime_s(&currentDateTimeLocalTime, &currentDateTimeTimeT);
+#else
+  gmtime_r(&currentDateTimeTimeT, &currentDateTimeLocalTime);
+#endif
 
   std::wstringstream fileNameStream;
   fileNameStream

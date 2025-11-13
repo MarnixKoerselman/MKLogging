@@ -79,7 +79,7 @@ function(set_warning_flags target_name)
 endfunction()
 
 # Enable Unity build for faster compilation
-set(CMAKE_UNITY_BUILD ON)
+set(CMAKE_UNITY_BUILD OFF)
 set(CMAKE_UNITY_BUILD_BATCH_SIZE 10)
 
 # Use ccache for compilation caching
@@ -116,6 +116,7 @@ if (MKLOGGING_STANDALONE_PROJECT)
   # speed up compilation
   if(MSVC)
     add_compile_options(/MP)
+    add_compile_definitions(_SILENCE_CXX17_CODECVT_HEADER_DEPRECATION_WARNING)
 
   add_link_options(
     $<$<NOT:$<CONFIG:DEBUG>>:/INCREMENTAL:NO> # Disable incremental linking.

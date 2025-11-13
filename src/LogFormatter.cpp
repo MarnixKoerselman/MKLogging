@@ -1,7 +1,3 @@
-#ifndef _CRT_SECURE_NO_WARNINGS
-#define _CRT_SECURE_NO_WARNINGS
-#endif
-
 #include "MKLogging/LogFormatter.h"
 #include <iomanip>
 #include <time.h>
@@ -38,7 +34,12 @@ void LogFormatter::OutputTime(std::ostream& os, const std::chrono::system_clock:
   // const auto currentDateTime = std::chrono::system_clock::now();
   const auto currentDateTime = time;
   const auto currentDateTimeTimeT = std::chrono::system_clock::to_time_t(currentDateTime);
-  const auto currentDateTimeLocalTime = *std::gmtime(&currentDateTimeTimeT);
+  std::tm currentDateTimeLocalTime;
+#ifdef _WIN32
+  gmtime_s(&currentDateTimeLocalTime, &currentDateTimeTimeT);
+#else
+  gmtime_r(&currentDateTimeTimeT, &currentDateTimeLocalTime);
+#endif
 
   const auto ms = std::chrono::time_point_cast<std::chrono::milliseconds>(currentDateTime).time_since_epoch().count() % 1000;
   os << std::put_time(&currentDateTimeLocalTime, "%F %T") << "." << std::setw(3) << std::setfill('0') << std::dec << ms;

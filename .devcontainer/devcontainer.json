@@ -22,9 +22,13 @@
         "cmake.parallelJobs": 0 // Use all available cores
       },
       "extensions": [
-        "ms-vscode.cmake-tools", // this comes pre-installed in the base dev container
+        "ms-vscode.cmake-tools",
         "mhutchie.git-graph",
-        "esbenp.prettier-vscode"
+        "esbenp.prettier-vscode",
+        "amazonwebservices.amazon-q-vscode",
+        "docker.docker",
+        "ms-azuretools.vscode-containers",
+        "github.vscode-github-actions"
       ]
     }
   }
