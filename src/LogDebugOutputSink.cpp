@@ -1,7 +1,6 @@
 #include "MKLogging/Windows/LogDebugOutputSink.h"
 #include <Windows.h>
 #include <sstream>
-#include <gsl/gsl>
 
 #define NOMINMAX
 
@@ -20,10 +19,10 @@ void LogDebugOutputSink::OutputRecord(const LogRecord& record)
     //OutputDebugStringW(converter.from_bytes(buffer.str()).c_str());
 
     // This is a Windows specific method anyway, so let's make use of Windows' transcoding facilities
-    auto stringLength = ::MultiByteToWideChar(CP_UTF8, MB_ERR_INVALID_CHARS, buffer.str().c_str(), gsl::narrow_cast<int>(buffer.str().size()), nullptr, 0);
+    auto stringLength = ::MultiByteToWideChar(CP_UTF8, MB_ERR_INVALID_CHARS, buffer.str().c_str(), static_cast<int>(buffer.str().size()), nullptr, 0);
     std::wstring display;
     display.resize(stringLength + 1);
-    stringLength = ::MultiByteToWideChar(CP_UTF8, MB_ERR_INVALID_CHARS, buffer.str().c_str(), gsl::narrow_cast<int>(buffer.str().size()), display.data(), gsl::narrow_cast<int>(display.size()));
+    stringLength = ::MultiByteToWideChar(CP_UTF8, MB_ERR_INVALID_CHARS, buffer.str().c_str(), static_cast<int>(buffer.str().size()), display.data(), static_cast<int>(display.size()));
     OutputDebugStringW(display.data());
   }
 }
