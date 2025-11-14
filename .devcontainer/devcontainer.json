@@ -12,7 +12,10 @@
   },
 
   // Mount ccache directory to persist the cache between container rebuilds
-  "mounts": ["source=ccache,target=/ccache,type=volume"],
+  "mounts": [
+    "source=ccache,target=/ccache,type=volume",
+    "source=/var/run/docker.sock,target=/var/run/docker.sock,type=bind"
+  ],
 
   // Configure VS Code settings
   "customizations": {
@@ -23,12 +26,13 @@
       },
       "extensions": [
         "ms-vscode.cmake-tools",
+        "ms-azuretools.vscode-containers",
+        //"docker.docker",
         "mhutchie.git-graph",
         "esbenp.prettier-vscode",
         "amazonwebservices.amazon-q-vscode",
-        "docker.docker",
-        "ms-azuretools.vscode-containers",
-        "github.vscode-github-actions"
+        "github.vscode-github-actions",
+        "editorconfig.editorconfig" // https://editorconfig.org/
       ]
     }
   },
