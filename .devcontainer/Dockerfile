@@ -1,4 +1,5 @@
 FROM mcr.microsoft.com/devcontainers/cpp:1-ubuntu-24.04
+# see https://github.com/devcontainers/images/tree/main/src/cpp/history for versions
 
 # ARG REINSTALL_CMAKE_VERSION_FROM_SOURCE="3.23.5"
 ARG REINSTALL_CMAKE_VERSION_FROM_SOURCE="4.1.2"
@@ -18,7 +19,6 @@ RUN if [ "${REINSTALL_CMAKE_VERSION_FROM_SOURCE}" != "none" ]; then \
 RUN apt-get update && export DEBIAN_FRONTEND=noninteractive \
     && apt-get -y install --no-install-recommends \
         ccache \
-        ninja-build \
         distcc \
         gcc-multilib \
         g++-multilib \
