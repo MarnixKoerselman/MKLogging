@@ -1,12 +1,9 @@
 cmake_minimum_required(VERSION 3.19)
 
+# Version can be provided by build script via -DPROJECT_VERSION_PARAM=x.y.z
 set("PROJECT_DESCRIPTION" "Open source C++ log library donated to the world by Marnix Koerselman")
 
-# Version can be provided by build script via -DPROJECT_VERSION_PARAM=x.y.z
-
-project(MKLogging
-  LANGUAGES CXX
-)
+project(MKLogging LANGUAGES CXX)
 
 # Determine whether this is a standalone project or included by other projects
 set(MKLOGGING_STANDALONE_PROJECT OFF)
@@ -198,7 +195,7 @@ set(CPACK_SOURCE_STRIP_FILES OFF)
 # Default CPack action is source package generation
 set(CPACK_GENERATOR "")
 set(CPACK_SOURCE_GENERATOR "ZIP")
-set(CPACK_SOURCE_PACKAGE_FILE_NAME "${PROJECT_NAME}-${PROJECT_VERSION}")
+set(CPACK_SOURCE_PACKAGE_FILE_NAME "${PROJECT_NAME}-${PROJECT_VERSION_PARAM}")
 
 # For source packages, include version in CMakeLists.txt if specified
 if(PROJECT_VERSION_PARAM)
@@ -207,8 +204,19 @@ if(PROJECT_VERSION_PARAM)
   string(REPLACE
     "project(MKLogging\n    LANGUAGES CXX\n  )"
     "project(MKLogging\n    VERSION ${PROJECT_VERSION_PARAM}\n    LANGUAGES CXX\n  )"
-    FIXED_CMAKELISTS "${ORIGINAL_CMAKELISTS}")
-  file(WRITE "${CMAKE_CURRENT_BINARY_DIR}/CMakeLists-fixed.txt" "${FIXED_CMAKELISTS}")
+    VERSIONED_CMAKELISTS "${ORIGINAL_CMAKELISTS}")
+
+  string(REPLACE
+    "project(MKLogging LANGUAGES CXX)"
+    "project(MKLoggingr VERSION ${PROJECT_VERSION_PARAM} LANGUAGES CXX)"
+    VERSIONED_CMAKELISTS "${ORIGINAL_CMAKELISTS}")
+
+  file(WRITE "${CMAKE_CURRENT_BINARY_DIR}/CMakeLists-fixed.txt" "${VERSIONED_CMAKELISTS}")
+
+  # Verify the replacement worked
+  if(NOT VERSIONED_CMAKELISTS MATCHES "VERSION ${PROJECT_VERSION_PARAM}")
+    message(FATAL_ERROR "Version replacement failed in source package CMakeLists.txt")
+  endif()
 
   set(CPACK_SOURCE_INSTALLED_DIRECTORIES
     "${CMAKE_CURRENT_BINARY_DIR}/CMakeLists-fixed.txt" "CMakeLists.txt"
