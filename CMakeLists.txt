@@ -2,7 +2,30 @@ cmake_minimum_required(VERSION 3.19)
 
 set("PROJECT_DESCRIPTION" "Open source C++ log library donated to the world by Marnix Koerselman")
 
+# Get version from git tag
+find_package(Git QUIET)
+if(GIT_FOUND)
+  execute_process(
+    COMMAND ${GIT_EXECUTABLE} describe --tags --abbrev=0
+    WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
+    OUTPUT_VARIABLE GIT_TAG
+    OUTPUT_STRIP_TRAILING_WHITESPACE
+    ERROR_QUIET
+  )
+  if(GIT_TAG MATCHES "^([0-9]+\.[0-9]+\.[0-9]+)$")
+    set(PROJECT_VERSION_FROM_GIT ${CMAKE_MATCH_1})
+  endif()
+endif()
+
+# Use git version or fallback
+if(PROJECT_VERSION_FROM_GIT)
+  set(PROJECT_VERSION_STRING ${PROJECT_VERSION_FROM_GIT})
+else()
+  set(PROJECT_VERSION_STRING "0.0.1")
+endif()
+
 project(MKLogging
+  VERSION ${PROJECT_VERSION_STRING}
   LANGUAGES CXX
 )
 
@@ -205,12 +228,32 @@ install(EXPORT ${PROJECT_NAME}Targets
 include(CMakePackageConfigHelpers)
 
 configure_package_config_file(
-  "${CMAKE_CURRENT_SOURCE_DIR}/cmake/${PROJECT_NAME}Config.cmake.in"
-  "${CMAKE_CURRENT_BINARY_DIR}/${PROJECT_NAME}Config.cmake"
+  "${CMAKE_CURRENT_SOURCE_DIR}/cmake/${PROJECT_NAME}.cmake.in"
+  "${CMAKE_CURRENT_BINARY_DIR}/${PROJECT_NAME}.cmake"
   INSTALL_DESTINATION ${CMAKE_INSTALL_LIBDIR}/cmake/${PROJECT_NAME}
 )
 
+write_basic_package_version_file(
+  "${CMAKE_CURRENT_BINARY_DIR}/${PROJECT_NAME}Version.cmake"
+  VERSION ${PROJECT_VERSION}
+  COMPATIBILITY SameMajorVersion
+)
+
 install(FILES
-  "${CMAKE_CURRENT_BINARY_DIR}/${PROJECT_NAME}Config.cmake"
+  "${CMAKE_CURRENT_BINARY_DIR}/${PROJECT_NAME}.cmake"
+  "${CMAKE_CURRENT_BINARY_DIR}/${PROJECT_NAME}Version.cmake"
   DESTINATION ${CMAKE_INSTALL_LIBDIR}/cmake/${PROJECT_NAME}
 )
+
+# CPack configuration
+set(CPACK_PACKAGE_DIRECTORY "${CMAKE_BINARY_DIR}/dist")
+set(CPACK_PACKAGE_NAME "${PROJECT_NAME}")
+set(CPACK_PACKAGE_VERSION "${PROJECT_VERSION}")
+set(CPACK_PACKAGE_DESCRIPTION_SUMMARY "${PROJECT_DESCRIPTION}")
+set(CPACK_PACKAGE_VENDOR "Marnix Koerselman")
+set(CPACK_RESOURCE_FILE_LICENSE "${CMAKE_CURRENT_SOURCE_DIR}/LICENSE")
+set(CPACK_RESOURCE_FILE_README "${CMAKE_CURRENT_SOURCE_DIR}/README.md")
+set(CPACK_GENERATOR "TGZ;ZIP")
+set(CPACK_SOURCE_GENERATOR "TGZ;ZIP")
+set(CPACK_SOURCE_IGNORE_FILES "/build/;/\\.git/;/\\.github/;/\\.vscode/;/\\.vs/")
+include(CPack)
