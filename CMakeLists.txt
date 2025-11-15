@@ -154,7 +154,6 @@ target_include_directories(${PROJECT_NAME}
     $<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/include>
     $<INSTALL_INTERFACE:include>
 )
-# target_include_directories(${PROJECT_NAME} PUBLIC "${PROJECT_SOURCE_DIR}/include")
 
 # Apply warning flags to our library
 set_warning_flags(MKLogging)
@@ -167,6 +166,18 @@ if(MKLOGGING_BUILD_TESTS)
   # Enables testing for this directory and below.
   # This command should be in the source directory root because ctest expects to find a test file in the build directory root.
   enable_testing()
+
+  include(FetchContent)
+  FetchContent_Declare(
+    googletest
+    GIT_REPOSITORY https://github.com/google/googletest.git
+    GIT_TAG        v1.14.0
+    GIT_SHALLOW    ON
+  )
+  # For Windows: Prevent overriding the parent project's compiler/linker settings
+  set(gtest_force_shared_crt ON CACHE BOOL "" FORCE)
+  set(INSTALL_GTEST OFF)
+  FetchContent_MakeAvailable(googletest)
 
   add_subdirectory("test")
 endif()
