@@ -205,120 +205,27 @@ if(MKLOGGING_BUILD_TESTS)
   add_subdirectory("test")
 endif()
 
-# Install configuration
-include(GNUInstallDirs)
-
-install(TARGETS ${PROJECT_NAME}
-  EXPORT ${PROJECT_NAME}Targets
-  ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR}
-    COMPONENT Development
-  LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
-    COMPONENT Runtime
-  RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}
-    COMPONENT Runtime
-)
-
-install(DIRECTORY include/
-  DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}
-  COMPONENT Development
-)
-
-install(EXPORT ${PROJECT_NAME}Targets
-  FILE ${PROJECT_NAME}Targets.cmake
-  NAMESPACE ${PROJECT_NAME}::
-  DESTINATION ${CMAKE_INSTALL_LIBDIR}/cmake/${PROJECT_NAME}
-  COMPONENT Development
-)
-
-include(CMakePackageConfigHelpers)
-
-configure_package_config_file(
-  "${CMAKE_CURRENT_SOURCE_DIR}/cmake/${PROJECT_NAME}.cmake.in"
-  "${CMAKE_CURRENT_BINARY_DIR}/${PROJECT_NAME}Config.cmake"
-  INSTALL_DESTINATION ${CMAKE_INSTALL_LIBDIR}/cmake/${PROJECT_NAME}
-)
-
-write_basic_package_version_file(
-  "${CMAKE_CURRENT_BINARY_DIR}/${PROJECT_NAME}ConfigVersion.cmake"
-  VERSION ${PROJECT_VERSION}
-  COMPATIBILITY SameMajorVersion
-)
-
-install(FILES
-  "${CMAKE_CURRENT_BINARY_DIR}/${PROJECT_NAME}Config.cmake"
-  "${CMAKE_CURRENT_BINARY_DIR}/${PROJECT_NAME}ConfigVersion.cmake"
-  DESTINATION ${CMAKE_INSTALL_LIBDIR}/cmake/${PROJECT_NAME}
-  COMPONENT Development
-)
-
-# CPack configuration - Distribution best practices
-set(CPACK_PACKAGE_DIRECTORY "${CMAKE_BINARY_DIR}/dist")
-set(CPACK_SOURCE_PACKAGE_DIRECTORY "${CMAKE_SOURCE_DIR}/dist")
+# CPack configuration - Source packages only
+set(CPACK_PACKAGE_DIRECTORY "${CMAKE_SOURCE_DIR}/dist")
 set(CPACK_PACKAGE_NAME "${PROJECT_NAME}")
 set(CPACK_PACKAGE_VERSION "${PROJECT_VERSION}")
 set(CPACK_PACKAGE_DESCRIPTION_SUMMARY "${PROJECT_DESCRIPTION}")
-set(CPACK_PACKAGE_DESCRIPTION "Cross-platform C++17 logging library with multiple output sinks and configurable formatting")
 set(CPACK_PACKAGE_VENDOR "Marnix Koerselman")
 set(CPACK_PACKAGE_CONTACT "https://github.com/MarnixKoerselman/MKLogging")
 set(CPACK_RESOURCE_FILE_LICENSE "${CMAKE_CURRENT_SOURCE_DIR}/LICENSE")
 set(CPACK_RESOURCE_FILE_README "${CMAKE_CURRENT_SOURCE_DIR}/README.md")
 set(CPACK_SOURCE_STRIP_FILES OFF)
 
-# Binary packages
-set(CPACK_GENERATOR "TGZ;ZIP")
-set(CPACK_PACKAGE_FILE_NAME "${PROJECT_NAME}-${PROJECT_VERSION}-${CMAKE_SYSTEM_NAME}-${CMAKE_SYSTEM_PROCESSOR}")
-
-# Source packages - Best practices (preset-independent)
-set(CPACK_SOURCE_GENERATOR "TGZ")
+# Default CPack action is source package generation
+set(CPACK_GENERATOR "")
+set(CPACK_SOURCE_GENERATOR "ZIP")
 set(CPACK_SOURCE_PACKAGE_FILE_NAME "${PROJECT_NAME}-${PROJECT_VERSION}")
 set(CPACK_SOURCE_IGNORE_FILES
-  # Build artifacts
-  "/build.*"
+  "/build/"
   "/dist/"
-  "/out/"
-  "/\\.cache/"
-  # Version control
-  "/\\.git/"
-  "/\\.svn/"
-  "/\\.hg/"
-  # IDE files
-  "/\\.vscode/"
-  "/\\.vs/"
-  "/\\.idea/"
-  "/\\.clion/"
-  # CMake generated files
-  "/CMakeFiles/"
-  "/CMakeCache\\.txt$"
-  "/cmake_install\\.cmake$"
-  "/CPackConfig\\.cmake$"
-  "/CPackSourceConfig\\.cmake$"
-  "/Makefile$"
-  "/build\\.ninja$"
-  "/\\.ninja_deps$"
-  "/\\.ninja_log$"
-  "/compile_commands\\.json$"
-  # OS files
-  "\\.DS_Store$"
-  "/Thumbs\\.db$"
-  # Temporary files
-  "~$"
-  "\\.tmp$"
-  "\\.bak$"
-  "\\.orig$"
-  "\\.rej$"
-  # Package files
-  "\\.tar\\.gz$"
-  "\\.zip$"
-  "\\.deb$"
-  "\\.rpm$"
+  "/.git/"
+  "/.vscode/"
+  "/.vs/"
 )
-
-# Component-based packaging
-set(CPACK_COMPONENTS_ALL Runtime Development)
-set(CPACK_COMPONENT_RUNTIME_DISPLAY_NAME "Runtime Libraries")
-set(CPACK_COMPONENT_RUNTIME_DESCRIPTION "MKLogging runtime libraries")
-set(CPACK_COMPONENT_DEVELOPMENT_DISPLAY_NAME "Development Files")
-set(CPACK_COMPONENT_DEVELOPMENT_DESCRIPTION "Headers and CMake configuration files")
-set(CPACK_COMPONENT_DEVELOPMENT_DEPENDS Runtime)
 
 include(CPack)
