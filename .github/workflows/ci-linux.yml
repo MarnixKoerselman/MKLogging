@@ -34,8 +34,10 @@ jobs:
         with:
           report_paths: build/**/TEST-*.xml
 
-      - name: Upload Source Package
+      - name: Upload Distributable Packages
         uses: actions/upload-artifact@v4
         with:
           name: source-package-${{ matrix.configuration_preset }}
-          path: build/${{ matrix.configuration_preset }}/dist/*.tar.gz
+          path:
+            dist/*
+            build/${{ matrix.configuration_preset }}/dist/*
