@@ -26,9 +26,16 @@ jobs:
             cmake --preset ${{ matrix.configuration_preset }}
             cmake --build build/${{ matrix.configuration_preset }} --parallel
             ctest --test-dir build/${{ matrix.configuration_preset }} --output-junit TEST-${{ matrix.configuration_preset }}.xml
+            cmake --build build/${{ matrix.configuration_preset }} --target package_source
 
       - name: JUnit Report
         uses: mikepenz/action-junit-report@v4
         if: success() || failure()
         with:
           report_paths: build/**/TEST-*.xml
+
+      - name: Upload Source Package
+        uses: actions/upload-artifact@v4
+        with:
+          name: source-package-${{ matrix.configuration_preset }}
+          path: dist/*.tar.gz
