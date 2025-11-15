@@ -46,6 +46,4 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: source-package-${{ matrix.preset }}-${{ matrix.config }}
-          path:
-            dist/*
-            build/${{ matrix.preset }}/dist/*
+          path: dist/*
