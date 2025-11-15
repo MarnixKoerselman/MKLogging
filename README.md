@@ -57,7 +57,7 @@ A Logger instance has remarkable similarities with LogSink and is in fact derive
 
 Currently available log sinks are:
 
-- LogDebugOutputSink => OutputDebugString
+- LogDebugOutputSink => OutputDebugString (Windows only!)
 - LogOutputStreamSink => std::ostream (user-provided reference)
 - LogStdOutSink => std::cout
 - LogStdErrSink => std::cerr
