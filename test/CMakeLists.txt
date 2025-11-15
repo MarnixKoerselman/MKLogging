@@ -18,6 +18,7 @@ add_executable(${PROJECT_NAME}
   "TestUtils.cpp"
   "TestUtils.h"
   "TestELogLevel.cpp"
+  "VersionTest.cpp"
 )
 
 include(GoogleTest)

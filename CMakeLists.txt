@@ -154,6 +154,23 @@ target_include_directories(${PROJECT_NAME}
     $<INSTALL_INTERFACE:include>
 )
 
+# Generate version header
+if(PROJECT_VERSION)
+  configure_file(
+    "${CMAKE_CURRENT_SOURCE_DIR}/cmake/Version.h.in"
+    "${CMAKE_CURRENT_BINARY_DIR}/include/MKLogging/Version.h"
+    @ONLY
+  )
+else()
+  file(WRITE
+       "${CMAKE_CURRENT_BINARY_DIR}/include/MKLogging/Version.h"
+       "#pragma once\n\n#define MKLOGGING_VERSION_MAJOR 0\n#define MKLOGGING_VERSION_MINOR 0\n#define MKLOGGING_VERSION_PATCH 1\n#define MKLOGGING_VERSION_STRING \"0.0.1\"")
+endif()
+
+target_include_directories(${PROJECT_NAME} PUBLIC
+  $<BUILD_INTERFACE:${CMAKE_CURRENT_BINARY_DIR}/include>
+)
+
 # Apply warning flags to our library
 set_warning_flags(MKLogging)
 
@@ -201,11 +218,6 @@ set(CPACK_SOURCE_PACKAGE_FILE_NAME "${PROJECT_NAME}-${PROJECT_VERSION_PARAM}")
 if(PROJECT_VERSION_PARAM)
   # Create CMakeLists.txt with hardcoded version for source distribution
   file(READ "${CMAKE_CURRENT_LIST_FILE}" ORIGINAL_CMAKELISTS)
-  string(REPLACE
-    "project(MKLogging\n    LANGUAGES CXX\n  )"
-    "project(MKLogging\n    VERSION ${PROJECT_VERSION_PARAM}\n    LANGUAGES CXX\n  )"
-    VERSIONED_CMAKELISTS "${ORIGINAL_CMAKELISTS}")
-
   string(REPLACE
     "project(MKLogging LANGUAGES CXX)"
     "project(MKLoggingr VERSION ${PROJECT_VERSION_PARAM} LANGUAGES CXX)"

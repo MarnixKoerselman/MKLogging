@@ -108,3 +108,8 @@ Logger* LogCentral();
 std::ostream& operator <<(std::ostream& os, const std::wstring& s);
 std::ostream& operator <<(std::ostream& os, const wchar_t* sz);
 #endif
+
+///////////////////////////////////////////////////////////////////////////////////////////////////
+namespace MKLogging {
+  std::string GetVersion();
+}
