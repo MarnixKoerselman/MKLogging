@@ -25,10 +25,10 @@ pipeline {
         """
         // bat """
         //   call "C:\\Program Files (x86)\\Microsoft Visual Studio\\2022\\BuildTools\\Common7\\Tools\\VsMSBuildCmd.bat"
-        //   MSBuild MkLogging.sln -nologo -target:Restore,Build -property:RestorePackagesConfig=true;Platform=x86;Configuration=Debug -maxCpuCount:1 -fileLogger -fileLoggerParameters:LogFile=_build_\\msbuild-x86-Debug.log;Encoding=UTF-8
-        //   MSBuild MkLogging.sln -nologo -target:Build -property:Platform=x86;Configuration=Release -maxCpuCount:1 -fileLogger -fileLoggerParameters:LogFile=_build_\\msbuild-x86-Release.log;Encoding=UTF-8
-        //   MSBuild MkLogging.sln -nologo -target:Build -property:Platform=x64;Configuration=Debug -maxCpuCount:1 -fileLogger -fileLoggerParameters:LogFile=_build_\\msbuild-x64-Debug.log;Encoding=UTF-8
-        //   MSBuild MkLogging.sln -nologo -target:Build -property:Platform=x64;Configuration=Release -maxCpuCount:1 -fileLogger -fileLoggerParameters:LogFile=_build_\\msbuild-x64-Release.log;Encoding=UTF-8
+        //   MSBuild MkLogging.sln -nologo -target:Restore,Build -property:RestorePackagesConfig=true;Platform=x86;Configuration=Debug -maxCpuCount:1 -fileLogger -fileLoggerParameters:LogFile=build\\msbuild-x86-Debug.log;Encoding=UTF-8
+        //   MSBuild MkLogging.sln -nologo -target:Build -property:Platform=x86;Configuration=Release -maxCpuCount:1 -fileLogger -fileLoggerParameters:LogFile=build\\msbuild-x86-Release.log;Encoding=UTF-8
+        //   MSBuild MkLogging.sln -nologo -target:Build -property:Platform=x64;Configuration=Debug -maxCpuCount:1 -fileLogger -fileLoggerParameters:LogFile=build\\msbuild-x64-Debug.log;Encoding=UTF-8
+        //   MSBuild MkLogging.sln -nologo -target:Build -property:Platform=x64;Configuration=Release -maxCpuCount:1 -fileLogger -fileLoggerParameters:LogFile=build\\msbuild-x64-Release.log;Encoding=UTF-8
         // """
       }
       post {
@@ -39,16 +39,16 @@ pipeline {
     }
     stage('Test') {
       steps {
-        dir('_build_\\x86\\MKLoggingTest\\Debug') {
+        dir('build\\x86\\MKLoggingTest\\Debug') {
           bat 'MKLoggingTest.exe --gtest_output="xml:gtest-results.xml" || exit /b 0'
         }
-        dir('_build_\\x86\\MKLoggingTest\\Release') {
+        dir('build\\x86\\MKLoggingTest\\Release') {
           bat 'MKLoggingTest.exe --gtest_output="xml:gtest-results.xml" || exit /b 0'
         }
-        dir('_build_\\x64\\MKLoggingTest\\Debug') {
+        dir('build\\x64\\MKLoggingTest\\Debug') {
           bat 'MKLoggingTest.exe --gtest_output="xml:gtest-results.xml" || exit /b 0'
         }
-        dir('_build_\\x64\\MKLoggingTest\\Release') {
+        dir('build\\x64\\MKLoggingTest\\Release') {
           bat 'MKLoggingTest.exe --gtest_output="xml:gtest-results.xml" || exit /b 0'
         }
         junit '**/gtest-results.xml'
