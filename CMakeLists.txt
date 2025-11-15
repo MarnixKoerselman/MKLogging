@@ -1,10 +1,9 @@
 cmake_minimum_required(VERSION 3.19)
 
+# Version can be provided by build script via -DPROJECT_VERSION_PARAM=x.y.z
 set("PROJECT_DESCRIPTION" "Open source C++ log library donated to the world by Marnix Koerselman")
 
-project(MKLogging
-  LANGUAGES CXX
-)
+project(MKLogging LANGUAGES CXX)
 
 # Determine whether this is a standalone project or included by other projects
 set(MKLOGGING_STANDALONE_PROJECT OFF)
@@ -154,7 +153,23 @@ target_include_directories(${PROJECT_NAME}
     $<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/include>
     $<INSTALL_INTERFACE:include>
 )
-# target_include_directories(${PROJECT_NAME} PUBLIC "${PROJECT_SOURCE_DIR}/include")
+
+# Generate version header
+if(PROJECT_VERSION)
+  configure_file(
+    "${CMAKE_CURRENT_SOURCE_DIR}/cmake/Version.h.in"
+    "${CMAKE_CURRENT_BINARY_DIR}/include/MKLogging/Version.h"
+    @ONLY
+  )
+else()
+  file(WRITE
+       "${CMAKE_CURRENT_BINARY_DIR}/include/MKLogging/Version.h"
+       "#pragma once\n\n#define MKLOGGING_VERSION_MAJOR 0\n#define MKLOGGING_VERSION_MINOR 0\n#define MKLOGGING_VERSION_PATCH 1\n#define MKLOGGING_VERSION_STRING \"0.0.1\"")
+endif()
+
+target_include_directories(${PROJECT_NAME} PUBLIC
+  $<BUILD_INTERFACE:${CMAKE_CURRENT_BINARY_DIR}/include>
+)
 
 # Apply warning flags to our library
 set_warning_flags(MKLogging)
@@ -168,38 +183,73 @@ if(MKLOGGING_BUILD_TESTS)
   # This command should be in the source directory root because ctest expects to find a test file in the build directory root.
   enable_testing()
 
+  include(FetchContent)
+  FetchContent_Declare(
+    googletest
+    GIT_REPOSITORY https://github.com/google/googletest.git
+    GIT_TAG        v1.17.0
+    GIT_SHALLOW    ON
+  )
+  # For Windows: Prevent overriding the parent project's compiler/linker settings
+  set(gtest_force_shared_crt ON CACHE BOOL "" FORCE)
+  set(INSTALL_GTEST OFF)
+  FetchContent_MakeAvailable(googletest)
+
   add_subdirectory("test")
 endif()
 
-# Install configuration
-include(GNUInstallDirs)
+# CPack configuration - Source packages only
+set(CPACK_PACKAGE_DIRECTORY "${CMAKE_SOURCE_DIR}/dist")
+set(CPACK_PACKAGE_NAME "${PROJECT_NAME}")
+set(CPACK_PACKAGE_VERSION "${PROJECT_VERSION}")
+set(CPACK_PACKAGE_DESCRIPTION_SUMMARY "${PROJECT_DESCRIPTION}")
+set(CPACK_PACKAGE_VENDOR "Marnix Koerselman")
+set(CPACK_PACKAGE_CONTACT "https://github.com/MarnixKoerselman/MKLogging")
+set(CPACK_RESOURCE_FILE_LICENSE "${CMAKE_CURRENT_SOURCE_DIR}/LICENSE")
+set(CPACK_RESOURCE_FILE_README "${CMAKE_CURRENT_SOURCE_DIR}/README.md")
+set(CPACK_SOURCE_STRIP_FILES OFF)
 
-install(TARGETS ${PROJECT_NAME}
-  EXPORT ${PROJECT_NAME}Targets
-  ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR}
-  LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
-  RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}
+# Default CPack action is source package generation
+set(CPACK_GENERATOR "")
+set(CPACK_SOURCE_GENERATOR "ZIP")
+set(CPACK_SOURCE_PACKAGE_FILE_NAME "${PROJECT_NAME}-${PROJECT_VERSION_PARAM}")
+
+# For source packages, include version in CMakeLists.txt if specified
+if(PROJECT_VERSION_PARAM)
+  # Create CMakeLists.txt with hardcoded version for source distribution
+  file(READ "${CMAKE_CURRENT_LIST_FILE}" ORIGINAL_CMAKELISTS)
+  string(REPLACE
+    "project(MKLogging LANGUAGES CXX)"
+    "project(MKLoggingr VERSION ${PROJECT_VERSION_PARAM} LANGUAGES CXX)"
+    VERSIONED_CMAKELISTS "${ORIGINAL_CMAKELISTS}")
+
+  file(WRITE "${CMAKE_CURRENT_BINARY_DIR}/CMakeLists-fixed.txt" "${VERSIONED_CMAKELISTS}")
+
+  # Verify the replacement worked
+  if(NOT VERSIONED_CMAKELISTS MATCHES "VERSION ${PROJECT_VERSION_PARAM}")
+    message(FATAL_ERROR "Version replacement failed in source package CMakeLists.txt")
+  endif()
+
+  set(CPACK_SOURCE_INSTALLED_DIRECTORIES
+    "${CMAKE_CURRENT_BINARY_DIR}/CMakeLists-fixed.txt" "CMakeLists.txt"
+    "${CMAKE_CURRENT_SOURCE_DIR}/include" "include"
+    "${CMAKE_CURRENT_SOURCE_DIR}/src" "src"
+    "${CMAKE_CURRENT_SOURCE_DIR}/test" "test"
+    "${CMAKE_CURRENT_SOURCE_DIR}/cmake" "cmake"
+    "${CMAKE_CURRENT_SOURCE_DIR}/LICENSE" "LICENSE"
+    "${CMAKE_CURRENT_SOURCE_DIR}/README.md" "README.md"
+    "${CMAKE_CURRENT_SOURCE_DIR}/CMakePresets.json" "CMakePresets.json"
+  )
+else()
+  # Standard source package without version fixation
+  set(CPACK_SOURCE_INSTALLED_DIRECTORIES "${CMAKE_CURRENT_SOURCE_DIR}" ".")
+endif()
+set(CPACK_SOURCE_IGNORE_FILES
+  "/build/"
+  "/dist/"
+  "/.git/"
+  "/.vscode/"
+  "/.vs/"
 )
 
-install(DIRECTORY include/
-  DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}
-)
-
-install(EXPORT ${PROJECT_NAME}Targets
-  FILE ${PROJECT_NAME}Targets.cmake
-  NAMESPACE ${PROJECT_NAME}::
-  DESTINATION ${CMAKE_INSTALL_LIBDIR}/cmake/${PROJECT_NAME}
-)
-
-include(CMakePackageConfigHelpers)
-
-configure_package_config_file(
-  "${CMAKE_CURRENT_SOURCE_DIR}/cmake/${PROJECT_NAME}Config.cmake.in"
-  "${CMAKE_CURRENT_BINARY_DIR}/${PROJECT_NAME}Config.cmake"
-  INSTALL_DESTINATION ${CMAKE_INSTALL_LIBDIR}/cmake/${PROJECT_NAME}
-)
-
-install(FILES
-  "${CMAKE_CURRENT_BINARY_DIR}/${PROJECT_NAME}Config.cmake"
-  DESTINATION ${CMAKE_INSTALL_LIBDIR}/cmake/${PROJECT_NAME}
-)
+include(CPack)

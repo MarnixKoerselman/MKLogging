@@ -33,8 +33,17 @@ jobs:
       - name: Test
         run: ctest --test-dir build/${{ matrix.preset }} --build-config ${{ matrix.config }} --output-junit TEST-${{ matrix.preset }}-${{ matrix.config }}.xml
 
+      - name: Package
+        run: cpack --config build/${{ matrix.preset }}/CPackSourceConfig.cmake
+
       - name: JUnit Report
         uses: mikepenz/action-junit-report@v4
         if: success() || failure()
         with:
           report_paths: build/**/TEST-*.xml
+
+      - name: Upload Distributable Packages
+        uses: actions/upload-artifact@v4
+        with:
+          name: source-package-${{ matrix.preset }}-${{ matrix.config }}
+          path: dist/*

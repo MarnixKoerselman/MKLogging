@@ -1,6 +1,7 @@
 #include "MKLogging/Logger.h"
 #include <codecvt>
 #include <locale>
+#include "MKLogging/Version.h"
 
 // Global instance; automatically instantiated for each application that references this static library.
 std::shared_ptr<Logger> SharedLogCentral()
@@ -73,4 +74,9 @@ bool Logger::IsLogged(ELogLevel logLevel)
   // TODO: allow overruling the hard-coded log level by dynamic application properties, to manipulate the log level at runtime
 
   return (logLevel >= m_MinimumLogLevel) && HasListeners();
+}
+
+std::string MKLogging::GetVersion()
+{
+  return std::string(MKLOGGING_VERSION_STRING);
 }

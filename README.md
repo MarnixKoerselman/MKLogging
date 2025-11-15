@@ -21,14 +21,23 @@ Log levels:
 
 ## Implementation in a nutshell
 
-This code is Microsoft based, using standard C++17 as much as possible (maybe you can use it on Linux too, YMMV). I used VS2019 to create the solution and project files. There is a 'Shared Items Project' (MKLoggingFiles) that contains the files for the library. The consuming project MKLoggingTest is a GoogleTest application, and by referencing LogShared it pulls in all files from MKLoggingFiles and compiles them with the same compiler settings. I thought that was a pretty neat option, as it saves me the hassle of keeping compiler settings for multiple projects in sync.
+This is a cross-platform C++17 logging library built with CMake. It supports Windows (MSVC), Linux (GCC/Clang), and provides both 32-bit and 64-bit builds. The project uses modern CMake practices with presets for different configurations and includes comprehensive CI/CD pipelines for automated testing.
+
+### Build System
+
+- **CMake 3.19+** with presets for easy configuration
+- **Cross-platform**: Windows (Visual Studio 2022), Linux (GCC/Clang)
+- **Multi-architecture**: x86 and x64 support
+- **Build configurations**: Debug, Release, RelWithDebInfo
+- **Testing**: GoogleTest integration with CTest
+- **CI/CD**: GitHub Actions for automated builds and testing
 
 ### Types
 
-LogRecord captures the information that makes up a log statement. It is unlikely that you'll interact directly with this type.
-LogSink writes the log statement to a specific output device, e.g. on the screen or to a file.
-Logger takes care of filtering and distributing log records to the connected sinks.
-LogFormatter takes care of the presentation of the metadata of log statements.
+- LogRecord captures the information that makes up a log statement. It is unlikely that you'll interact directly with this type.
+- LogSink writes the log statement to a specific output device, e.g. on the screen or to a file.
+- Logger takes care of filtering and distributing log records to the connected sinks.
+- LogFormatter takes care of the presentation of the metadata of log statements.
 
 #### Logger
 
@@ -48,7 +57,7 @@ A Logger instance has remarkable similarities with LogSink and is in fact derive
 
 Currently available log sinks are:
 
-- LogDebugOutputSink => OutputDebugString
+- LogDebugOutputSink => OutputDebugString (Windows only!)
 - LogOutputStreamSink => std::ostream (user-provided reference)
 - LogStdOutSink => std::cout
 - LogStdErrSink => std::cerr
@@ -57,9 +66,19 @@ Currently available log sinks are:
 - LogRotatingFileSink => multiple text files, to limit the total size of logs
 - LogQueue => a wrapper that allows each of the aforementioned log sinks to become buffered and asynchronous (NB: not recommended for LogDebugOutputSink)
 
- To create your own custom long sink, simply derive a class from ILogSink and implement its only method 'OutputRecord'. Instantiate and use your class like this:
+To create your own custom log sink, simply derive a class from ILogSink and implement its only method 'OutputRecord'. Instantiate and use your class like this:
 
-   `LogCentral()->AddListener(std::make_shared<MyLogSink>())`
+```cpp
+class MyLogSink : public ILogSink {
+public:
+    void OutputRecord(const LogRecord& record) override {
+        // Your custom logging implementation
+    }
+};
+
+// Add to central logger
+LogCentral()->AddListener(std::make_shared<MyLogSink>());
+```
 
 #### LogFormatter
 
@@ -82,12 +101,86 @@ A typical log command (e.g. `LOGD("var=" << var)`) has the following properties:
 
 - the log statement is std::ostream based, for UTF-8. Conversion helpers for std::wstring and (wchar_t*) are provided, but they use `std::wstring_convert<std::codecvt_utf8<wchar_t>>` converter which is deprecated. The conversion helpers can be replaced (see Logger.h: `MKL_NO_STD_STRING_HELPERS`).
 
-### Notes
+## Quick Start
+
+### Building the Library
+
+```bash
+# Configure with preset
+cmake --preset linux-release  # or windows-x64-vs2022
+
+# Build
+cmake --build build/linux-release --parallel
+
+# Run tests
+ctest --test-dir build/linux-release
+```
+
+### Using in Your Project
+
+```cpp
+#include <MKLogging/Logger.h>
+#include <MKLogging/LogFileSink.h>
+
+int main() {
+    // Configure log level
+    LogCentral()->SetMinimumLogLevel(ELogLevel::Info);
+
+    // Add file logging
+    LogCentral()->AddListener(std::make_shared<LogFileSink>("app.log"));
+
+    // Basic usage with central logger
+    LOGI("Application started");
+    LOGD("Debug info: value=" << 42);
+    LOGW("Warning message");
+    LOGE("Error occurred");
+
+    return 0;
+}
+```
+
+### CMake Integration
+
+Example using find_package:
+
+```cmake
+find_package(MKLogging REQUIRED)
+target_link_libraries(your_target MKLogging::MKLogging)
+```
+
+Example using the
+[`FetchContent` CMake module](https://cmake.org/cmake/help/latest/module/FetchContent.html):
+
+```cmake
+cmake_minimum_required(VERSION 3.19)
+project(your_target)
+
+# MKLogging requires at least C++17
+set(CMAKE_CXX_STANDARD 17)
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
+
+include(FetchContent)
+FetchContent_Declare(
+  mklogging
+  GIT_REPOSITORY https://github.com/MarnixKoerselman/MKLogging.git
+  GIT_TAG main   # or a specific git commit
+)
+FetchContent_MakeAvailable(mklogging)
+
+add_executable(your_target)
+target_link_libraries(
+  your_target
+  MKLogging
+)
+
+```
+
+### Performance Notes
 
 IOStream based output is slower than std::printf based output.
 See <https://stackoverflow.com/questions/2872543/printf-vs-cout-in-c/20238349#20238349> for some thoughts.
 
-Some tests (in LogLibTests > PerformanceTest) show that this is correct.
+Some tests (in test/PerformanceTest.cpp) demonstrate this difference.
 
 For creating the log statement however, there are many advantages of using string stream buffer to construct the log statement: mostly ease-of-use (e.g. consistent logging of a class), and type safety.
 
@@ -100,5 +193,7 @@ Log when a method is entered and left:
 void f()
 {
   LOG_ENTER_LEAVE(ELogLevel::Verbose);
+
+  // do stuff...
 }
 ```
