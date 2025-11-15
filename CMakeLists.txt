@@ -2,30 +2,9 @@ cmake_minimum_required(VERSION 3.19)
 
 set("PROJECT_DESCRIPTION" "Open source C++ log library donated to the world by Marnix Koerselman")
 
-# Get version from git tag
-find_package(Git QUIET)
-if(GIT_FOUND)
-  execute_process(
-    COMMAND ${GIT_EXECUTABLE} describe --tags --abbrev=0
-    WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
-    OUTPUT_VARIABLE GIT_TAG
-    OUTPUT_STRIP_TRAILING_WHITESPACE
-    ERROR_QUIET
-  )
-  if(GIT_TAG MATCHES "^([0-9]+\.[0-9]+\.[0-9]+)$")
-    set(PROJECT_VERSION_FROM_GIT ${CMAKE_MATCH_1})
-  endif()
-endif()
-
-# Use git version or fallback
-if(PROJECT_VERSION_FROM_GIT)
-  set(PROJECT_VERSION_STRING ${PROJECT_VERSION_FROM_GIT})
-else()
-  set(PROJECT_VERSION_STRING "0.0.1")
-endif()
+# Version can be provided by build script via -DPROJECT_VERSION_PARAM=x.y.z
 
 project(MKLogging
-  VERSION ${PROJECT_VERSION_STRING}
   LANGUAGES CXX
 )
 
@@ -220,12 +199,31 @@ set(CPACK_SOURCE_STRIP_FILES OFF)
 set(CPACK_GENERATOR "")
 set(CPACK_SOURCE_GENERATOR "ZIP")
 set(CPACK_SOURCE_PACKAGE_FILE_NAME "${PROJECT_NAME}-${PROJECT_VERSION}")
-configure_file(
-  "${CMAKE_CURRENT_SOURCE_DIR}/cmake/FixateVersion.cmake"
-  "${CMAKE_CURRENT_BINARY_DIR}/FixateVersion.cmake"
-  @ONLY
-)
-set(CPACK_INSTALL_SCRIPT "${CMAKE_CURRENT_BINARY_DIR}/FixateVersion.cmake")
+
+# For source packages, include version in CMakeLists.txt if specified
+if(PROJECT_VERSION_PARAM)
+  # Create CMakeLists.txt with hardcoded version for source distribution
+  file(READ "${CMAKE_CURRENT_LIST_FILE}" ORIGINAL_CMAKELISTS)
+  string(REPLACE
+    "project(MKLogging\n    LANGUAGES CXX\n  )"
+    "project(MKLogging\n    VERSION ${PROJECT_VERSION_PARAM}\n    LANGUAGES CXX\n  )"
+    FIXED_CMAKELISTS "${ORIGINAL_CMAKELISTS}")
+  file(WRITE "${CMAKE_CURRENT_BINARY_DIR}/CMakeLists-fixed.txt" "${FIXED_CMAKELISTS}")
+
+  set(CPACK_SOURCE_INSTALLED_DIRECTORIES
+    "${CMAKE_CURRENT_BINARY_DIR}/CMakeLists-fixed.txt" "CMakeLists.txt"
+    "${CMAKE_CURRENT_SOURCE_DIR}/include" "include"
+    "${CMAKE_CURRENT_SOURCE_DIR}/src" "src"
+    "${CMAKE_CURRENT_SOURCE_DIR}/test" "test"
+    "${CMAKE_CURRENT_SOURCE_DIR}/cmake" "cmake"
+    "${CMAKE_CURRENT_SOURCE_DIR}/LICENSE" "LICENSE"
+    "${CMAKE_CURRENT_SOURCE_DIR}/README.md" "README.md"
+    "${CMAKE_CURRENT_SOURCE_DIR}/CMakePresets.json" "CMakePresets.json"
+  )
+else()
+  # Standard source package without version fixation
+  set(CPACK_SOURCE_INSTALLED_DIRECTORIES "${CMAKE_CURRENT_SOURCE_DIR}" ".")
+endif()
 set(CPACK_SOURCE_IGNORE_FILES
   "/build/"
   "/dist/"
