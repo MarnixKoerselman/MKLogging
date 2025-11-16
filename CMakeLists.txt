@@ -102,16 +102,11 @@ set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin)
 set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/lib)
 set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/lib)
 
+set(CMAKE_CXX_STANDARD 20) # MKKLogging requires at least c++17
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
+
 # Set CXX standard and other compile options for standalone project
 if (MKLOGGING_STANDALONE_PROJECT)
-  # C++ standard
-  if (MKLOGGING_CXX_STANDARD)
-    set(CMAKE_CXX_STANDARD ${MKLOGGING_CXX_STANDARD})
-  else()
-    set(CMAKE_CXX_STANDARD 17) # WARNING: library is currently incompatible with c++20
-  endif()
-  set(CMAKE_CXX_STANDARD_REQUIRED ON)
-
   # disable extensions
   set(CMAKE_CXX_EXTENSIONS OFF)
 
