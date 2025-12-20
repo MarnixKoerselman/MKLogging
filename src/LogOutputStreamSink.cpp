@@ -1,27 +1,32 @@
 #include "MKLogging/LogOutputStreamSink.h"
 #include <iostream>
 
-LogOutputStreamSink::LogOutputStreamSink(std::ostream& os)
-	: m_Stream(os)
+namespace MKLogging
 {
-}
 
-void LogOutputStreamSink::OutputRecord(const LogRecord& record)
-{
-	OutputFormattedRecord(m_Stream, record);
-}
+	LogOutputStreamSink::LogOutputStreamSink(std::ostream& os)
+		: m_Stream(os)
+	{
+	}
 
-LogStdOutSink::LogStdOutSink()
-	: LogOutputStreamSink(std::cout)
-{
-}
+	void LogOutputStreamSink::OutputRecord(const LogRecord& record)
+	{
+		OutputFormattedRecord(m_Stream, record);
+	}
 
-LogStdErrSink::LogStdErrSink()
-	: LogOutputStreamSink(std::cerr)
-{
-}
+	LogStdOutSink::LogStdOutSink()
+		: LogOutputStreamSink(std::cout)
+	{
+	}
 
-LogStdLogSink::LogStdLogSink()
-	: LogOutputStreamSink(std::clog)
-{
-}
+	LogStdErrSink::LogStdErrSink()
+		: LogOutputStreamSink(std::cerr)
+	{
+	}
+
+	LogStdLogSink::LogStdLogSink()
+		: LogOutputStreamSink(std::clog)
+	{
+	}
+
+} // namespace MKLogging

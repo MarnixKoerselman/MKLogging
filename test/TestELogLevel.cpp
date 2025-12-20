@@ -1,6 +1,8 @@
 #include "MKLogging/Logger.h"
 #include <gtest/gtest.h>
 
+using namespace MKLogging;
+
 TEST(ELogLevel, FromString)
 {
   EXPECT_EQ(ELogLevel::Error, ELogLevel_FromString("Error"));

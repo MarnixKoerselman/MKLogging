@@ -2,23 +2,28 @@
 
 #include <ostream>
 
-enum class ELogLevel
+namespace MKLogging
 {
-  Verbose,  ///< Verbose debug logging.
-  Debug,    ///< To be used while debugging.
-  Info,     ///< Track progress of the application.
-  Warning,  ///< Only warnings and more severe logging is written.
-  Error,    ///< Only errors are logged.
-  None,     ///< No logging.
 
-  Min = Verbose,
-  Max = None,
-  All = Min,
-};
+  enum class ELogLevel
+  {
+    Verbose,  ///< Verbose debug logging.
+    Debug,    ///< To be used while debugging.
+    Info,     ///< Track progress of the application.
+    Warning,  ///< Only warnings and more severe logging is written.
+    Error,    ///< Only errors are logged.
+    None,     ///< No logging.
 
-const char* ELogLevel_ToString(ELogLevel logLevel);
-ELogLevel ELogLevel_FromString(const char* szLogLevel);
+    Min = Verbose,
+    Max = None,
+    All = Min,
+  };
 
-void operator++(ELogLevel& logLevel);
+  const char* ELogLevel_ToString(ELogLevel logLevel);
+  ELogLevel ELogLevel_FromString(const char* szLogLevel);
 
-std::ostream& operator <<(std::ostream& os, ELogLevel logLevel);
+  void operator++(ELogLevel& logLevel);
+
+  std::ostream& operator <<(std::ostream& os, ELogLevel logLevel);
+
+} // namespace MKLogging

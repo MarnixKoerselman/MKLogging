@@ -3,32 +3,37 @@
 #include "LogSinkWithFormatter.h"
 #include <ostream>
 
-class LogOutputStreamSink : public LogSinkWithFormatter
+namespace MKLogging
 {
-public:
-	LogOutputStreamSink(std::ostream& os); // NB: the owner of the ostream has the responsibility to keep it alive (instantiated) as long as the sink exists.
 
-public: // ILogSink
-	void OutputRecord(const LogRecord& record) override;
+  class LogOutputStreamSink : public LogSinkWithFormatter
+  {
+  public:
+    LogOutputStreamSink(std::ostream& os); // NB: the owner of the ostream has the responsibility to keep it alive (instantiated) as long as the sink exists.
 
-private:
-	std::ostream& m_Stream;
-};
+  public: // ILogSink
+    void OutputRecord(const LogRecord& record) override;
 
-class LogStdOutSink : public LogOutputStreamSink
-{
-public:
-	LogStdOutSink();
-};
+  private:
+    std::ostream& m_Stream;
+  };
 
-class LogStdErrSink : public LogOutputStreamSink
-{
-public:
-	LogStdErrSink();
-};
+  class LogStdOutSink : public LogOutputStreamSink
+  {
+  public:
+    LogStdOutSink();
+  };
 
-class LogStdLogSink : public LogOutputStreamSink
-{
-public:
-	LogStdLogSink();
-};
+  class LogStdErrSink : public LogOutputStreamSink
+  {
+  public:
+    LogStdErrSink();
+  };
+
+  class LogStdLogSink : public LogOutputStreamSink
+  {
+  public:
+    LogStdLogSink();
+  };
+
+} // namespace MKLogging

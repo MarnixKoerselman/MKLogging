@@ -2,6 +2,8 @@
 
 #include "MKLogging/Logger.h"
 
+using namespace MKLogging;
+
 class FakeStringLogSink : public ILogSink
 {
 public:

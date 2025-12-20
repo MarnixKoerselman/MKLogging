@@ -73,6 +73,8 @@ Currently available log sinks are:
 To create your own custom log sink, simply derive a class from `ILogSink` and implement its only method `OutputRecord`. Instantiate and use your class like this:
 
 ```cpp
+using namespace MKLogging;
+
 class MyLogSink : public ILogSink {
 public:
     void OutputRecord(const LogRecord& record) override {
@@ -125,6 +127,8 @@ ctest --test-dir build/linux-release
 ```cpp
 #include <MKLogging/Logger.h>
 #include <MKLogging/LogFileSink.h>
+
+using namespace MKLogging;
 
 int main() {
     // Configure log level
@@ -187,6 +191,9 @@ Log when a method is entered and left:
 
 ```cpp
 #include <LogEnterLeave.h>
+
+using namespace MKLogging;
+
 void f()
 {
   LOG_ENTER_LEAVE(ELogLevel::Verbose);

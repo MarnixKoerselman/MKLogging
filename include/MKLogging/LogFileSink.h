@@ -3,23 +3,28 @@
 #include "LogSinkWithFormatter.h"
 #include <filesystem>
 
-class LogFileSink : public LogSinkWithFormatter
+namespace MKLogging
 {
-public:
-  LogFileSink() = default;
-  virtual ~LogFileSink();
-  bool Create(const std::filesystem::path& filePath);
-  void Close();
 
-  size_t GetFileSize() const;
-  bool IsOpen() const;
+  class LogFileSink : public LogSinkWithFormatter
+  {
+  public:
+    LogFileSink() = default;
+    virtual ~LogFileSink();
+    bool Create(const std::filesystem::path& filePath);
+    void Close();
 
-  void WriteToFile(const std::string& text);
+    size_t GetFileSize() const;
+    bool IsOpen() const;
 
-public: // ILogSink
-  void OutputRecord(const LogRecord& record) override;
+    void WriteToFile(const std::string& text);
 
-private:
-  FILE* m_File = nullptr;
-  size_t m_FileSize = 0;
-};
+  public: // ILogSink
+    void OutputRecord(const LogRecord& record) override;
+
+  private:
+    FILE* m_File = nullptr;
+    size_t m_FileSize = 0;
+  };
+
+} // namespace MKLogging

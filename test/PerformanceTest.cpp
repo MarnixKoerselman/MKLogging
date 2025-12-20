@@ -13,6 +13,8 @@
 #include <fstream>
 #include "FakeFileLogSink.h"
 
+using namespace MKLogging;
+
 class PerformanceTest : public testing::Test
 {
 public:
@@ -87,9 +89,9 @@ public:
     for (int i = 0; i < threadCount; i++)
     {
       producers.push_back(std::thread([=]
-        {
-          Sing(repetitionsPerProducer);
-        }));
+      {
+        Sing(repetitionsPerProducer);
+      }));
     }
     for (auto& t : producers)
     {
@@ -155,10 +157,10 @@ TEST_F(PerformanceTest, LogWithAsynchronousFile_ManyProducerThreads)
   auto logFilePath = GetLogFilePath("LogWithAsynchronousFile.ManyProducerThreads");
   SetUpLogWithAsynchronousFile(logFilePath);
   MeasureTime([this]()
-    {
-      Sing(REPETITION_COUNT, MANY_PRODUCER_THREADS);
-      LogCentral()->RemoveAllListeners(); // drain queue & flush file
-    });
+  {
+    Sing(REPETITION_COUNT, MANY_PRODUCER_THREADS);
+    LogCentral()->RemoveAllListeners(); // drain queue & flush file
+  });
   VerifyLogFileEntries(logFilePath);
 }
 
@@ -174,20 +176,20 @@ TEST_F(PerformanceTest, FilePerformance)
   int testCount = 10000;
 
   auto stdDuration = MeasureTime([this, &stdFile, testCount]()
+  {
+    for (int i = 0; i < testCount; i++)
     {
-      for (int i = 0; i < testCount; i++)
-      {
-        stdFile.PrintF(L"This is test %i\n", i);
-      }
-    });
+      stdFile.PrintF(L"This is test %i\n", i);
+    }
+  });
 
   auto streamDuration = MeasureTime([this, &streamFile, testCount]()
+  {
+    for (int i = 0; i < testCount; i++)
     {
-      for (int i = 0; i < testCount; i++)
-      {
-        streamFile.GetStream() << L"This is test " << i << L"\n";
-      }
-    });
+      streamFile.GetStream() << L"This is test " << i << L"\n";
+    }
+  });
 
   GTEST_INFO("Standard file: " << stdDuration << " ms, stream: " << streamDuration << " ms\n");
 }

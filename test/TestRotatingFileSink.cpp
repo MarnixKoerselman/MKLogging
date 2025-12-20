@@ -5,6 +5,7 @@
 #include <gtest/gtest.h>
 
 using namespace testing;
+using namespace MKLogging;
 
 // make (protected) implementation methods public, so they can be tested
 class TestableLogRotatingFileSink : public LogRotatingFileSink

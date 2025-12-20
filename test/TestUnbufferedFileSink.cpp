@@ -3,6 +3,8 @@
 #include <filesystem>
 #include "TestUtils.h"
 
+using namespace MKLogging;
+
 TEST(UnbufferedFileSink, Basic)
 {
   std::filesystem::path logFilePath = GetTestOutputDirectoryPath("UnbufferedFileSink.Basic");

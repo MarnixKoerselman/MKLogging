@@ -1,78 +1,83 @@
 #include "MKLogging/LogQueue.h"
 
-LogQueue::LogQueue(const std::shared_ptr<ILogSink>& logDelegate)
-  : m_Delegate(logDelegate)
-  , m_IsProcessingStopped(false)
-  , m_WorkerThread(&LogQueue::ConsumerThread, this)
+namespace MKLogging
 {
-}
 
-LogQueue::~LogQueue()
-{
-  Drain();
-  // trigger thread EOL
-  m_IsProcessingStopped = true;
-  m_QueueChanged.notify_one();
-
-  // wait for the thread to complete
-  m_WorkerThread.join();
-}
-
-void LogQueue::Drain()
-{
-  bool isQueueEmpty = false;
-  while (!isQueueEmpty)
+  LogQueue::LogQueue(const std::shared_ptr<ILogSink>& logDelegate)
+    : m_Delegate(logDelegate)
+    , m_IsProcessingStopped(false)
+    , m_WorkerThread(&LogQueue::ConsumerThread, this)
   {
-    std::unique_lock<std::mutex> lock(m_AccessQueue);
-    isQueueEmpty = m_MessageQueue.empty();
-    if (!isQueueEmpty)
-    {
-      lock.unlock();
-      std::this_thread::yield();
-    }
   }
-}
 
-size_t LogQueue::GetMessageQueueSize()
-{
-  return m_MessageQueue.size();
-}
-
-void LogQueue::OutputRecord(const LogRecord& record)
-{
-  // make the change while locked, and unlock before signalling the changed condition
-  std::unique_lock<std::mutex> lock(m_AccessQueue);
-  m_MessageQueue.push(record);
-  // keep locked until signalled, see https://stackoverflow.com/questions/52503361/unlock-the-mutex-after-condition-variablenotify-all-or-before/66162551#66162551
-  // lock.unlock();
-  // signal new message
-  m_QueueChanged.notify_one();
-}
-
-void LogQueue::ConsumerThread()
-{
-  while (true)
+  LogQueue::~LogQueue()
   {
-    std::unique_lock<std::mutex> lock(m_AccessQueue);
-    // unlock as soon as possible, before dealing with the potentially very slow Delegate, to allow the producer access to the queue
-    m_QueueChanged.wait(lock, [this]
-      {
-        return m_IsProcessingStopped || !m_MessageQueue.empty();
-      });
-    // check the 'abort' condition
-    if (m_IsProcessingStopped)
+    Drain();
+    // trigger thread EOL
+    m_IsProcessingStopped = true;
+    m_QueueChanged.notify_one();
+
+    // wait for the thread to complete
+    m_WorkerThread.join();
+  }
+
+  void LogQueue::Drain()
+  {
+    bool isQueueEmpty = false;
+    while (!isQueueEmpty)
     {
-      return;
-    }
-    if (!m_MessageQueue.empty())
-    {
-      LogRecord record = m_MessageQueue.front();
-      m_MessageQueue.pop();
-      lock.unlock(); // release the queue for access by log producers
-      if (m_Delegate)
+      std::unique_lock<std::mutex> lock(m_AccessQueue);
+      isQueueEmpty = m_MessageQueue.empty();
+      if (!isQueueEmpty)
       {
-        m_Delegate->OutputRecord(record);
+        lock.unlock();
+        std::this_thread::yield();
       }
     }
   }
-}
+
+  size_t LogQueue::GetMessageQueueSize()
+  {
+    return m_MessageQueue.size();
+  }
+
+  void LogQueue::OutputRecord(const LogRecord& record)
+  {
+    // make the change while locked, and unlock before signalling the changed condition
+    std::unique_lock<std::mutex> lock(m_AccessQueue);
+    m_MessageQueue.push(record);
+    // keep locked until signalled, see https://stackoverflow.com/questions/52503361/unlock-the-mutex-after-condition-variablenotify-all-or-before/66162551#66162551
+    // lock.unlock();
+    // signal new message
+    m_QueueChanged.notify_one();
+  }
+
+  void LogQueue::ConsumerThread()
+  {
+    while (true)
+    {
+      std::unique_lock<std::mutex> lock(m_AccessQueue);
+      // unlock as soon as possible, before dealing with the potentially very slow Delegate, to allow the producer access to the queue
+      m_QueueChanged.wait(lock, [this]
+      {
+        return m_IsProcessingStopped || !m_MessageQueue.empty();
+      });
+      // check the 'abort' condition
+      if (m_IsProcessingStopped)
+      {
+        return;
+      }
+      if (!m_MessageQueue.empty())
+      {
+        LogRecord record = m_MessageQueue.front();
+        m_MessageQueue.pop();
+        lock.unlock(); // release the queue for access by log producers
+        if (m_Delegate)
+        {
+          m_Delegate->OutputRecord(record);
+        }
+      }
+    }
+  }
+
+} // namespace MKLogging

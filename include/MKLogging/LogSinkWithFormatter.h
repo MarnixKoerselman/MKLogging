@@ -4,22 +4,27 @@
 #include <memory>
 #include <ostream>
 
-class LogFormatter;
-
-class LogSinkWithFormatter : public ILogSink
+namespace MKLogging
 {
-public:
-  LogSinkWithFormatter(bool useDefaultFormatter = false);
-  virtual ~LogSinkWithFormatter() = default;
 
-  void SetFormatter(const std::shared_ptr<LogFormatter>& formatter);
-  void OutputFormattedRecord(std::ostream& os, const LogRecord& record);
+  class LogFormatter;
 
-  static std::shared_ptr<LogFormatter> GetDefaultFormatter();
+  class LogSinkWithFormatter : public ILogSink
+  {
+  public:
+    LogSinkWithFormatter(bool useDefaultFormatter = false);
+    virtual ~LogSinkWithFormatter() = default;
 
-public: // ILogSink
-  void OutputRecord(const LogRecord& record) override = 0;
+    void SetFormatter(const std::shared_ptr<LogFormatter>& formatter);
+    void OutputFormattedRecord(std::ostream& os, const LogRecord& record);
 
-protected:
-  std::shared_ptr<LogFormatter> m_Formatter;
-};
+    static std::shared_ptr<LogFormatter> GetDefaultFormatter();
+
+  public: // ILogSink
+    void OutputRecord(const LogRecord& record) override = 0;
+
+  protected:
+    std::shared_ptr<LogFormatter> m_Formatter;
+  };
+
+} // namespace MKLogging

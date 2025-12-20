@@ -2,9 +2,14 @@
 
 #include "../LogSinkWithFormatter.h"
 
-// Use OutputDebugString for output during debugging
-class LogDebugOutputSink : public LogSinkWithFormatter
+namespace MKLogging
 {
-public: // ILogSink
-  void OutputRecord(const LogRecord& record) override;
-};
+
+  // Use OutputDebugString for output during debugging
+  class LogDebugOutputSink : public LogSinkWithFormatter
+  {
+  public: // ILogSink
+    void OutputRecord(const LogRecord& record) override;
+  };
+
+} // namespace MKLogging
