@@ -63,6 +63,11 @@ namespace MKLogging
 
   ELogLevel ELogLevel_FromString(const char* szLogLevel)
   {
+    if (szLogLevel == nullptr || szLogLevel[0] == '\0')
+    {
+      throw std::runtime_error("log level cannot be null or empty");
+    }
+    // NB: this is not an off-by-one error, as the last value is "None"
     for (ELogLevel logLevel = ELogLevel::Verbose; logLevel <= ELogLevel::None; ++logLevel)
     {
       if (isEqualCaseInsentitive(szLogLevel, ELogLevel_ToString(logLevel)))
@@ -70,7 +75,7 @@ namespace MKLogging
         return logLevel;
       }
     }
-    throw std::runtime_error(std::string("unrecognised log level: ") + szLogLevel);
+    throw std::runtime_error("unrecognised log level: " + std::string(szLogLevel));
   }
 
 } // namespace MKLogging
