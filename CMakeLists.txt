@@ -16,10 +16,70 @@ option(MKLOGGING_ENABLE_WARNINGS "Add warnings to CMAKE_CXX_FLAGS" ${MKLOGGING_S
 option(MKLOGGING_COMPILE_WARNING_AS_ERROR "Make it impossible to ignore compiler warnings" ${MKLOGGING_STANDALONE_PROJECT})
 option(MKLOGGING_BUILD_TESTS "Set to ON to build tests" ${MKLOGGING_STANDALONE_PROJECT})
 
-# Function to set warning flags for a specific target
-function(set_warning_flags target_name)
+# Enable Unity build for faster compilation
+set(CMAKE_UNITY_BUILD OFF)
+set(CMAKE_UNITY_BUILD_BATCH_SIZE 10)
+
+# Enable parallel builds by default
+set(CMAKE_BUILD_PARALLEL_LEVEL 0)  # 0 = use all available cores
+
+# Use ccache for compilation caching
+find_program(CCACHE_PROGRAM ccache)
+if(CCACHE_PROGRAM)
+  set(CMAKE_CXX_COMPILER_LAUNCHER "${CCACHE_PROGRAM}")
+endif()
+
+# Enable interprocedural optimization in Release mode
+include(CheckIPOSupported)
+check_ipo_supported(RESULT IPO_SUPPORTED OUTPUT IPO_ERROR)
+if(IPO_SUPPORTED AND NOT CMAKE_BUILD_TYPE STREQUAL "Debug")
+  set(CMAKE_INTERPROCEDURAL_OPTIMIZATION TRUE)
+endif()
+
+# Set output directories for all targets
+set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin)
+set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/lib)
+set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/lib)
+
+set(CMAKE_CXX_STANDARD 20) # MKKLogging requires at least c++17
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
+
+# Set CXX standard and other compile options for standalone project
+if (MKLOGGING_STANDALONE_PROJECT)
+  # disable extensions
+  set(CMAKE_CXX_EXTENSIONS OFF)
+
+  # speed up compilation
   if(MSVC)
-    target_compile_options(${target_name} PRIVATE
+    add_compile_options(/MP)
+    add_compile_definitions(_SILENCE_CXX17_CODECVT_HEADER_DEPRECATION_WARNING _CRT_SECURE_NO_WARNINGS)
+
+  add_link_options(
+    $<$<NOT:$<CONFIG:DEBUG>>:/INCREMENTAL:NO> # Disable incremental linking.
+    $<$<NOT:$<CONFIG:DEBUG>>:/OPT:REF> # Remove unreferenced functions and data.
+    $<$<NOT:$<CONFIG:DEBUG>>:/OPT:ICF> # Identical COMDAT folding.
+    $<$<CONFIG:DEBUG>:/INCREMENTAL:NO> # Disable incremental linking.
+    $<$<CONFIG:DEBUG>:/OPT:NOREF> # No unreferenced data elimination.
+    $<$<CONFIG:DEBUG>:/OPT:NOICF> # No Identical COMDAT folding.
+  )
+  endif()
+endif()
+
+if(MKLOGGING_COMPILE_WARNING_AS_ERROR)
+  set(CMAKE_COMPILE_WARNING_AS_ERROR  ${MKLOGGING_COMPILE_WARNING_AS_ERROR})
+endif()
+
+# Library target
+add_library(${PROJECT_NAME} STATIC)
+target_include_directories(${PROJECT_NAME}
+  PUBLIC
+    $<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/include>
+    $<INSTALL_INTERFACE:include>
+)
+
+if(MKLOGGING_ENABLE_WARNINGS)
+  if(MSVC)
+    target_compile_options(${PROJECT_NAME} PRIVATE
       /W4           # Enable high warning level
       /WX           # Treat warnings as errors
       # /permissive-  # Disable non-conforming code
@@ -75,79 +135,7 @@ function(set_warning_flags target_name)
       )
     endif()
   endif()
-endfunction()
-
-# Enable Unity build for faster compilation
-set(CMAKE_UNITY_BUILD OFF)
-set(CMAKE_UNITY_BUILD_BATCH_SIZE 10)
-
-# Enable parallel builds by default
-set(CMAKE_BUILD_PARALLEL_LEVEL 0)  # 0 = use all available cores
-
-# Use ccache for compilation caching
-find_program(CCACHE_PROGRAM ccache)
-if(CCACHE_PROGRAM)
-  set(CMAKE_CXX_COMPILER_LAUNCHER "${CCACHE_PROGRAM}")
 endif()
-
-# Enable interprocedural optimization in Release mode
-include(CheckIPOSupported)
-check_ipo_supported(RESULT IPO_SUPPORTED OUTPUT IPO_ERROR)
-if(IPO_SUPPORTED AND NOT CMAKE_BUILD_TYPE STREQUAL "Debug")
-  set(CMAKE_INTERPROCEDURAL_OPTIMIZATION TRUE)
-endif()
-
-# Set output directories for all targets
-set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin)
-set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/lib)
-set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/lib)
-
-set(CMAKE_CXX_STANDARD 20) # MKKLogging requires at least c++17
-set(CMAKE_CXX_STANDARD_REQUIRED ON)
-
-# Set CXX standard and other compile options for standalone project
-if (MKLOGGING_STANDALONE_PROJECT)
-  # disable extensions
-  set(CMAKE_CXX_EXTENSIONS OFF)
-
-  # speed up compilation
-  if(MSVC)
-    add_compile_options(/MP)
-    add_compile_definitions(_SILENCE_CXX17_CODECVT_HEADER_DEPRECATION_WARNING _CRT_SECURE_NO_WARNINGS)
-
-  add_link_options(
-    $<$<NOT:$<CONFIG:DEBUG>>:/INCREMENTAL:NO> # Disable incremental linking.
-    $<$<NOT:$<CONFIG:DEBUG>>:/OPT:REF> # Remove unreferenced functions and data.
-    $<$<NOT:$<CONFIG:DEBUG>>:/OPT:ICF> # Identical COMDAT folding.
-    $<$<CONFIG:DEBUG>:/INCREMENTAL:NO> # Disable incremental linking.
-    $<$<CONFIG:DEBUG>:/OPT:NOREF> # No unreferenced data elimination.
-    $<$<CONFIG:DEBUG>:/OPT:NOICF> # No Identical COMDAT folding.
-  )
-  endif()
-endif()
-
-if(MKLOGGING_ENABLE_WARNINGS)
-  if (MSVC)
-    # set compiler warning level
-    add_compile_options("/W4")
-  else()
-    # set compiler warning level
-    # add_compile_options(-Wall -Werror -Wextra -Wshadow -Weffc++ -Wsign-compare -Wshadow -Wwrite-strings -Wpointer-arith -Winit-self -Wconversion -Wno-sign-conversion)
-    add_compile_options(-Wall -Wno-unknown-pragmas -Wextra -Wpedantic)
-  endif()
-endif()
-
-if(MKLOGGING_COMPILE_WARNING_AS_ERROR)
-  set(CMAKE_COMPILE_WARNING_AS_ERROR  ${MKLOGGING_COMPILE_WARNING_AS_ERROR})
-endif()
-
-# Library target
-add_library(${PROJECT_NAME} STATIC)
-target_include_directories(${PROJECT_NAME}
-  PUBLIC
-    $<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/include>
-    $<INSTALL_INTERFACE:include>
-)
 
 # Generate version header
 if(PROJECT_VERSION)
@@ -165,9 +153,6 @@ endif()
 target_include_directories(${PROJECT_NAME} PUBLIC
   $<BUILD_INTERFACE:${CMAKE_CURRENT_BINARY_DIR}/include>
 )
-
-# Apply warning flags to our library
-set_warning_flags(MKLogging)
 
 add_subdirectory("include")
 add_subdirectory("src")
