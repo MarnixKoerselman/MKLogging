@@ -3,6 +3,8 @@
 #include "MKLogging/Logger.h"
 #include <gmock/gmock.h>
 
+using namespace MKLogging;
+
 class MockLogSink : public ILogSink
 {
 public: // ILogSink

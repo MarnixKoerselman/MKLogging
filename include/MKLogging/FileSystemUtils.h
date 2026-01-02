@@ -2,8 +2,12 @@
 
 #include <filesystem>
 
-namespace FileSystemUtils
+namespace MKLogging
 {
-  void CreateDirectoriesFromFilePath(const std::filesystem::path& filePath);
-};
 
+  namespace FileSystemUtils
+  {
+    void CreateDirectoriesFromFilePath(const std::filesystem::path& filePath);
+  };
+
+} // namespace MKLogging

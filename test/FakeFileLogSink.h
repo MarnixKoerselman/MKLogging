@@ -4,6 +4,8 @@
 #include <filesystem>
 #include <fstream>
 
+using namespace MKLogging;
+
 class TestFileStream : public ILogSink
 {
 public:

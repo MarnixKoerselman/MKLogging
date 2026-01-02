@@ -4,6 +4,9 @@
 
 #define NOMINMAX
 
+namespace MKLogging
+{
+
 void LogDebugOutputSink::OutputRecord(const LogRecord& record)
 {
   if (IsDebuggerPresent())
@@ -26,3 +29,5 @@ void LogDebugOutputSink::OutputRecord(const LogRecord& record)
     OutputDebugStringW(display.data());
   }
 }
+
+} // namespace MKLogging

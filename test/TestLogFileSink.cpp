@@ -5,6 +5,8 @@
 #include <gtest/gtest.h>
 #include "TestUtils.h"
 
+using namespace MKLogging;
+
 TEST(LogFileSink, Basic)
 {
   std::filesystem::path testOuputDirectoryPath = GetTestOutputDirectoryPath("LogFileSink.Basic");

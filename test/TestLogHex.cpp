@@ -6,6 +6,8 @@
 
 #include <gtest/gtest.h>
 
+using namespace MKLogging;
+
 TEST(Debug, LogHex)
 {
   auto mockSink = std::make_shared<MockLogSink>();

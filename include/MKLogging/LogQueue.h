@@ -7,26 +7,31 @@
 #include <memory>
 #include <condition_variable>
 
-class LogQueue : public ILogSink
+namespace MKLogging
 {
-public:
-  LogQueue(const std::shared_ptr<ILogSink>& logDelegate);
-  virtual ~LogQueue();
 
-  void Drain();
-  size_t GetMessageQueueSize();
+  class LogQueue : public ILogSink
+  {
+  public:
+    LogQueue(const std::shared_ptr<ILogSink>& logDelegate);
+    virtual ~LogQueue();
 
-public: // ILogSink
-  void OutputRecord(const LogRecord& record) override;
+    void Drain();
+    size_t GetMessageQueueSize();
 
-protected:
-  void ConsumerThread();
+  public: // ILogSink
+    void OutputRecord(const LogRecord& record) override;
 
-protected:
-  std::shared_ptr<ILogSink> m_Delegate;
-  std::queue<LogRecord> m_MessageQueue; // FIFO queue
-  std::mutex m_AccessQueue;
-  std::condition_variable m_QueueChanged;
-  bool m_IsProcessingStopped;
-  std::thread m_WorkerThread;
-};
+  protected:
+    void ConsumerThread();
+
+  protected:
+    std::shared_ptr<ILogSink> m_Delegate;
+    std::queue<LogRecord> m_MessageQueue; // FIFO queue
+    std::mutex m_AccessQueue;
+    std::condition_variable m_QueueChanged;
+    bool m_IsProcessingStopped;
+    std::thread m_WorkerThread;
+  };
+
+} // namespace MKLogging

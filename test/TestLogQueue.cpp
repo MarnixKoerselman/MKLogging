@@ -12,6 +12,8 @@
 #include "TestUtils.h"
 #include <list>
 
+using namespace MKLogging;
+
 TEST(LogQueue, Basic)
 {
   // Initialise the test environment

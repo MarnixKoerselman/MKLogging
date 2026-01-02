@@ -11,6 +11,7 @@
 #endif
 
 using testing::_;
+using namespace MKLogging;
 
 TEST(LogFormatters, DefaultLogFormatter)
 {
