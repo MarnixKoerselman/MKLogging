@@ -180,7 +180,7 @@ pipeline {
           agent {
             dockerfile {
               dir '.devcontainer'
-              label 'ubuntu && docker-engine'
+              label 'linux && docker-engine'
             }
           }
           stages {
