@@ -104,7 +104,7 @@ if(MKLOGGING_ENABLE_WARNINGS)
       # /w14928       # Illegal copy-initialization
     )
   else()
-    target_compile_options(${target_name} PRIVATE
+    target_compile_options(${PROJECT_NAME} PRIVATE
       -Wall                # Enable all common warnings
       -Wextra              # Enable extra warnings
       -Wpedantic           # Issue warnings needed for strict compliance to C++
@@ -122,13 +122,13 @@ if(MKLOGGING_ENABLE_WARNINGS)
     )
 
     if(CMAKE_CXX_COMPILER_ID MATCHES "GNU")
-      target_compile_options(${target_name} PRIVATE
+      target_compile_options(${PROJECT_NAME} PRIVATE
         -Wlogical-op      # Warn about logical operations being used where bitwise were probably wanted
         -Wuseless-cast    # Warn about casting to the same type
         -Wzero-as-null-pointer-constant # Warn about using 0 as nullptr
       )
     elseif(CMAKE_CXX_COMPILER_ID MATCHES "Clang")
-      target_compile_options(${target_name} PRIVATE
+      target_compile_options(${PROJECT_NAME} PRIVATE
         -Wmost            # Enable most warnings
         -Wextra-semi      # Warn about redundant semicolons
         -Wno-c++98-compat # Don't warn about C++98 compatibility

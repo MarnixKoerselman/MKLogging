@@ -62,29 +62,29 @@ pipeline {
                 }
                 stage('Test') {
                   steps {
-                    dir('build\\windows-x86-vs2026\\bin\\Debug') {
-                      bat 'TestMKLogging.exe --gtest_output="xml:gtest-results.xml" || exit /b 0'
+                    dir('build\\windows-x86-vs2022\\bin\\Debug') {
+                      bat 'if exist TestMKLogging.exe (TestMKLogging.exe --gtest_output="xml:gtest-results.xml") else (echo TestMKLogging.exe not found && exit /b 1)'
                     }
-                    dir('build\\windows-x86-vs2026\\bin\\Release') {
-                      bat 'TestMKLogging.exe --gtest_output="xml:gtest-results.xml" || exit /b 0'
+                    dir('build\\windows-x86-vs2022\\bin\\Release') {
+                      bat 'if exist TestMKLogging.exe (TestMKLogging.exe --gtest_output="xml:gtest-results.xml") else (echo TestMKLogging.exe not found && exit /b 1)'
                     }
-                    dir('build\\windows-x64-vs2026\\bin\\Debug') {
-                      bat 'TestMKLogging.exe --gtest_output="xml:gtest-results.xml" || exit /b 0'
+                    dir('build\\windows-x64-vs2022\\bin\\Debug') {
+                      bat 'if exist TestMKLogging.exe (TestMKLogging.exe --gtest_output="xml:gtest-results.xml") else (echo TestMKLogging.exe not found && exit /b 1)'
                     }
-                    dir('build\\windows-x64-vs2026\\bin\\Release') {
-                      bat 'TestMKLogging.exe --gtest_output="xml:gtest-results.xml" || exit /b 0'
+                    dir('build\\windows-x64-vs2022\\bin\\Release') {
+                      bat 'if exist TestMKLogging.exe (TestMKLogging.exe --gtest_output="xml:gtest-results.xml") else (echo TestMKLogging.exe not found && exit /b 1)'
                     }
                     dir('build\\win-x86-debug\\bin') {
-                      bat 'TestMKLogging.exe --gtest_output="xml:gtest-results.xml" || exit /b 0'
+                      bat 'if exist TestMKLogging.exe (TestMKLogging.exe --gtest_output="xml:gtest-results.xml") else (echo TestMKLogging.exe not found && exit /b 1)'
                     }
                     dir('build\\win-x86-release\\bin') {
-                      bat 'TestMKLogging.exe --gtest_output="xml:gtest-results.xml" || exit /b 0'
+                      bat 'if exist TestMKLogging.exe (TestMKLogging.exe --gtest_output="xml:gtest-results.xml") else (echo TestMKLogging.exe not found && exit /b 1)'
                     }
                     dir('build\\win-x64-debug\\bin') {
-                      bat 'TestMKLogging.exe --gtest_output="xml:gtest-results.xml" || exit /b 0'
+                      bat 'if exist TestMKLogging.exe (TestMKLogging.exe --gtest_output="xml:gtest-results.xml") else (echo TestMKLogging.exe not found && exit /b 1)'
                     }
                     dir('build\\win-x64-release\\bin') {
-                      bat 'TestMKLogging.exe --gtest_output="xml:gtest-results.xml" || exit /b 0'
+                      bat 'if exist TestMKLogging.exe (TestMKLogging.exe --gtest_output="xml:gtest-results.xml") else (echo TestMKLogging.exe not found && exit /b 1)'
                     }
                     junit '**/gtest-results.xml'
                     recordIssues(tools: [junitParser(id: 'VS2022-junit', pattern: '**/gtest-results.xml')])
@@ -145,28 +145,52 @@ pipeline {
                 stage('Test') {
                   steps {
                     dir('build\\windows-x86-vs2026\\bin\\Debug') {
-                      bat 'TestMKLogging.exe --gtest_output="xml:gtest-results.xml" || exit /b 0'
+                      bat '''
+                      TestMKLogging.exe --gtest_output="xml:gtest-results.xml"
+                      if %ErrorLevel% equ 1 (exit /b 0)
+                      '''
                     }
                     dir('build\\windows-x86-vs2026\\bin\\Release') {
-                      bat 'TestMKLogging.exe --gtest_output="xml:gtest-results.xml" || exit /b 0'
+                      bat '''
+                      TestMKLogging.exe --gtest_output="xml:gtest-results.xml"
+                      if %ErrorLevel% equ 1 (exit /b 0)
+                      '''
                     }
                     dir('build\\windows-x64-vs2026\\bin\\Debug') {
-                      bat 'TestMKLogging.exe --gtest_output="xml:gtest-results.xml" || exit /b 0'
+                      bat '''
+                      TestMKLogging.exe --gtest_output="xml:gtest-results.xml"
+                      if %ErrorLevel% equ 1 (exit /b 0)
+                      '''
                     }
                     dir('build\\windows-x64-vs2026\\bin\\Release') {
-                      bat 'TestMKLogging.exe --gtest_output="xml:gtest-results.xml" || exit /b 0'
+                      bat '''
+                      TestMKLogging.exe --gtest_output="xml:gtest-results.xml"
+                      if %ErrorLevel% equ 1 (exit /b 0)
+                      '''
                     }
                     dir('build\\win-x86-debug\\bin') {
-                      bat 'TestMKLogging.exe --gtest_output="xml:gtest-results.xml" || exit /b 0'
+                      bat '''
+                      TestMKLogging.exe --gtest_output="xml:gtest-results.xml"
+                      if %ErrorLevel% equ 1 (exit /b 0)
+                      '''
                     }
                     dir('build\\win-x86-release\\bin') {
-                      bat 'TestMKLogging.exe --gtest_output="xml:gtest-results.xml" || exit /b 0'
+                      bat '''
+                      TestMKLogging.exe --gtest_output="xml:gtest-results.xml"
+                      if %ErrorLevel% equ 1 (exit /b 0)
+                      '''
                     }
                     dir('build\\win-x64-debug\\bin') {
-                      bat 'TestMKLogging.exe --gtest_output="xml:gtest-results.xml" || exit /b 0'
+                      bat '''
+                      TestMKLogging.exe --gtest_output="xml:gtest-results.xml"
+                      if %ErrorLevel% equ 1 (exit /b 0)
+                      '''
                     }
                     dir('build\\win-x64-release\\bin') {
-                      bat 'TestMKLogging.exe --gtest_output="xml:gtest-results.xml" || exit /b 0'
+                      bat '''
+                      TestMKLogging.exe --gtest_output="xml:gtest-results.xml"
+                      if %ErrorLevel% equ 1 (exit /b 0)
+                      '''
                     }
                     junit '**/gtest-results.xml'
                     recordIssues(tools: [junitParser(id: 'VS2026-junit', pattern: '**/gtest-results.xml')])
@@ -188,10 +212,16 @@ pipeline {
               steps {
                 sh '''
                   cmake --version
-                  cmake --preset linux-x86_64-debug
-                  cmake --build build/linux-x86_64-debug --parallel
-                  cmake --preset linux-x86_64-release
-                  cmake --build build/linux-x86_64-release --parallel
+                  cmake --preset linux-debug
+                  cmake --build build/linux-debug --parallel
+                  cmake --preset linux-release
+                  cmake --build build/linux-release --parallel
+                  cmake --preset linux-relwithdebinfo
+                  cmake --build build/linux-relwithdebinfo --parallel
+                  cmake --preset linux-x86-debug
+                  cmake --build build/linux-x86-debug --parallel
+                  cmake --preset linux-x86-release
+                  cmake --build build/linux-x86-release --parallel
                 '''
               }
               post {
@@ -203,10 +233,20 @@ pipeline {
             stage('Test') {
               steps {
                 sh '''
-                  cd ${WORKSPACE}/build/linux-x86_64-debug/bin
-                  ./TestMKLogging --gtest_output="xml:gtest-results.xml" || true
-                  cd ${WORKSPACE}/build/linux-x86_64-release/bin
-                  ./TestMKLogging --gtest_output="xml:gtest-results.xml" || true
+                  if [ -f "${WORKSPACE}/build/linux-debug/bin/TestMKLogging" ]; then
+                    cd ${WORKSPACE}/build/linux-debug/bin
+                    ./TestMKLogging --gtest_output="xml:gtest-results.xml"
+                  else
+                    echo "TestMKLogging not found in linux-debug"
+                    exit 1
+                  fi
+                  if [ -f "${WORKSPACE}/build/linux-release/bin/TestMKLogging" ]; then
+                    cd ${WORKSPACE}/build/linux-release/bin
+                    ./TestMKLogging --gtest_output="xml:gtest-results.xml"
+                  else
+                    echo "TestMKLogging not found in linux-release"
+                    exit 1
+                  fi
                 '''
                 junit '**/gtest-results.xml'
                 recordIssues(tools: [junitParser(id: 'linux-junit', pattern: '**/gtest-results.xml')])
