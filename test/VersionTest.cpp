@@ -3,7 +3,7 @@
 
 TEST(VersionTest, GetVersion)
 {
-    std::string version = MKLogging::GetVersion();
+    std::string_view version = MKLogging::GetVersion();
     EXPECT_FALSE(version.empty());
     EXPECT_NE(version, "");
 }
