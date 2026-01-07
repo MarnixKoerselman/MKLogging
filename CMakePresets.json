@@ -315,18 +315,6 @@
       "description": "Release configuration for Windows 64-bit target.",
       "configuration": "Release",
       "configurePreset": "windows-x64-vs2026"
-    },
-    {
-      "name": "linux-x86-debug",
-      "displayName": "Linux x86 Debug",
-      "description": "Debug configuration for Linux 32-bit target.",
-      "configurePreset": "linux-x86-debug"
-    },
-    {
-      "name": "linux-x86-release",
-      "displayName": "Linux x86 Release",
-      "description": "Release configuration for Linux 32-bit target.",
-      "configurePreset": "linux-x86-release"
     }
   ]
 }

@@ -1,4 +1,28 @@
-# MkLogging
+# MKLogging
+
+- [MKLogging](#mklogging)
+  - [Introduction](#introduction)
+    - [Examples](#examples)
+    - [Log Levels](#log-levels)
+  - [Implementation Overview](#implementation-overview)
+    - [Build System](#build-system)
+    - [Core Types](#core-types)
+    - [Logger](#logger)
+      - [Configuration Options](#configuration-options)
+    - [LogSink](#logsink)
+      - [Creating Custom Log Sinks](#creating-custom-log-sinks)
+    - [LogFormatter](#logformatter)
+  - [Usage Considerations](#usage-considerations)
+  - [Quick Start](#quick-start)
+    - [Building the Library](#building-the-library)
+    - [Windows / Linux](#windows--linux)
+    - [Using in Your Project](#using-in-your-project)
+    - [CMake Integration](#cmake-integration)
+    - [Performance Notes](#performance-notes)
+    - [Helpers](#helpers)
+  - [Future Enhancements](#future-enhancements)
+    - [Library Architecture Improvements](#library-architecture-improvements)
+    - [CMake Build System Improvements](#cmake-build-system-improvements)
 
 ## Introduction
 
@@ -121,6 +145,12 @@ cmake --build build/linux-release --parallel
 # Run tests
 ctest --test-dir build/linux-release
 ```
+
+### Windows / Linux
+
+There is a devcontainer configuration, which is what I use myself, mostly. If you're on a Windows machine and have Docker installed (e.g. VS2022 or later with Docker Desktop, or VSCode with any Docker) then you can simply switch to the devcontainer to start developing in a Linux environment.
+
+*Gotcha: I'm not sure if this is typical for Rancher Desktop, but often I have a problem switching to the container, something about a mount point that is not configured correctly. It turns out that there are file under `\\wsl.localhost\Ubuntu\mnt\wslg\runtime-dir` (`wayland-0` and `wayland-0.lock`) that need to be removed or renamed. Paste this directory path in Windows Explorer to see the magic of WSL integration in action, and delete these files if necessary.*
 
 ### Using in Your Project
 

@@ -1,5 +1,7 @@
 #pragma once
 
+#include <string_view>
+
 // This is the main include file.
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////
@@ -111,6 +113,6 @@ namespace MKLogging
   std::ostream& operator <<(std::ostream& os, const wchar_t* sz);
 #endif
 
-  std::string GetVersion();
+  std::string_view GetVersion();
 
 } // namespace MKLogging

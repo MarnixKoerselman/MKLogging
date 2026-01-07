@@ -81,9 +81,9 @@ namespace MKLogging
     return (logLevel >= m_MinimumLogLevel) && HasListeners();
   }
 
-  std::string GetVersion()
+  std::string_view GetVersion()
   {
-    return std::string(MKLOGGING_VERSION_STRING);
+    return MKLOGGING_VERSION_STRING;
   }
 
 } // namespace MKLogging
