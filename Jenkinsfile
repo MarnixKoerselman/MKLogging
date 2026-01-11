@@ -253,7 +253,7 @@ pipeline {
                     cd ${WORKSPACE}/build/linux-debug-coverage/bin
                     ./TestMKLogging --gtest_output="xml:gtest-results.xml"
                     cd ${WORKSPACE}/build/linux-debug-coverage
-                    gcov -r . src/*.cpp
+                    gcov CMakeFiles/MKLogging.dir/src/*.gcda
                     lcov --capture --directory . --output-file coverage.info
                     genhtml coverage.info --output-directory coverage-report
                   else
