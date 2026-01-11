@@ -222,6 +222,8 @@ pipeline {
                   cmake --build build/linux-x86-debug --parallel
                   cmake --preset linux-x86-release
                   cmake --build build/linux-x86-release --parallel
+                  cmake --preset linux-debug-coverage
+                  cmake --build build/linux-debug-coverage --parallel
                 '''
               }
               post {
@@ -247,9 +249,28 @@ pipeline {
                     echo "TestMKLogging not found in linux-release"
                     exit 1
                   fi
+                  if [ -f "${WORKSPACE}/build/linux-debug-coverage/bin/TestMKLogging" ]; then
+                    cd ${WORKSPACE}/build/linux-debug-coverage/bin
+                    ./TestMKLogging --gtest_output="xml:gtest-results.xml"
+                    cd ${WORKSPACE}/build/linux-debug-coverage
+                    gcov -r . src/*.cpp
+                    lcov --capture --directory . --output-file coverage.info
+                    genhtml coverage.info --output-directory coverage-report
+                  else
+                    echo "TestMKLogging not found in linux-debug-coverage"
+                    exit 1
+                  fi
                 '''
                 junit '**/gtest-results.xml'
                 recordIssues(tools: [junitParser(id: 'linux-junit', pattern: '**/gtest-results.xml')])
+                publishHTML([
+                  allowMissing: false,
+                  alwaysLinkToLastBuild: true,
+                  keepAll: true,
+                  reportDir: 'build/linux-debug-coverage/coverage-report',
+                  reportFiles: 'index.html',
+                  reportName: 'Code Coverage Report'
+                ])
               }
             }
           }

@@ -93,6 +93,23 @@
       }
     },
     {
+      "name": "linux-debug-coverage",
+      "inherits": "base",
+      "displayName": "Linux Debug Coverage",
+      "description": "Linux debug build with code coverage",
+      "condition": {
+        "type": "equals",
+        "lhs": "${hostSystemName}",
+        "rhs": "Linux"
+      },
+      "cacheVariables": {
+        "CMAKE_BUILD_TYPE": "Debug",
+        "CMAKE_CXX_FLAGS": "--coverage",
+        "CMAKE_C_FLAGS": "--coverage",
+        "CMAKE_EXE_LINKER_FLAGS": "--coverage"
+      }
+    },
+    {
       "name": "windows-base",
       "inherits": "base",
       "hidden": true,
@@ -315,6 +332,12 @@
       "description": "Release configuration for Windows 64-bit target.",
       "configuration": "Release",
       "configurePreset": "windows-x64-vs2026"
+    },
+    {
+      "name": "linux-debug-coverage",
+      "displayName": "Linux Debug Coverage",
+      "description": "Linux debug build with code coverage",
+      "configurePreset": "linux-debug-coverage"
     }
   ]
 }
