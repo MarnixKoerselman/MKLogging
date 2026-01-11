@@ -54,15 +54,20 @@ if (MKLOGGING_STANDALONE_PROJECT)
     add_compile_options(/MP)
     add_compile_definitions(_SILENCE_CXX17_CODECVT_HEADER_DEPRECATION_WARNING _CRT_SECURE_NO_WARNINGS)
 
-  add_link_options(
-    $<$<NOT:$<CONFIG:DEBUG>>:/INCREMENTAL:NO> # Disable incremental linking.
-    $<$<NOT:$<CONFIG:DEBUG>>:/OPT:REF> # Remove unreferenced functions and data.
-    $<$<NOT:$<CONFIG:DEBUG>>:/OPT:ICF> # Identical COMDAT folding.
-    $<$<CONFIG:DEBUG>:/INCREMENTAL:NO> # Disable incremental linking.
-    $<$<CONFIG:DEBUG>:/OPT:NOREF> # No unreferenced data elimination.
-    $<$<CONFIG:DEBUG>:/OPT:NOICF> # No Identical COMDAT folding.
-  )
+    add_link_options(
+      $<$<NOT:$<CONFIG:DEBUG>>:/INCREMENTAL:NO> # Disable incremental linking.
+      $<$<NOT:$<CONFIG:DEBUG>>:/OPT:REF> # Remove unreferenced functions and data.
+      $<$<NOT:$<CONFIG:DEBUG>>:/OPT:ICF> # Identical COMDAT folding.
+      $<$<CONFIG:DEBUG>:/INCREMENTAL:NO> # Disable incremental linking.
+      $<$<CONFIG:DEBUG>:/OPT:NOREF> # No unreferenced data elimination.
+      $<$<CONFIG:DEBUG>:/OPT:NOICF> # No Identical COMDAT folding.
+    )
   endif()
+endif()
+
+# Tell MSVC to set the correct value for __cplusplus (see https://learn.microsoft.com/en-us/cpp/build/reference/zc-cplusplus and https://gitlab.kitware.com/cmake/cmake/-/issues/18837)
+if(MSVC)
+  add_compile_options(/Zc:__cplusplus)
 endif()
 
 if(MKLOGGING_COMPILE_WARNING_AS_ERROR)
@@ -170,6 +175,7 @@ if(MKLOGGING_BUILD_TESTS)
   FetchContent_MakeAvailable(googletest)
 
   add_subdirectory("test")
+  add_subdirectory("test20")
 endif()
 
 # CPack configuration - Source packages only

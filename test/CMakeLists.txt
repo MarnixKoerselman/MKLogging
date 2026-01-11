@@ -1,5 +1,6 @@
 project(TestMKLogging)
 
+# this needs to be c++17 because of the utf-8 strings
 set(CMAKE_CXX_STANDARD 17)
 
 add_executable(${PROJECT_NAME}

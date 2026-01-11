@@ -9,6 +9,19 @@
 namespace MKLogging
 {
 
+#if __cplusplus >= 202002L
+  LogRecord::LogRecord(ELogLevel logLevel, std::source_location location)
+    : LogLevel(logLevel)
+    , Function(location.function_name())
+    , File(location.file_name())
+    , LineNumber(static_cast<long>(location.line()))
+    , Time(std::chrono::system_clock::now())
+    , ThreadId(std::this_thread::get_id())
+  {
+    std::boolalpha(m_MessageBuffer);
+  }
+#endif
+
   LogRecord::LogRecord(ELogLevel logLevel, const char* szFunction, const char* szFile, long lineNumber)
     : LogLevel(logLevel)
     , Function(szFunction)
