@@ -25,7 +25,7 @@ jobs:
           runCmd: |
             cmake --preset ${{ matrix.configuration_preset }}
             cmake --build build/${{ matrix.configuration_preset }} --parallel
-            ctest --test-dir build/${{ matrix.configuration_preset }} --output-junit TEST-${{ matrix.configuration_preset }}.xml
+            ctest --test-dir build/${{ matrix.configuration_preset }} --output-on-failure --verbose --output-junit TEST-${{ matrix.configuration_preset }}.xml
             cpack --config build/${{ matrix.configuration_preset }}/CPackSourceConfig.cmake
 
       - name: JUnit Report
