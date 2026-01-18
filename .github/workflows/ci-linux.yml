@@ -22,6 +22,7 @@ jobs:
       - name: Build and Test in Dev Container
         uses: devcontainers/ci@v0.3
         with:
+          push: never
           runCmd: |
             cmake --preset ${{ matrix.configuration_preset }}
             cmake --build build/${{ matrix.configuration_preset }} --parallel
