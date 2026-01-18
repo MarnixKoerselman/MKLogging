@@ -199,23 +199,28 @@ pipeline {
             stage('Test') {
               steps {
                 sh '''
-                  ctest --test-dir build/linux-debug --output-on-failure --verbose --output-junit build/linux-debug/test-results.xml
-                  ctest --test-dir build/linux-release --output-on-failure --verbose --output-junit build/linux-release/test-results.xml
-                  ctest --test-dir build/linux-debug-coverage --output-on-failure --verbose --output-junit build/linux-debug-coverage/test-results.xml
+                  build/linux-debug/bin/TestMKLogging-c++17 --gtest_output="xml:build/linux-debug/test-cpp17.xml"
+                  build/linux-debug/bin/TestMKLogging-c++20 --gtest_output="xml:build/linux-debug/test-cpp20.xml"
+                  build/linux-release/bin/TestMKLogging-c++17 --gtest_output="xml:build/linux-release/test-cpp17.xml"
+                  build/linux-release/bin/TestMKLogging-c++20 --gtest_output="xml:build/linux-release/test-cpp20.xml"
+                  build/linux-debug-coverage/bin/TestMKLogging-c++17 --gtest_output="xml:build/linux-debug-coverage/test-cpp17.xml"
+                  build/linux-debug-coverage/bin/TestMKLogging-c++20 --gtest_output="xml:build/linux-debug-coverage/test-cpp20.xml"
                   cd ${WORKSPACE}/build/linux-debug-coverage
                   gcov CMakeFiles/MKLogging.dir/src/*.gcda
-                  lcov --capture --directory . --output-file coverage.info --ignore-errors mismatch,mismatch --ignore-errors negative,negative --rc geninfo_unexecuted_blocks=1
-                  genhtml coverage.info --output-directory coverage-report
+                  lcov --capture --directory . --output-file coverage.info --ignore-errors mismatch,gcov --rc geninfo_unexecuted_blocks=0
+                  lcov --remove coverage.info '/usr/*' '*/build/*' --output-file coverage.info
+                  lcov --extract coverage.info '*/include/*' '*/src/*' --output-file coverage.info
+                  genhtml coverage.info --output-directory coverage-report --ignore-errors source
                 '''
-                junit '**/test-results.xml'
-                recordIssues(tools: [junitParser(id: 'linux-junit', pattern: '**/test-results.xml')])
+                junit 'build/**/*.xml'
+                recordIssues(tools: [junitParser(id: 'linux-junit', pattern: 'build/**/*.xml')])
                 publishHTML([
                   allowMissing: false,
                   alwaysLinkToLastBuild: true,
                   keepAll: true,
                   reportDir: 'build/linux-debug-coverage/coverage-report',
                   reportFiles: 'index.html',
-                  reportName: 'Code Coverage Report'
+                  reportName: 'Code Coverage Report (linux)'
                 ])
               }
             }
