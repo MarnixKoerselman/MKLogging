@@ -209,7 +209,7 @@ pipeline {
                   gcov CMakeFiles/MKLogging.dir/src/*.gcda
                   lcov --capture --directory . --output-file coverage.info --ignore-errors mismatch,mismatch --ignore-errors negative,negative --rc geninfo_unexecuted_blocks=1
                   lcov --remove coverage.info '/usr/*' '*/build/*' --output-file coverage.info
-                  lcov --extract coverage.info '*/include/*' '*/src/*' --output-file coverage.info
+                  lcov --extract coverage.info '*/include/*' '*/src/*' '*/TestMKLogging*' --output-file coverage.info
                   genhtml coverage.info --output-directory coverage-report --ignore-errors source
                 '''
                 junit 'build/**/*.xml'
