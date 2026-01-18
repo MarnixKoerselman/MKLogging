@@ -207,7 +207,7 @@ pipeline {
                   build/linux-debug-coverage/bin/TestMKLogging-c++20 --gtest_output="xml:build/linux-debug-coverage/test-cpp20.xml"
                   cd ${WORKSPACE}/build/linux-debug-coverage
                   gcov CMakeFiles/MKLogging.dir/src/*.gcda
-                  lcov --capture --directory . --output-file coverage.info --ignore-errors mismatch,gcov --rc geninfo_unexecuted_blocks=0
+                  lcov --capture --directory . --output-file coverage.info --ignore-errors mismatch,mismatch --ignore-errors negative,negative --rc geninfo_unexecuted_blocks=1
                   lcov --remove coverage.info '/usr/*' '*/build/*' --output-file coverage.info
                   lcov --extract coverage.info '*/include/*' '*/src/*' --output-file coverage.info
                   genhtml coverage.info --output-directory coverage-report --ignore-errors source
