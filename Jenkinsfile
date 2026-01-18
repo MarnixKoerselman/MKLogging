@@ -63,6 +63,7 @@ pipeline {
                 stage('Test') {
                   steps {
                     bat '''
+                      call "C:\\Program Files (x86)\\Microsoft Visual Studio\\2022\\BuildTools\\Common7\\Tools\\VsDevCmd.bat"
                       ctest --test-dir build\\windows-x86-vs2022 --build-config Debug --output-on-failure --verbose --output-junit build\\windows-x86-vs2022\\test-results-debug.xml
                       ctest --test-dir build\\windows-x86-vs2022 --build-config Release --output-on-failure --verbose --output-junit build\\windows-x86-vs2022\\test-results-release.xml
                       ctest --test-dir build\\windows-x64-vs2022 --build-config Debug --output-on-failure --verbose --output-junit build\\windows-x64-vs2022\\test-results-debug.xml
@@ -131,6 +132,7 @@ pipeline {
                 stage('Test') {
                   steps {
                     bat '''
+                      call "C:\\Program Files (x86)\\Microsoft Visual Studio\\18\\BuildTools\\Common7\\Tools\\VsDevCmd.bat"
                       ctest --test-dir build\\windows-x86-vs2026 --build-config Debug --output-on-failure --verbose --output-junit build\\windows-x86-vs2026\\test-results-debug.xml
                       if %ErrorLevel% equ 1 (exit /b 0)
                       ctest --test-dir build\\windows-x86-vs2026 --build-config Release --output-on-failure --verbose --output-junit build\\windows-x86-vs2026\\test-results-release.xml
