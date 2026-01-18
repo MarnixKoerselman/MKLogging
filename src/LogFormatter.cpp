@@ -8,7 +8,7 @@ namespace MKLogging
   void LogFormatter::OutputRecordWithFormatting(std::ostream& os, const LogRecord& record)
   {
     auto flags = os.flags();
-    os << record.File << '(' << record.LineNumber << ")\n";
+    os << record.File << '(' << record.Line << ")\n";
     OutputTime(os, record.Time);
     os << ' ';
     OutputThreadId(os, record.ThreadId);

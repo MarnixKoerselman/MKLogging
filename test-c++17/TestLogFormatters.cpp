@@ -19,21 +19,22 @@ TEST(LogFormatters, DefaultLogFormatter)
 
   auto function = __FUNCTION__;
   auto line = __LINE__;
+  auto file = __FILE__;
 
   MockLogSink mockSink;
-  EXPECT_CALL(mockSink, OutputRecord(_)).WillOnce([function, line](const LogRecord& record)
+  EXPECT_CALL(mockSink, OutputRecord(_)).WillOnce([function, line, file](const LogRecord& record)
     {
       EXPECT_EQ(ELogLevel::Info, record.LogLevel);
-      EXPECT_EQ(function, record.Function);
-      EXPECT_EQ(__FILE__, record.File);
-      EXPECT_EQ(line, record.LineNumber);
+      EXPECT_STREQ(function, record.Function);
+      EXPECT_STREQ(file, record.File);
+      EXPECT_EQ(line, record.Line);
       //EXPECT_EQ(_, record.Time);
       EXPECT_EQ(std::this_thread::get_id(), record.ThreadId);
       EXPECT_STREQ("test", record.GetLogMessage().c_str());
     });
 
   {
-    LogRecordAutoSink(&mockSink, ELogLevel::Info, function, __FILE__, line).Get() << "test";
+    LogRecordAutoSink(&mockSink, ELogLevel::Info, file, line, function).Get() << "test";
   }
 }
 
@@ -42,7 +43,7 @@ TEST(LogFormatters, MessageOnlyLogFormatter_LogRecordWithSink)
   // unless explicitly configured, a log sink does not have a formatter
   std::shared_ptr<FakeStringLogSink> buffer = std::make_shared<FakeStringLogSink>();
   {
-    LogRecordAutoSink(buffer.get(), ELogLevel::Info, __FUNCTION__, __FILE__, __LINE__).Get() << "test";
+    LogRecordAutoSink(buffer.get(), ELogLevel::Info, __FILE__, __LINE__, __FUNCTION__).Get() << "test";
   }
   EXPECT_STREQ("test", buffer->Buffer.c_str());
   buffer->Buffer.clear();

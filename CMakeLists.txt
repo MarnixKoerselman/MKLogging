@@ -7,7 +7,8 @@ project(MKLogging VERSION 0.0.0 LANGUAGES CXX)
 
 # Determine whether this is a standalone project or included by other projects
 set(MKLOGGING_STANDALONE_PROJECT OFF)
-if (CMAKE_CURRENT_SOURCE_DIR STREQUAL CMAKE_SOURCE_DIR)
+
+if(CMAKE_CURRENT_SOURCE_DIR STREQUAL CMAKE_SOURCE_DIR)
   set(MKLOGGING_STANDALONE_PROJECT ON)
 endif()
 
@@ -21,10 +22,11 @@ set(CMAKE_UNITY_BUILD OFF)
 set(CMAKE_UNITY_BUILD_BATCH_SIZE 10)
 
 # Enable parallel builds by default
-set(CMAKE_BUILD_PARALLEL_LEVEL 0)  # 0 = use all available cores
+set(CMAKE_BUILD_PARALLEL_LEVEL 0) # 0 = use all available cores
 
 # Use ccache for compilation caching
 find_program(CCACHE_PROGRAM ccache)
+
 if(CCACHE_PROGRAM)
   set(CMAKE_CXX_COMPILER_LAUNCHER "${CCACHE_PROGRAM}")
 endif()
@@ -32,6 +34,7 @@ endif()
 # Enable interprocedural optimization in Release mode
 include(CheckIPOSupported)
 check_ipo_supported(RESULT IPO_SUPPORTED OUTPUT IPO_ERROR)
+
 if(IPO_SUPPORTED AND NOT CMAKE_BUILD_TYPE STREQUAL "Debug")
   set(CMAKE_INTERPROCEDURAL_OPTIMIZATION TRUE)
 endif()
@@ -45,7 +48,7 @@ set(CMAKE_CXX_STANDARD 20) # MKKLogging requires at least c++17
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 # Set CXX standard and other compile options for standalone project
-if (MKLOGGING_STANDALONE_PROJECT)
+if(MKLOGGING_STANDALONE_PROJECT)
   # disable extensions
   set(CMAKE_CXX_EXTENSIONS OFF)
 
@@ -71,7 +74,7 @@ if(MSVC)
 endif()
 
 if(MKLOGGING_COMPILE_WARNING_AS_ERROR)
-  set(CMAKE_COMPILE_WARNING_AS_ERROR  ${MKLOGGING_COMPILE_WARNING_AS_ERROR})
+  set(CMAKE_COMPILE_WARNING_AS_ERROR ${MKLOGGING_COMPILE_WARNING_AS_ERROR})
 endif()
 
 # Library target
@@ -85,8 +88,9 @@ target_include_directories(${PROJECT_NAME}
 if(MKLOGGING_ENABLE_WARNINGS)
   if(MSVC)
     target_compile_options(${PROJECT_NAME} PRIVATE
-      /W4           # Enable high warning level
-      /WX           # Treat warnings as errors
+      /W4 # Enable high warning level
+      /WX # Treat warnings as errors
+
       # /permissive-  # Disable non-conforming code
       # /w14242       # Conversion from 'type1' to 'type1', possible loss of data
       # /w14254       # Operator': conversion from 'type1:field_bits' to 'type2:field_bits'
@@ -110,32 +114,32 @@ if(MKLOGGING_ENABLE_WARNINGS)
     )
   else()
     target_compile_options(${PROJECT_NAME} PRIVATE
-      -Wall                # Enable all common warnings
-      -Wextra              # Enable extra warnings
-      -Wpedantic           # Issue warnings needed for strict compliance to C++
-      -Werror              # Treat warnings as errors
-      -Wcast-align         # Warn for potential performance problem casts
-      -Wconversion         # Warn for implicit conversions that may alter a value
-      -Wunused             # Warn about unused variables
-      -Wshadow             # Warn about shadowing variables
-      -Wformat=2           # Warn about printf format strings
-      -Wundef              # Warn about undefined identifier is evaluated
-      -Wnull-dereference   # Warn about NULL pointer dereference
-      -Wdouble-promotion   # Warn about implicit double promotion
+      -Wall # Enable all common warnings
+      -Wextra # Enable extra warnings
+      -Wpedantic # Issue warnings needed for strict compliance to C++
+      -Werror # Treat warnings as errors
+      -Wcast-align # Warn for potential performance problem casts
+      -Wconversion # Warn for implicit conversions that may alter a value
+      -Wunused # Warn about unused variables
+      -Wshadow # Warn about shadowing variables
+      -Wformat=2 # Warn about printf format strings
+      -Wundef # Warn about undefined identifier is evaluated
+      -Wnull-dereference # Warn about NULL pointer dereference
+      -Wdouble-promotion # Warn about implicit double promotion
       -Woverloaded-virtual # Warn about overloaded virtual function names
       -Wno-unused-function # Don't warn about unused functions (can be useful for headers)
     )
 
     if(CMAKE_CXX_COMPILER_ID MATCHES "GNU")
       target_compile_options(${PROJECT_NAME} PRIVATE
-        -Wlogical-op      # Warn about logical operations being used where bitwise were probably wanted
-        -Wuseless-cast    # Warn about casting to the same type
+        -Wlogical-op # Warn about logical operations being used where bitwise were probably wanted
+        -Wuseless-cast # Warn about casting to the same type
         -Wzero-as-null-pointer-constant # Warn about using 0 as nullptr
       )
     elseif(CMAKE_CXX_COMPILER_ID MATCHES "Clang")
       target_compile_options(${PROJECT_NAME} PRIVATE
-        -Wmost            # Enable most warnings
-        -Wextra-semi      # Warn about redundant semicolons
+        -Wmost # Enable most warnings
+        -Wextra-semi # Warn about redundant semicolons
         -Wno-c++98-compat # Don't warn about C++98 compatibility
       )
     endif()
@@ -166,16 +170,17 @@ if(MKLOGGING_BUILD_TESTS)
   FetchContent_Declare(
     googletest
     GIT_REPOSITORY https://github.com/google/googletest.git
-    GIT_TAG        v1.17.0
-    GIT_SHALLOW    ON
+    GIT_TAG v1.17.0
+    GIT_SHALLOW ON
   )
+
   # For Windows: Prevent overriding the parent project's compiler/linker settings
   set(gtest_force_shared_crt ON CACHE BOOL "" FORCE)
   set(INSTALL_GTEST OFF)
   FetchContent_MakeAvailable(googletest)
 
-  add_subdirectory("test")
-  add_subdirectory("test20")
+  add_subdirectory("test-c++17")
+  add_subdirectory("test-c++20")
 endif()
 
 # CPack configuration - Source packages only
@@ -220,4 +225,5 @@ if(SOURCE_DIST_PROJECT_VERSION)
     "${CMAKE_CURRENT_SOURCE_DIR}/cmake" "cmake"
   )
 endif()
+
 include(CPack)

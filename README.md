@@ -112,7 +112,7 @@ LogCentral()->AddListener(std::make_shared<MyLogSink>());
 
 ### LogFormatter
 
-Loggers have a default formatter, and this logs all metadata (file, line number, function, thread & process ID) along with the user-provided log message. Log sinks do not have a default formatter, but it is possible to use a formatter on a sink. Please take note that formatting may be 'expensive' and formatters should be null-ed if possible.
+Loggers have a default formatter, and this logs all metadata (source file, line number, function, thread & process ID) along with the user-provided log message. Log sinks do not have a default formatter, but it is possible to use a formatter on a sink. Please take note that formatting may be 'expensive' and formatters should be null-ed if possible.
 
 Take a look at the implementation of the default formatter for ideas, and rewrite it or create a derived class with your own preferred formatting.
 
@@ -130,6 +130,8 @@ A typical log command (e.g. `LOGD("var=" << var)`) has the following properties:
   ```
 
 - **UTF-8 Support** - The log statement is `std::ostream` based, for UTF-8. Conversion helpers for `std::wstring` and `wchar_t*` are provided, but they use `std::wstring_convert<std::codecvt_utf8<wchar_t>>` converter which is deprecated. The conversion helpers can be replaced (see Logger.h: `MKL_NO_STD_STRING_HELPERS`).
+
+- **_Source location_** - in c++20 a new type `std::source_location` was included, which does not offer much under _MSVC_ (IMHO it makes the function name a little less readable) but the function name improvement for _GLIBCXX_ is significant. By default the c++20 implementation is used if possible, but this behaviour can be modified with compiler flag `MKL_USE_SOURCE_LOCATION` (see the `CMakeLists.txt` files in the test directories for examples).
 
 ## Quick Start
 
@@ -150,7 +152,7 @@ ctest --test-dir build/linux-release
 
 There is a devcontainer configuration, which is what I use myself, mostly. If you're on a Windows machine and have Docker installed (e.g. VS2022 or later with Docker Desktop, or VSCode with any Docker) then you can simply switch to the devcontainer to start developing in a Linux environment.
 
-*Gotcha: I'm not sure if this is typical for Rancher Desktop, but often I have a problem switching to the container, something about a mount point that is not configured correctly. It turns out that there are file under `\\wsl.localhost\Ubuntu\mnt\wslg\runtime-dir` (`wayland-0` and `wayland-0.lock`) that need to be removed or renamed. Paste this directory path in Windows Explorer to see the magic of WSL integration in action, and delete these files if necessary.*
+_Gotcha: I'm not sure if this is typical for Rancher Desktop, but often I have a problem switching to the container, something about a mount point that is not configured correctly. It turns out that there are file under `\\wsl.localhost\Ubuntu\mnt\wslg\runtime-dir` (`wayland-0` and `wayland-0.lock`) that need to be removed or renamed. Paste this directory path in Windows Explorer to see the magic of WSL integration in action, and delete these files if necessary._
 
 ### Using in Your Project
 
@@ -240,7 +242,6 @@ void f()
 
 - Upgrade to C++20 consistently (currently mixed C++17/20)
 - Add `std::format` support as alternative to iostream for better performance
-- Use `std::source_location` instead of `__FILE__`, `__LINE__`, `__FUNCTION__` macros
 - Consider `std::span` for binary data logging instead of raw pointers
 
 **Thread Safety & Performance**

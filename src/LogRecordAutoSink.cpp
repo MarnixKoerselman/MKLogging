@@ -4,21 +4,21 @@
 namespace MKLogging
 {
 
-//#if __cplusplus >= 202002L
-//  LogRecordAutoSink::LogRecordAutoSink(ELogLevel logLevel, std::source_location location)
-//    : LogRecord(logLevel, location)
-//    , m_LogSink(pLogSink)
-//  {
-//    assert(m_LogSink != nullptr);
-//  }
-//#endif
-
-  LogRecordAutoSink::LogRecordAutoSink(ILogSink* pLogSink, ELogLevel logLevel, const char* szFunction, const char* szFile, long lineNumber)
-    : LogRecord(logLevel, szFunction, szFile, lineNumber)
+  LogRecordAutoSink::LogRecordAutoSink(ILogSink* pLogSink, ELogLevel logLevel, const char* file, int line, const char* function)
+    : LogRecord(logLevel, file, line, function)
     , m_LogSink(pLogSink)
   {
     assert(m_LogSink != nullptr);
   }
+
+#if __cplusplus >= 202002L
+  LogRecordAutoSink::LogRecordAutoSink(ILogSink* pLogSink, ELogLevel logLevel, std::source_location location)
+    : LogRecord(logLevel, location)
+    , m_LogSink(pLogSink)
+  {
+    assert(m_LogSink != nullptr);
+  }
+#endif
 
   LogRecordAutoSink::~LogRecordAutoSink()
   {

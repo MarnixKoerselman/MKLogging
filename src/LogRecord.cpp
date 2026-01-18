@@ -5,16 +5,28 @@
 #include <iomanip>
 #include <thread>
 #include <algorithm>
+#include <cstring>
 
 namespace MKLogging
 {
 
+  LogRecord::LogRecord(ELogLevel logLevel, const char* file, int line, const char* function)
+    : LogLevel(logLevel)
+    , File(file)
+    , Line(line)
+    , Function(function)
+    , Time(std::chrono::system_clock::now())
+    , ThreadId(std::this_thread::get_id())
+  {
+    std::boolalpha(m_MessageBuffer);
+  }
+
 #if __cplusplus >= 202002L
   LogRecord::LogRecord(ELogLevel logLevel, std::source_location location)
     : LogLevel(logLevel)
-    , Function(location.function_name())
     , File(location.file_name())
-    , LineNumber(static_cast<long>(location.line()))
+    , Line(location.line())
+    , Function(location.function_name())
     , Time(std::chrono::system_clock::now())
     , ThreadId(std::this_thread::get_id())
   {
@@ -22,22 +34,11 @@ namespace MKLogging
   }
 #endif
 
-  LogRecord::LogRecord(ELogLevel logLevel, const char* szFunction, const char* szFile, long lineNumber)
-    : LogLevel(logLevel)
-    , Function(szFunction)
-    , File(szFile)
-    , LineNumber(lineNumber)
-    , Time(std::chrono::system_clock::now())
-    , ThreadId(std::this_thread::get_id())
-  {
-    std::boolalpha(m_MessageBuffer);
-  }
-
   LogRecord::LogRecord(const LogRecord& rhs)
     : LogLevel(rhs.LogLevel)
-    , Function(rhs.Function)
     , File(rhs.File)
-    , LineNumber(rhs.LineNumber)
+    , Line(rhs.Line)
+    , Function(rhs.Function)
     , Time(rhs.Time)
     , ThreadId(rhs.ThreadId)
     , PreformattedMessage(rhs.PreformattedMessage)
@@ -106,9 +107,9 @@ namespace MKLogging
   bool operator ==(const LogRecord& lhs, const LogRecord& rhs)
   {
     return (lhs.LogLevel == rhs.LogLevel)
-      && (lhs.Function == rhs.Function)
-      && (lhs.File == rhs.File)
-      && (lhs.LineNumber == rhs.LineNumber)
+      && (strcmp(lhs.File, rhs.File) == 0)
+      && (lhs.Line == rhs.Line)
+      && (strcmp(lhs.Function, rhs.Function) == 0)
       && (lhs.Time == rhs.Time)
       && (lhs.ThreadId == rhs.ThreadId)
       && (lhs.m_MessageBuffer.str() == rhs.m_MessageBuffer.str());

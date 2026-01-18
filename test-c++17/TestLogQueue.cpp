@@ -22,7 +22,7 @@ TEST(LogQueue, Basic)
 
   // Set expectations
   std::string testString = "This is a test";
-  LogRecord testRecord(ELogLevel::All, __FUNCTION__, __FILE__, __LINE__);
+  LogRecord testRecord(ELogLevel::All, __FILE__, __LINE__, __FUNCTION__);
   testRecord.Get() << testString;
 
   EXPECT_CALL(*mockSink, OutputRecord(testRecord)).Times(1);

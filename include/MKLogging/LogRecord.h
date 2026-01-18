@@ -8,17 +8,17 @@
 #include <memory>
 #if __cplusplus >= 202002L
 #include <source_location>
-#endif
+#endif // __cplusplus >= 202002L
 
 namespace MKLogging
 {
 
   struct LogRecord
   {
-    LogRecord(ELogLevel logLevel, const char* szFunction, const char* szFile, long lineNumber);
+    LogRecord(ELogLevel logLevel, const char* file, int line, const char* function);
 #if __cplusplus >= 202002L
-    LogRecord(ELogLevel logLevel, std::source_location location = std::source_location::current());
-#endif
+    LogRecord(ELogLevel logLevel, std::source_location location);
+#endif // __cplusplus >= 202002L
     LogRecord(const LogRecord& rhs);
     virtual ~LogRecord() = default;
 
@@ -29,9 +29,9 @@ namespace MKLogging
     friend bool operator ==(const LogRecord& lhs, const LogRecord& rhs);
 
     ELogLevel LogLevel;
-    std::string_view Function; // the function string appears to always be in a constant location (perhaps in the .text segment?) so no string copy required
-    std::string_view File; // the file string appears to always be in a constant location (perhaps in the .text segment?) so no string copy required
-    long LineNumber;
+    const char* File = nullptr;
+    int Line = 0;
+    const char* Function = nullptr;
     std::chrono::system_clock::time_point Time;
     std::thread::id ThreadId;
     std::shared_ptr<std::string> PreformattedMessage;
