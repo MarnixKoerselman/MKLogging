@@ -4,8 +4,7 @@ set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 add_executable(${PROJECT_NAME}
-  TestSourceLocation.cpp
-  "TestUtils.cpp" "TestUtils.h" "StringUtils.cpp" "StringUtils.h")
+  TestSourceLocation.cpp)
 
 # C++20 tests use source_location on Linux, old API on Windows
 if(WIN32)
