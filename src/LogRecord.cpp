@@ -5,26 +5,40 @@
 #include <iomanip>
 #include <thread>
 #include <algorithm>
+#include <cstring>
 
 namespace MKLogging
 {
 
-  LogRecord::LogRecord(ELogLevel logLevel, const char* szFunction, const char* szFile, long lineNumber)
+  LogRecord::LogRecord(ELogLevel logLevel, const std::string_view function, const std::string_view file, unsigned line)
     : LogLevel(logLevel)
-    , Function(szFunction)
-    , File(szFile)
-    , LineNumber(lineNumber)
+    , Function(function)
+    , File(file)
+    , Line(line)
     , Time(std::chrono::system_clock::now())
     , ThreadId(std::this_thread::get_id())
   {
     std::boolalpha(m_MessageBuffer);
   }
 
+#if __cplusplus >= 202002L
+  LogRecord::LogRecord(ELogLevel logLevel, std::source_location location)
+    : LogLevel(logLevel)
+    , Function(location.function_name())
+    , File(location.file_name())
+    , Line(location.line())
+    , Time(std::chrono::system_clock::now())
+    , ThreadId(std::this_thread::get_id())
+  {
+    std::boolalpha(m_MessageBuffer);
+  }
+#endif
+
   LogRecord::LogRecord(const LogRecord& rhs)
     : LogLevel(rhs.LogLevel)
     , Function(rhs.Function)
     , File(rhs.File)
-    , LineNumber(rhs.LineNumber)
+    , Line(rhs.Line)
     , Time(rhs.Time)
     , ThreadId(rhs.ThreadId)
     , PreformattedMessage(rhs.PreformattedMessage)
@@ -93,9 +107,9 @@ namespace MKLogging
   bool operator ==(const LogRecord& lhs, const LogRecord& rhs)
   {
     return (lhs.LogLevel == rhs.LogLevel)
-      && (lhs.Function == rhs.Function)
       && (lhs.File == rhs.File)
-      && (lhs.LineNumber == rhs.LineNumber)
+      && (lhs.Line == rhs.Line)
+      && (lhs.Function == rhs.Function)
       && (lhs.Time == rhs.Time)
       && (lhs.ThreadId == rhs.ThreadId)
       && (lhs.m_MessageBuffer.str() == rhs.m_MessageBuffer.str());

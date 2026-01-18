@@ -22,6 +22,7 @@ RUN apt-get update && export DEBIAN_FRONTEND=noninteractive \
         distcc \
         gcc-multilib \
         g++-multilib \
+        lcov \
     && rm -rf /var/lib/apt/lists/*
 
 # Configure ccache

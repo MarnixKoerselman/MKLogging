@@ -1,5 +1,6 @@
 #pragma once
 
+#include "Config.h"
 #include <string_view>
 
 // This is the main include file.
@@ -44,6 +45,36 @@
 #define MKL_ISLOGGED(mp_Logger, mp_LogLevel) (mp_Logger)->IsLogged(mp_LogLevel)
 #endif
 
+#if MKL_USE_SOURCE_LOCATION
+
+#include <source_location>
+
+#ifndef MKL_LOGV
+#define MKL_LOGV(mp_Logger, mp_Out) do { if (MKL_ISLOGGED(mp_Logger, MKLogging::ELogLevel::Verbose)) { MKLogging::LogRecordAutoSink(mp_Logger, MKLogging::ELogLevel::Verbose, std::source_location::current()).Get() << mp_Out << MKL_ENDLINE; } } while (0)
+#endif
+
+#ifndef MKL_LOGD
+#define MKL_LOGD(mp_Logger, mp_Out) do { if (MKL_ISLOGGED(mp_Logger, MKLogging::ELogLevel::Debug)) { MKLogging::LogRecordAutoSink(mp_Logger, MKLogging::ELogLevel::Debug, std::source_location::current()).Get() << mp_Out << MKL_ENDLINE; } } while (0)
+#endif
+
+#ifndef MKL_LOGI
+#define MKL_LOGI(mp_Logger, mp_Out) do { if (MKL_ISLOGGED(mp_Logger, MKLogging::ELogLevel::Info)) { MKLogging::LogRecordAutoSink(mp_Logger, MKLogging::ELogLevel::Info, std::source_location::current()).Get() << mp_Out << MKL_ENDLINE; } } while (0)
+#endif
+
+#ifndef MKL_LOGW
+#define MKL_LOGW(mp_Logger, mp_Out) do { if (MKL_ISLOGGED(mp_Logger, MKLogging::ELogLevel::Warning)) { MKLogging::LogRecordAutoSink(mp_Logger, MKLogging::ELogLevel::Warning, std::source_location::current()).Get() << mp_Out << MKL_ENDLINE; } } while (0)
+#endif
+
+#ifndef MKL_LOGE
+#define MKL_LOGE(mp_Logger, mp_Out) do { if (MKL_ISLOGGED(mp_Logger, MKLogging::ELogLevel::Error)) { MKLogging::LogRecordAutoSink(mp_Logger, MKLogging::ELogLevel::Error, std::source_location::current()).Get() << mp_Out << MKL_ENDLINE; } } while (0)
+#endif
+
+#ifndef MKL_LOGHEX
+#define MKL_LOGHEX(mp_Logger, mp_LogLevel, mp_DataHeader, mp_Data, mp_DataSize) do { if (MKL_ISLOGGED(mp_Logger, mp_LogLevel)) { MKLogging::LogRecordAutoSink(mp_Logger, mp_LogLevel, std::source_location::current()).LogHex(mp_DataHeader, mp_Data, mp_DataSize); } } while (0)
+#endif
+
+#else // !MKL_USE_SOURCE_LOCATION
+
 #ifndef MKL_LOGV
 #define MKL_LOGV(mp_Logger, mp_Out) do { if (MKL_ISLOGGED(mp_Logger, MKLogging::ELogLevel::Verbose)) { MKLogging::LogRecordAutoSink(mp_Logger, MKLogging::ELogLevel::Verbose, __FUNCTION__, __FILE__, __LINE__).Get() << mp_Out << MKL_ENDLINE; } } while (0)
 #endif
@@ -67,6 +98,8 @@
 #ifndef MKL_LOGHEX
 #define MKL_LOGHEX(mp_Logger, mp_LogLevel, mp_DataHeader, mp_Data, mp_DataSize) do { if (MKL_ISLOGGED(mp_Logger, mp_LogLevel)) { MKLogging::LogRecordAutoSink(mp_Logger, mp_LogLevel, __FUNCTION__, __FILE__, __LINE__).LogHex(mp_DataHeader, mp_Data, mp_DataSize); } } while (0)
 #endif
+
+#endif // MKL_USE_SOURCE_LOCATION
 
 #include "LogSinkWithFormatter.h"
 #include "EventSource.h"

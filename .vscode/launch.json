@@ -4,7 +4,7 @@
       "name": "(Windows) Launch",
       "type": "cppvsdbg",
       "request": "launch",
-      "program": "${workspaceFolder}/build/win-x86-debug/bin/TestMKLogging.exe",
+      "program": "${workspaceFolder}/build/win-x86-debug/bin/TestMKLogging-c++17.exe",
       "args": [],
       "stopAtEntry": false,
       "cwd": "${fileDirname}",

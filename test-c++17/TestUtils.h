@@ -2,6 +2,7 @@
 
 #include <filesystem>
 #include <vector>
+#include <string_view>
 
 #define GTEST_INFO(mp_out) std::cerr << "\033[0;32m[   INFO   ] \033[0;0m" << mp_out;
 
@@ -39,4 +40,3 @@ void EnsureCleanOutputDirectory(const std::filesystem::path& directoryPath);
 void ReadLogFileAsBinary(const std::filesystem::path& logFilePath, /*__out*/ std::string& fileContents);
 
 int CountOccurrence(const std::string& string, const std::string& subString);
-

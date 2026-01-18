@@ -17,23 +17,24 @@ TEST(LogFormatters, DefaultLogFormatter)
 {
   LogFormatter formatter;
 
-  auto function = __FUNCTION__;
+  const std::string_view function = __FUNCTION__;
   auto line = __LINE__;
+  const std::string_view file = __FILE__;
 
   MockLogSink mockSink;
-  EXPECT_CALL(mockSink, OutputRecord(_)).WillOnce([function, line](const LogRecord& record)
-    {
-      EXPECT_EQ(ELogLevel::Info, record.LogLevel);
-      EXPECT_STREQ(function, record.Function);
-      EXPECT_STREQ(__FILE__, record.File);
-      EXPECT_EQ(line, record.LineNumber);
-      //EXPECT_EQ(_, record.Time);
-      EXPECT_EQ(std::this_thread::get_id(), record.ThreadId);
-      EXPECT_STREQ("test", record.GetLogMessage().c_str());
-    });
+  EXPECT_CALL(mockSink, OutputRecord(_)).WillOnce([function, line, file](const LogRecord& record)
+  {
+    EXPECT_EQ(ELogLevel::Info, record.LogLevel);
+    EXPECT_EQ(function, record.Function);
+    EXPECT_EQ(file, record.File);
+    EXPECT_EQ(line, record.Line);
+    //EXPECT_EQ(_, record.Time);
+    EXPECT_EQ(std::this_thread::get_id(), record.ThreadId);
+    EXPECT_STREQ("test", record.GetLogMessage().c_str());
+  });
 
   {
-    LogRecordAutoSink(&mockSink, ELogLevel::Info, function, __FILE__, line).Get() << "test";
+    LogRecordAutoSink(&mockSink, ELogLevel::Info, function, file, line).Get() << "test";
   }
 }
 
@@ -82,32 +83,32 @@ TEST(LogFormatters, DerivedLogFormatter)
 
 TEST(LogFormatters, DerivedLogFormatterPartials)
 {
-    class DerivedFormatter : public LogFormatter
+  class DerivedFormatter : public LogFormatter
+  {
+  public:
+    virtual void OutputLogLevel(std::ostream& os, ELogLevel /*logLevel*/) override
     {
-    public:
-        virtual void OutputLogLevel(std::ostream& os, ELogLevel /*logLevel*/) override
-        {
-            os << "loglevel";
-        }
-        virtual void OutputTime(std::ostream& os, const std::chrono::system_clock::time_point& /*time*/) override
-        {
-            os << "time";
-        }
-        virtual void OutputThreadId(std::ostream& os, std::thread::id /*threadId*/) override
-        {
-            os << "threadid";
-        }
-        virtual void OutputMessage(std::ostream& os, const LogRecord& /*record*/) override
-        {
-            os << "message";
-        }
-    };
+      os << "loglevel";
+    }
+    virtual void OutputTime(std::ostream& os, const std::chrono::system_clock::time_point& /*time*/) override
+    {
+      os << "time";
+    }
+    virtual void OutputThreadId(std::ostream& os, std::thread::id /*threadId*/) override
+    {
+      os << "threadid";
+    }
+    virtual void OutputMessage(std::ostream& os, const LogRecord& /*record*/) override
+    {
+      os << "message";
+    }
+  };
 
-    Logger logger;
-    logger.SetFormatter(std::make_shared<DerivedFormatter>());
-    logger.SetMinimumLogLevel(ELogLevel::All);
-    std::shared_ptr<FakeStringLogSink> buffer = std::make_shared<FakeStringLogSink>();
-    logger.AddListener(buffer);
-    MKL_LOGD(&logger, "test");
-    EXPECT_NE(std::string::npos, buffer->Buffer.find("time threadid loglevel message"));
+  Logger logger;
+  logger.SetFormatter(std::make_shared<DerivedFormatter>());
+  logger.SetMinimumLogLevel(ELogLevel::All);
+  std::shared_ptr<FakeStringLogSink> buffer = std::make_shared<FakeStringLogSink>();
+  logger.AddListener(buffer);
+  MKL_LOGD(&logger, "test");
+  EXPECT_NE(std::string::npos, buffer->Buffer.find("time threadid loglevel message"));
 }
