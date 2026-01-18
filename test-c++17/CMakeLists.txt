@@ -1,5 +1,6 @@
-project(TestMKLogging)
+project(TestMKLogging-c++17)
 
+# this needs to be c++17 because of the utf-8 strings
 set(CMAKE_CXX_STANDARD 17)
 
 add_executable(${PROJECT_NAME}
@@ -22,6 +23,9 @@ add_executable(${PROJECT_NAME}
   "TestELogLevel.cpp"
   "VersionTest.cpp"
 )
+
+# C++17 tests use macro-based source location by default
+target_compile_definitions(${PROJECT_NAME} PRIVATE MKL_USE_SOURCE_LOCATION=0)
 
 include(GoogleTest)
 gtest_discover_tests(${PROJECT_NAME})

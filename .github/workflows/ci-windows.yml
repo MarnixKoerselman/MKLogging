@@ -31,7 +31,7 @@ jobs:
         run: cmake --build build/${{ matrix.preset }} --config ${{ matrix.config }} --parallel
 
       - name: Test
-        run: ctest --test-dir build/${{ matrix.preset }} --build-config ${{ matrix.config }} --output-junit TEST-${{ matrix.preset }}-${{ matrix.config }}.xml
+        run: ctest --test-dir build/${{ matrix.preset }} --build-config ${{ matrix.config }} --output-on-failure --verbose --output-junit TEST-${{ matrix.preset }}-${{ matrix.config }}.xml
 
       - name: Package
         run: cpack --config build/${{ matrix.preset }}/CPackSourceConfig.cmake

@@ -62,32 +62,26 @@ pipeline {
                 }
                 stage('Test') {
                   steps {
-                    dir('build\\windows-x86-vs2022\\bin\\Debug') {
-                      bat 'if exist TestMKLogging.exe (TestMKLogging.exe --gtest_output="xml:gtest-results.xml") else (echo TestMKLogging.exe not found && exit /b 1)'
-                    }
-                    dir('build\\windows-x86-vs2022\\bin\\Release') {
-                      bat 'if exist TestMKLogging.exe (TestMKLogging.exe --gtest_output="xml:gtest-results.xml") else (echo TestMKLogging.exe not found && exit /b 1)'
-                    }
-                    dir('build\\windows-x64-vs2022\\bin\\Debug') {
-                      bat 'if exist TestMKLogging.exe (TestMKLogging.exe --gtest_output="xml:gtest-results.xml") else (echo TestMKLogging.exe not found && exit /b 1)'
-                    }
-                    dir('build\\windows-x64-vs2022\\bin\\Release') {
-                      bat 'if exist TestMKLogging.exe (TestMKLogging.exe --gtest_output="xml:gtest-results.xml") else (echo TestMKLogging.exe not found && exit /b 1)'
-                    }
-                    dir('build\\win-x86-debug\\bin') {
-                      bat 'if exist TestMKLogging.exe (TestMKLogging.exe --gtest_output="xml:gtest-results.xml") else (echo TestMKLogging.exe not found && exit /b 1)'
-                    }
-                    dir('build\\win-x86-release\\bin') {
-                      bat 'if exist TestMKLogging.exe (TestMKLogging.exe --gtest_output="xml:gtest-results.xml") else (echo TestMKLogging.exe not found && exit /b 1)'
-                    }
-                    dir('build\\win-x64-debug\\bin') {
-                      bat 'if exist TestMKLogging.exe (TestMKLogging.exe --gtest_output="xml:gtest-results.xml") else (echo TestMKLogging.exe not found && exit /b 1)'
-                    }
-                    dir('build\\win-x64-release\\bin') {
-                      bat 'if exist TestMKLogging.exe (TestMKLogging.exe --gtest_output="xml:gtest-results.xml") else (echo TestMKLogging.exe not found && exit /b 1)'
-                    }
-                    junit '**/gtest-results.xml'
-                    recordIssues(tools: [junitParser(id: 'VS2022-junit', pattern: '**/gtest-results.xml')])
+                    bat '''
+                      build\\windows-x86-vs2022\\bin\\Debug\\TestMKLogging-c++17.exe --gtest_output="xml:build\\windows-x86-vs2022\\test-cpp17-debug.xml"
+                      build\\windows-x86-vs2022\\bin\\Debug\\TestMKLogging-c++20.exe --gtest_output="xml:build\\windows-x86-vs2022\\test-cpp20-debug.xml"
+                      build\\windows-x86-vs2022\\bin\\Release\\TestMKLogging-c++17.exe --gtest_output="xml:build\\windows-x86-vs2022\\test-cpp17-release.xml"
+                      build\\windows-x86-vs2022\\bin\\Release\\TestMKLogging-c++20.exe --gtest_output="xml:build\\windows-x86-vs2022\\test-cpp20-release.xml"
+                      build\\windows-x64-vs2022\\bin\\Debug\\TestMKLogging-c++17.exe --gtest_output="xml:build\\windows-x64-vs2022\\test-cpp17-debug.xml"
+                      build\\windows-x64-vs2022\\bin\\Debug\\TestMKLogging-c++20.exe --gtest_output="xml:build\\windows-x64-vs2022\\test-cpp20-debug.xml"
+                      build\\windows-x64-vs2022\\bin\\Release\\TestMKLogging-c++17.exe --gtest_output="xml:build\\windows-x64-vs2022\\test-cpp17-release.xml"
+                      build\\windows-x64-vs2022\\bin\\Release\\TestMKLogging-c++20.exe --gtest_output="xml:build\\windows-x64-vs2022\\test-cpp20-release.xml"
+                      build\\win-x86-debug\\bin\\TestMKLogging-c++17.exe --gtest_output="xml:build\\win-x86-debug\\test-cpp17.xml"
+                      build\\win-x86-debug\\bin\\TestMKLogging-c++20.exe --gtest_output="xml:build\\win-x86-debug\\test-cpp20.xml"
+                      build\\win-x86-release\\bin\\TestMKLogging-c++17.exe --gtest_output="xml:build\\win-x86-release\\test-cpp17.xml"
+                      build\\win-x86-release\\bin\\TestMKLogging-c++20.exe --gtest_output="xml:build\\win-x86-release\\test-cpp20.xml"
+                      build\\win-x64-debug\\bin\\TestMKLogging-c++17.exe --gtest_output="xml:build\\win-x64-debug\\test-cpp17.xml"
+                      build\\win-x64-debug\\bin\\TestMKLogging-c++20.exe --gtest_output="xml:build\\win-x64-debug\\test-cpp20.xml"
+                      build\\win-x64-release\\bin\\TestMKLogging-c++17.exe --gtest_output="xml:build\\win-x64-release\\test-cpp17.xml"
+                      build\\win-x64-release\\bin\\TestMKLogging-c++20.exe --gtest_output="xml:build\\win-x64-release\\test-cpp20.xml"
+                    '''
+                    junit 'build/**/*.xml'
+                    recordIssues(tools: [junitParser(id: 'VS2022-junit', pattern: 'build/**/*.xml')])
                   }
                 }
               }
@@ -144,56 +138,26 @@ pipeline {
                 }
                 stage('Test') {
                   steps {
-                    dir('build\\windows-x86-vs2026\\bin\\Debug') {
-                      bat '''
-                      TestMKLogging.exe --gtest_output="xml:gtest-results.xml"
-                      if %ErrorLevel% equ 1 (exit /b 0)
-                      '''
-                    }
-                    dir('build\\windows-x86-vs2026\\bin\\Release') {
-                      bat '''
-                      TestMKLogging.exe --gtest_output="xml:gtest-results.xml"
-                      if %ErrorLevel% equ 1 (exit /b 0)
-                      '''
-                    }
-                    dir('build\\windows-x64-vs2026\\bin\\Debug') {
-                      bat '''
-                      TestMKLogging.exe --gtest_output="xml:gtest-results.xml"
-                      if %ErrorLevel% equ 1 (exit /b 0)
-                      '''
-                    }
-                    dir('build\\windows-x64-vs2026\\bin\\Release') {
-                      bat '''
-                      TestMKLogging.exe --gtest_output="xml:gtest-results.xml"
-                      if %ErrorLevel% equ 1 (exit /b 0)
-                      '''
-                    }
-                    dir('build\\win-x86-debug\\bin') {
-                      bat '''
-                      TestMKLogging.exe --gtest_output="xml:gtest-results.xml"
-                      if %ErrorLevel% equ 1 (exit /b 0)
-                      '''
-                    }
-                    dir('build\\win-x86-release\\bin') {
-                      bat '''
-                      TestMKLogging.exe --gtest_output="xml:gtest-results.xml"
-                      if %ErrorLevel% equ 1 (exit /b 0)
-                      '''
-                    }
-                    dir('build\\win-x64-debug\\bin') {
-                      bat '''
-                      TestMKLogging.exe --gtest_output="xml:gtest-results.xml"
-                      if %ErrorLevel% equ 1 (exit /b 0)
-                      '''
-                    }
-                    dir('build\\win-x64-release\\bin') {
-                      bat '''
-                      TestMKLogging.exe --gtest_output="xml:gtest-results.xml"
-                      if %ErrorLevel% equ 1 (exit /b 0)
-                      '''
-                    }
-                    junit '**/gtest-results.xml'
-                    recordIssues(tools: [junitParser(id: 'VS2026-junit', pattern: '**/gtest-results.xml')])
+                    bat '''
+                      build\\windows-x86-vs2026\\bin\\Debug\\TestMKLogging-c++17.exe --gtest_output="xml:build\\windows-x86-vs2026\\test-cpp17-debug.xml" || exit /b 0
+                      build\\windows-x86-vs2026\\bin\\Debug\\TestMKLogging-c++20.exe --gtest_output="xml:build\\windows-x86-vs2026\\test-cpp20-debug.xml" || exit /b 0
+                      build\\windows-x86-vs2026\\bin\\Release\\TestMKLogging-c++17.exe --gtest_output="xml:build\\windows-x86-vs2026\\test-cpp17-release.xml" || exit /b 0
+                      build\\windows-x86-vs2026\\bin\\Release\\TestMKLogging-c++20.exe --gtest_output="xml:build\\windows-x86-vs2026\\test-cpp20-release.xml" || exit /b 0
+                      build\\windows-x64-vs2026\\bin\\Debug\\TestMKLogging-c++17.exe --gtest_output="xml:build\\windows-x64-vs2026\\test-cpp17-debug.xml" || exit /b 0
+                      build\\windows-x64-vs2026\\bin\\Debug\\TestMKLogging-c++20.exe --gtest_output="xml:build\\windows-x64-vs2026\\test-cpp20-debug.xml" || exit /b 0
+                      build\\windows-x64-vs2026\\bin\\Release\\TestMKLogging-c++17.exe --gtest_output="xml:build\\windows-x64-vs2026\\test-cpp17-release.xml" || exit /b 0
+                      build\\windows-x64-vs2026\\bin\\Release\\TestMKLogging-c++20.exe --gtest_output="xml:build\\windows-x64-vs2026\\test-cpp20-release.xml" || exit /b 0
+                      build\\win-x86-debug\\bin\\TestMKLogging-c++17.exe --gtest_output="xml:build\\win-x86-debug\\test-cpp17.xml" || exit /b 0
+                      build\\win-x86-debug\\bin\\TestMKLogging-c++20.exe --gtest_output="xml:build\\win-x86-debug\\test-cpp20.xml" || exit /b 0
+                      build\\win-x86-release\\bin\\TestMKLogging-c++17.exe --gtest_output="xml:build\\win-x86-release\\test-cpp17.xml" || exit /b 0
+                      build\\win-x86-release\\bin\\TestMKLogging-c++20.exe --gtest_output="xml:build\\win-x86-release\\test-cpp20.xml" || exit /b 0
+                      build\\win-x64-debug\\bin\\TestMKLogging-c++17.exe --gtest_output="xml:build\\win-x64-debug\\test-cpp17.xml" || exit /b 0
+                      build\\win-x64-debug\\bin\\TestMKLogging-c++20.exe --gtest_output="xml:build\\win-x64-debug\\test-cpp20.xml" || exit /b 0
+                      build\\win-x64-release\\bin\\TestMKLogging-c++17.exe --gtest_output="xml:build\\win-x64-release\\test-cpp17.xml" || exit /b 0
+                      build\\win-x64-release\\bin\\TestMKLogging-c++20.exe --gtest_output="xml:build\\win-x64-release\\test-cpp20.xml" || exit /b 0
+                    '''
+                    junit 'build/**/*.xml'
+                    recordIssues(tools: [junitParser(id: 'VS2026-junit', pattern: 'build/**/*.xml')])
                   }
                 }
               }
@@ -205,6 +169,7 @@ pipeline {
             dockerfile {
               dir '.devcontainer'
               label 'linux && docker-engine'
+              customWorkspace 'workspace/mklogging'
             }
           }
           stages {
@@ -222,6 +187,8 @@ pipeline {
                   cmake --build build/linux-x86-debug --parallel
                   cmake --preset linux-x86-release
                   cmake --build build/linux-x86-release --parallel
+                  cmake --preset linux-debug-coverage
+                  cmake --build build/linux-debug-coverage --parallel
                 '''
               }
               post {
@@ -233,23 +200,29 @@ pipeline {
             stage('Test') {
               steps {
                 sh '''
-                  if [ -f "${WORKSPACE}/build/linux-debug/bin/TestMKLogging" ]; then
-                    cd ${WORKSPACE}/build/linux-debug/bin
-                    ./TestMKLogging --gtest_output="xml:gtest-results.xml"
-                  else
-                    echo "TestMKLogging not found in linux-debug"
-                    exit 1
-                  fi
-                  if [ -f "${WORKSPACE}/build/linux-release/bin/TestMKLogging" ]; then
-                    cd ${WORKSPACE}/build/linux-release/bin
-                    ./TestMKLogging --gtest_output="xml:gtest-results.xml"
-                  else
-                    echo "TestMKLogging not found in linux-release"
-                    exit 1
-                  fi
+                  build/linux-debug/bin/TestMKLogging-c++17 --gtest_output="xml:build/linux-debug/test-cpp17.xml"
+                  build/linux-debug/bin/TestMKLogging-c++20 --gtest_output="xml:build/linux-debug/test-cpp20.xml"
+                  build/linux-release/bin/TestMKLogging-c++17 --gtest_output="xml:build/linux-release/test-cpp17.xml"
+                  build/linux-release/bin/TestMKLogging-c++20 --gtest_output="xml:build/linux-release/test-cpp20.xml"
+                  build/linux-debug-coverage/bin/TestMKLogging-c++17 --gtest_output="xml:build/linux-debug-coverage/test-cpp17.xml"
+                  build/linux-debug-coverage/bin/TestMKLogging-c++20 --gtest_output="xml:build/linux-debug-coverage/test-cpp20.xml"
+                  cd ${WORKSPACE}/build/linux-debug-coverage
+                  gcov CMakeFiles/MKLogging.dir/src/*.gcda
+                  lcov --capture --directory . --output-file coverage.info --ignore-errors mismatch,mismatch --ignore-errors negative,negative --rc geninfo_unexecuted_blocks=1
+                  lcov --remove coverage.info '/usr/*' '*/build/*' --output-file coverage.info
+                  lcov --extract coverage.info '*/include/*' '*/src/*' '*/test-c++*' --output-file coverage.info
+                  genhtml coverage.info --output-directory coverage-report --ignore-errors source
                 '''
-                junit '**/gtest-results.xml'
-                recordIssues(tools: [junitParser(id: 'linux-junit', pattern: '**/gtest-results.xml')])
+                junit 'build/**/*.xml'
+                recordIssues(tools: [junitParser(id: 'linux-junit', pattern: 'build/**/*.xml')])
+                publishHTML([
+                  allowMissing: false,
+                  alwaysLinkToLastBuild: true,
+                  keepAll: true,
+                  reportDir: 'build/linux-debug-coverage/coverage-report',
+                  reportFiles: 'index.html',
+                  reportName: 'Code Coverage Report (linux)'
+                ])
               }
             }
           }

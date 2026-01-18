@@ -42,7 +42,7 @@ namespace MKLogging
 
   void Logger::SetMinimumLogLevel(ELogLevel logLevel)
   {
-    MKL_LOGW(this, ELogLevel_ToString(logLevel));
+    MKL_LOGW(this, "Setting log level to: " << ELogLevel_ToString(logLevel));
     m_MinimumLogLevel = logLevel;
   }
 

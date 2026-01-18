@@ -12,17 +12,14 @@
   },
 
   // Mount ccache directory to persist the cache between container rebuilds
-  "mounts": [
-    "source=ccache,target=/ccache,type=volume",
-    "source=/var/run/docker.sock,target=/var/run/docker.sock,type=bind"
-  ],
+  "mounts": ["source=ccache,target=/ccache,type=volume", "source=/var/run/docker.sock,target=/var/run/docker.sock,type=bind"],
 
   // Configure VS Code settings
   "customizations": {
     "vscode": {
       "settings": {
         "cmake.configureOnOpen": true,
-        "cmake.parallelJobs": 0 // Use all available cores
+        "cmake.parallelJobs": 2
       },
       "extensions": [
         "ms-vscode.cmake-tools",
