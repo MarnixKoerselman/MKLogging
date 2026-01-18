@@ -198,8 +198,8 @@ pipeline {
                   ctest --test-dir build/linux-debug-coverage --output-on-failure --verbose --output-junit build/linux-debug-coverage/test-results.xml
                   cd ${WORKSPACE}/build/linux-debug-coverage
                   gcov CMakeFiles/MKLogging.dir/src/*.gcda
-                  lcov --capture --directory . --output-file coverage.info --ignore-errors mismatch,gcov --rc geninfo_unexecuted_blocks=0
-                  genhtml coverage.info --output-directory coverage-report --ignore-errors source
+                  lcov --capture --directory . --output-file coverage.info --ignore-errors mismatch,mismatch --ignore-errors negative,negative --rc geninfo_unexecuted_blocks=1
+                  genhtml coverage.info --output-directory coverage-report
                 '''
                 junit '**/test-results.xml'
                 recordIssues(tools: [junitParser(id: 'linux-junit', pattern: '**/test-results.xml')])
