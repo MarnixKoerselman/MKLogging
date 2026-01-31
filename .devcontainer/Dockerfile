@@ -18,15 +18,7 @@ RUN if [ "${REINSTALL_CMAKE_VERSION_FROM_SOURCE}" != "none" ]; then \
 # Install additional packages for build optimization
 RUN apt-get update && export DEBIAN_FRONTEND=noninteractive \
     && apt-get -y install --no-install-recommends \
-        ccache \
-        distcc \
         gcc-multilib \
         g++-multilib \
         lcov \
     && rm -rf /var/lib/apt/lists/*
-
-# Configure ccache
-ENV CCACHE_DIR=/ccache
-ENV PATH="/usr/lib/ccache:$PATH"
-RUN mkdir -p /ccache \
-    && chown -R vscode:vscode /ccache
