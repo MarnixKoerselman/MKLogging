@@ -25,12 +25,26 @@ pipeline {
                     bat """
                       call "C:\\Program Files (x86)\\Microsoft Visual Studio\\2022\\BuildTools\\Common7\\Tools\\VsDevCmd.bat"
                       cmake --version
+
                       cmake --preset windows-x86-vs2022
+
                       cmake --build --preset windows-x86-vs2022-debug --parallel
+                      build\\windows-x86-vs2022\\bin\\Debug\\TestMKLogging-c++17.exe --gtest_output="xml:build\\windows-x86-vs2022\\test-cpp17-debug.xml"
+                      build\\windows-x86-vs2022\\bin\\Debug\\TestMKLogging-c++20.exe --gtest_output="xml:build\\windows-x86-vs2022\\test-cpp20-debug.xml"
+
                       cmake --build --preset windows-x86-vs2022-release --parallel
+                      build\\windows-x86-vs2022\\bin\\Release\\TestMKLogging-c++17.exe --gtest_output="xml:build\\windows-x86-vs2022\\test-cpp17-release.xml"
+                      build\\windows-x86-vs2022\\bin\\Release\\TestMKLogging-c++20.exe --gtest_output="xml:build\\windows-x86-vs2022\\test-cpp20-release.xml"
+
                       cmake --preset windows-x64-vs2022
+
                       cmake --build --preset windows-x64-vs2022-debug --parallel
+                      build\\windows-x64-vs2022\\bin\\Debug\\TestMKLogging-c++17.exe --gtest_output="xml:build\\windows-x64-vs2022\\test-cpp17-debug.xml"
+                      build\\windows-x64-vs2022\\bin\\Debug\\TestMKLogging-c++20.exe --gtest_output="xml:build\\windows-x64-vs2022\\test-cpp20-debug.xml"
+
                       cmake --build --preset windows-x64-vs2022-release --parallel
+                      build\\windows-x64-vs2022\\bin\\Release\\TestMKLogging-c++17.exe --gtest_output="xml:build\\windows-x64-vs2022\\test-cpp17-release.xml"
+                      build\\windows-x64-vs2022\\bin\\Release\\TestMKLogging-c++20.exe --gtest_output="xml:build\\windows-x64-vs2022\\test-cpp20-release.xml"
                     """
                   }
                   post {
@@ -44,44 +58,34 @@ pipeline {
                     bat """
                       call "C:\\Program Files (x86)\\Microsoft Visual Studio\\2022\\BuildTools\\Common7\\Tools\\VsDevCmd.bat"
                       cmake --version
+
                       cmake --preset win-x86-debug
                       cmake --build build\\win-x86-debug --parallel
+                      build\\win-x86-debug\\bin\\TestMKLogging-c++17.exe --gtest_output="xml:build\\win-x86-debug\\test-cpp17.xml"
+                      build\\win-x86-debug\\bin\\TestMKLogging-c++20.exe --gtest_output="xml:build\\win-x86-debug\\test-cpp20.xml"
+
                       cmake --preset win-x86-release
                       cmake --build build\\win-x86-release --parallel
+                      build\\win-x86-release\\bin\\TestMKLogging-c++17.exe --gtest_output="xml:build\\win-x86-release\\test-cpp17.xml"
+                      build\\win-x86-release\\bin\\TestMKLogging-c++20.exe --gtest_output="xml:build\\win-x86-release\\test-cpp20.xml"
+
                       cmake --preset win-x64-debug
                       cmake --build build\\win-x64-debug --parallel
+                      build\\win-x64-debug\\bin\\TestMKLogging-c++17.exe --gtest_output="xml:build\\win-x64-debug\\test-cpp17.xml"
+                      build\\win-x64-debug\\bin\\TestMKLogging-c++20.exe --gtest_output="xml:build\\win-x64-debug\\test-cpp20.xml"
+
                       cmake --preset win-x64-release
                       cmake --build build\\win-x64-release --parallel
+                      build\\win-x64-release\\bin\\TestMKLogging-c++17.exe --gtest_output="xml:build\\win-x64-release\\test-cpp17.xml"
+                      build\\win-x64-release\\bin\\TestMKLogging-c++20.exe --gtest_output="xml:build\\win-x64-release\\test-cpp20.xml"
                     """
                   }
                   post {
                     always {
                       recordIssues(tools: [cmake(id: 'VS2022-Ninja')])
+                      junit 'build/**/*.xml'
+                      recordIssues(tools: [junitParser(id: 'VS2022-junit', pattern: 'build/**/*.xml')])
                     }
-                  }
-                }
-                stage('Test') {
-                  steps {
-                    bat '''
-                      build\\windows-x86-vs2022\\bin\\Debug\\TestMKLogging-c++17.exe --gtest_output="xml:build\\windows-x86-vs2022\\test-cpp17-debug.xml"
-                      build\\windows-x86-vs2022\\bin\\Debug\\TestMKLogging-c++20.exe --gtest_output="xml:build\\windows-x86-vs2022\\test-cpp20-debug.xml"
-                      build\\windows-x86-vs2022\\bin\\Release\\TestMKLogging-c++17.exe --gtest_output="xml:build\\windows-x86-vs2022\\test-cpp17-release.xml"
-                      build\\windows-x86-vs2022\\bin\\Release\\TestMKLogging-c++20.exe --gtest_output="xml:build\\windows-x86-vs2022\\test-cpp20-release.xml"
-                      build\\windows-x64-vs2022\\bin\\Debug\\TestMKLogging-c++17.exe --gtest_output="xml:build\\windows-x64-vs2022\\test-cpp17-debug.xml"
-                      build\\windows-x64-vs2022\\bin\\Debug\\TestMKLogging-c++20.exe --gtest_output="xml:build\\windows-x64-vs2022\\test-cpp20-debug.xml"
-                      build\\windows-x64-vs2022\\bin\\Release\\TestMKLogging-c++17.exe --gtest_output="xml:build\\windows-x64-vs2022\\test-cpp17-release.xml"
-                      build\\windows-x64-vs2022\\bin\\Release\\TestMKLogging-c++20.exe --gtest_output="xml:build\\windows-x64-vs2022\\test-cpp20-release.xml"
-                      build\\win-x86-debug\\bin\\TestMKLogging-c++17.exe --gtest_output="xml:build\\win-x86-debug\\test-cpp17.xml"
-                      build\\win-x86-debug\\bin\\TestMKLogging-c++20.exe --gtest_output="xml:build\\win-x86-debug\\test-cpp20.xml"
-                      build\\win-x86-release\\bin\\TestMKLogging-c++17.exe --gtest_output="xml:build\\win-x86-release\\test-cpp17.xml"
-                      build\\win-x86-release\\bin\\TestMKLogging-c++20.exe --gtest_output="xml:build\\win-x86-release\\test-cpp20.xml"
-                      build\\win-x64-debug\\bin\\TestMKLogging-c++17.exe --gtest_output="xml:build\\win-x64-debug\\test-cpp17.xml"
-                      build\\win-x64-debug\\bin\\TestMKLogging-c++20.exe --gtest_output="xml:build\\win-x64-debug\\test-cpp20.xml"
-                      build\\win-x64-release\\bin\\TestMKLogging-c++17.exe --gtest_output="xml:build\\win-x64-release\\test-cpp17.xml"
-                      build\\win-x64-release\\bin\\TestMKLogging-c++20.exe --gtest_output="xml:build\\win-x64-release\\test-cpp20.xml"
-                    '''
-                    junit 'build/**/*.xml'
-                    recordIssues(tools: [junitParser(id: 'VS2022-junit', pattern: 'build/**/*.xml')])
                   }
                 }
               }
@@ -101,12 +105,26 @@ pipeline {
                     bat """
                       call "C:\\Program Files (x86)\\Microsoft Visual Studio\\18\\BuildTools\\Common7\\Tools\\VsDevCmd.bat"
                       cmake --version
+
                       cmake --preset windows-x86-vs2026
+
                       cmake --build --preset windows-x86-vs2026-debug --parallel
+                      build\\windows-x86-vs2026\\bin\\Debug\\TestMKLogging-c++17.exe --gtest_output="xml:build\\windows-x86-vs2026\\test-cpp17-debug.xml" || exit /b 0
+                      build\\windows-x86-vs2026\\bin\\Debug\\TestMKLogging-c++20.exe --gtest_output="xml:build\\windows-x86-vs2026\\test-cpp20-debug.xml" || exit /b 0
+
                       cmake --build --preset windows-x86-vs2026-release --parallel
+                      build\\windows-x86-vs2026\\bin\\Release\\TestMKLogging-c++17.exe --gtest_output="xml:build\\windows-x86-vs2026\\test-cpp17-release.xml" || exit /b 0
+                      build\\windows-x86-vs2026\\bin\\Release\\TestMKLogging-c++20.exe --gtest_output="xml:build\\windows-x86-vs2026\\test-cpp20-release.xml" || exit /b 0
+
                       cmake --preset windows-x64-vs2026
+
                       cmake --build --preset windows-x64-vs2026-debug --parallel
+                      build\\windows-x64-vs2026\\bin\\Debug\\TestMKLogging-c++17.exe --gtest_output="xml:build\\windows-x64-vs2026\\test-cpp17-debug.xml" || exit /b 0
+                      build\\windows-x64-vs2026\\bin\\Debug\\TestMKLogging-c++20.exe --gtest_output="xml:build\\windows-x64-vs2026\\test-cpp20-debug.xml" || exit /b 0
+
                       cmake --build --preset windows-x64-vs2026-release --parallel
+                      build\\windows-x64-vs2026\\bin\\Release\\TestMKLogging-c++17.exe --gtest_output="xml:build\\windows-x64-vs2026\\test-cpp17-release.xml" || exit /b 0
+                      build\\windows-x64-vs2026\\bin\\Release\\TestMKLogging-c++20.exe --gtest_output="xml:build\\windows-x64-vs2026\\test-cpp20-release.xml" || exit /b 0
                     """
                   }
                   post {
@@ -120,44 +138,34 @@ pipeline {
                     bat """
                       call "C:\\Program Files (x86)\\Microsoft Visual Studio\\18\\BuildTools\\Common7\\Tools\\VsDevCmd.bat"
                       cmake --version
+
                       cmake --preset win-x86-debug
                       cmake --build build\\win-x86-debug --parallel
+                      build\\win-x86-debug\\bin\\TestMKLogging-c++17.exe --gtest_output="xml:build\\win-x86-debug\\test-cpp17.xml" || exit /b 0
+                      build\\win-x86-debug\\bin\\TestMKLogging-c++20.exe --gtest_output="xml:build\\win-x86-debug\\test-cpp20.xml" || exit /b 0
+
                       cmake --preset win-x86-release
                       cmake --build build\\win-x86-release --parallel
+                      build\\win-x86-release\\bin\\TestMKLogging-c++17.exe --gtest_output="xml:build\\win-x86-release\\test-cpp17.xml" || exit /b 0
+                      build\\win-x86-release\\bin\\TestMKLogging-c++20.exe --gtest_output="xml:build\\win-x86-release\\test-cpp20.xml" || exit /b 0
+
                       cmake --preset win-x64-debug
                       cmake --build build\\win-x64-debug --parallel
+                      build\\win-x64-debug\\bin\\TestMKLogging-c++17.exe --gtest_output="xml:build\\win-x64-debug\\test-cpp17.xml" || exit /b 0
+                      build\\win-x64-debug\\bin\\TestMKLogging-c++20.exe --gtest_output="xml:build\\win-x64-debug\\test-cpp20.xml" || exit /b 0
+
                       cmake --preset win-x64-release
                       cmake --build build\\win-x64-release --parallel
+                      build\\win-x64-release\\bin\\TestMKLogging-c++17.exe --gtest_output="xml:build\\win-x64-release\\test-cpp17.xml" || exit /b 0
+                      build\\win-x64-release\\bin\\TestMKLogging-c++20.exe --gtest_output="xml:build\\win-x64-release\\test-cpp20.xml" || exit /b 0
                     """
                   }
                   post {
                     always {
                       recordIssues(tools: [cmake(id: 'VS2026-Ninja')])
+                      junit 'build/**/*.xml'
+                      recordIssues(tools: [junitParser(id: 'VS2026-junit', pattern: 'build/**/*.xml')])
                     }
-                  }
-                }
-                stage('Test') {
-                  steps {
-                    bat '''
-                      build\\windows-x86-vs2026\\bin\\Debug\\TestMKLogging-c++17.exe --gtest_output="xml:build\\windows-x86-vs2026\\test-cpp17-debug.xml" || exit /b 0
-                      build\\windows-x86-vs2026\\bin\\Debug\\TestMKLogging-c++20.exe --gtest_output="xml:build\\windows-x86-vs2026\\test-cpp20-debug.xml" || exit /b 0
-                      build\\windows-x86-vs2026\\bin\\Release\\TestMKLogging-c++17.exe --gtest_output="xml:build\\windows-x86-vs2026\\test-cpp17-release.xml" || exit /b 0
-                      build\\windows-x86-vs2026\\bin\\Release\\TestMKLogging-c++20.exe --gtest_output="xml:build\\windows-x86-vs2026\\test-cpp20-release.xml" || exit /b 0
-                      build\\windows-x64-vs2026\\bin\\Debug\\TestMKLogging-c++17.exe --gtest_output="xml:build\\windows-x64-vs2026\\test-cpp17-debug.xml" || exit /b 0
-                      build\\windows-x64-vs2026\\bin\\Debug\\TestMKLogging-c++20.exe --gtest_output="xml:build\\windows-x64-vs2026\\test-cpp20-debug.xml" || exit /b 0
-                      build\\windows-x64-vs2026\\bin\\Release\\TestMKLogging-c++17.exe --gtest_output="xml:build\\windows-x64-vs2026\\test-cpp17-release.xml" || exit /b 0
-                      build\\windows-x64-vs2026\\bin\\Release\\TestMKLogging-c++20.exe --gtest_output="xml:build\\windows-x64-vs2026\\test-cpp20-release.xml" || exit /b 0
-                      build\\win-x86-debug\\bin\\TestMKLogging-c++17.exe --gtest_output="xml:build\\win-x86-debug\\test-cpp17.xml" || exit /b 0
-                      build\\win-x86-debug\\bin\\TestMKLogging-c++20.exe --gtest_output="xml:build\\win-x86-debug\\test-cpp20.xml" || exit /b 0
-                      build\\win-x86-release\\bin\\TestMKLogging-c++17.exe --gtest_output="xml:build\\win-x86-release\\test-cpp17.xml" || exit /b 0
-                      build\\win-x86-release\\bin\\TestMKLogging-c++20.exe --gtest_output="xml:build\\win-x86-release\\test-cpp20.xml" || exit /b 0
-                      build\\win-x64-debug\\bin\\TestMKLogging-c++17.exe --gtest_output="xml:build\\win-x64-debug\\test-cpp17.xml" || exit /b 0
-                      build\\win-x64-debug\\bin\\TestMKLogging-c++20.exe --gtest_output="xml:build\\win-x64-debug\\test-cpp20.xml" || exit /b 0
-                      build\\win-x64-release\\bin\\TestMKLogging-c++17.exe --gtest_output="xml:build\\win-x64-release\\test-cpp17.xml" || exit /b 0
-                      build\\win-x64-release\\bin\\TestMKLogging-c++20.exe --gtest_output="xml:build\\win-x64-release\\test-cpp20.xml" || exit /b 0
-                    '''
-                    junit 'build/**/*.xml'
-                    recordIssues(tools: [junitParser(id: 'VS2026-junit', pattern: 'build/**/*.xml')])
                   }
                 }
               }
