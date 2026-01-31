@@ -24,13 +24,6 @@ set(CMAKE_UNITY_BUILD_BATCH_SIZE 10)
 # Enable parallel builds by default
 set(CMAKE_BUILD_PARALLEL_LEVEL 0) # 0 = use all available cores
 
-# Use ccache for compilation caching
-find_program(CCACHE_PROGRAM ccache)
-
-if(CCACHE_PROGRAM)
-  set(CMAKE_CXX_COMPILER_LAUNCHER "${CCACHE_PROGRAM}")
-endif()
-
 # Enable interprocedural optimization in Release mode
 include(CheckIPOSupported)
 check_ipo_supported(RESULT IPO_SUPPORTED OUTPUT IPO_ERROR)

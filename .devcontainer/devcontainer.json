@@ -6,25 +6,28 @@
     "dockerfile": "Dockerfile"
   },
 
-  // Configure environment variables for build optimization
-  "remoteEnv": {
-    "CCACHE_DIR": "/ccache"
-  },
+  // Configure environment variables
+  "remoteEnv": {},
 
-  // Mount ccache directory to persist the cache between container rebuilds
-  "mounts": ["source=ccache,target=/ccache,type=volume", "source=/var/run/docker.sock,target=/var/run/docker.sock,type=bind"],
+  // Features to add to the dev container. More info: https://containers.dev/features.
+  // "features": {
+  //   "ghcr.io/devcontainers/features/docker-outside-of-docker:1": {}
+  // },
+
+  "mounts": [
+    // Use a named volume for the build directory to improve build performance and persist builds between container rebuilds
+    "type=volume,source=${localWorkspaceFolderBasename}-build,target=${containerWorkspaceFolder}/build"
+  ],
+
+  // Use 'postCreateCommand' to run commands after the container is created.
+  "postCreateCommand": "sudo chown vscode build ; gcc -v",
 
   // Configure VS Code settings
   "customizations": {
     "vscode": {
-      "settings": {
-        "cmake.configureOnOpen": true,
-        "cmake.parallelJobs": 2
-      },
       "extensions": [
         "ms-vscode.cmake-tools",
         "ms-azuretools.vscode-containers",
-        //"docker.docker",
         "mhutchie.git-graph",
         "esbenp.prettier-vscode",
         "amazonwebservices.amazon-q-vscode",
@@ -33,6 +36,8 @@
       ]
     }
   },
+
+  "remoteUser": "vscode"
   // Uncomment to connect as root instead. More info: https://aka.ms/dev-containers-non-root.
-  "remoteUser": "root"
+  // "remoteUser": "root"
 }
