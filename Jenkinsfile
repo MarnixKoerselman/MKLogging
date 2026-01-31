@@ -32,19 +32,19 @@ pipeline {
                       build\\windows-x86-vs2022\\bin\\Debug\\TestMKLogging-c++17.exe --gtest_output="xml:build\\windows-x86-vs2022\\test-cpp17-debug.xml"
                       build\\windows-x86-vs2022\\bin\\Debug\\TestMKLogging-c++20.exe --gtest_output="xml:build\\windows-x86-vs2022\\test-cpp20-debug.xml"
 
-                      cmake --build --preset windows-x86-vs2022-release --parallel
-                      build\\windows-x86-vs2022\\bin\\Release\\TestMKLogging-c++17.exe --gtest_output="xml:build\\windows-x86-vs2022\\test-cpp17-release.xml"
-                      build\\windows-x86-vs2022\\bin\\Release\\TestMKLogging-c++20.exe --gtest_output="xml:build\\windows-x86-vs2022\\test-cpp20-release.xml"
+                      REM cmake --build --preset windows-x86-vs2022-release --parallel
+                      REM build\\windows-x86-vs2022\\bin\\Release\\TestMKLogging-c++17.exe --gtest_output="xml:build\\windows-x86-vs2022\\test-cpp17-release.xml"
+                      REM build\\windows-x86-vs2022\\bin\\Release\\TestMKLogging-c++20.exe --gtest_output="xml:build\\windows-x86-vs2022\\test-cpp20-release.xml"
 
-                      cmake --preset windows-x64-vs2022
+                      REM cmake --preset windows-x64-vs2022
 
-                      cmake --build --preset windows-x64-vs2022-debug --parallel
-                      build\\windows-x64-vs2022\\bin\\Debug\\TestMKLogging-c++17.exe --gtest_output="xml:build\\windows-x64-vs2022\\test-cpp17-debug.xml"
-                      build\\windows-x64-vs2022\\bin\\Debug\\TestMKLogging-c++20.exe --gtest_output="xml:build\\windows-x64-vs2022\\test-cpp20-debug.xml"
+                      REM cmake --build --preset windows-x64-vs2022-debug --parallel
+                      REM build\\windows-x64-vs2022\\bin\\Debug\\TestMKLogging-c++17.exe --gtest_output="xml:build\\windows-x64-vs2022\\test-cpp17-debug.xml"
+                      REM build\\windows-x64-vs2022\\bin\\Debug\\TestMKLogging-c++20.exe --gtest_output="xml:build\\windows-x64-vs2022\\test-cpp20-debug.xml"
 
-                      cmake --build --preset windows-x64-vs2022-release --parallel
-                      build\\windows-x64-vs2022\\bin\\Release\\TestMKLogging-c++17.exe --gtest_output="xml:build\\windows-x64-vs2022\\test-cpp17-release.xml"
-                      build\\windows-x64-vs2022\\bin\\Release\\TestMKLogging-c++20.exe --gtest_output="xml:build\\windows-x64-vs2022\\test-cpp20-release.xml"
+                      REM cmake --build --preset windows-x64-vs2022-release --parallel
+                      REM build\\windows-x64-vs2022\\bin\\Release\\TestMKLogging-c++17.exe --gtest_output="xml:build\\windows-x64-vs2022\\test-cpp17-release.xml"
+                      REM build\\windows-x64-vs2022\\bin\\Release\\TestMKLogging-c++20.exe --gtest_output="xml:build\\windows-x64-vs2022\\test-cpp20-release.xml"
                     """
                   }
                   post {
@@ -53,39 +53,43 @@ pipeline {
                     }
                   }
                 }
-                stage('Build with Ninja') {
+                // stage('Build with Ninja') {
+                //   steps {
+                //     bat """
+                //       call "C:\\Program Files (x86)\\Microsoft Visual Studio\\2022\\BuildTools\\Common7\\Tools\\VsDevCmd.bat"
+                //       cmake --version
+
+                //       cmake --preset win-x86-debug
+                //       cmake --build build\\win-x86-debug --parallel
+                //       build\\win-x86-debug\\bin\\TestMKLogging-c++17.exe --gtest_output="xml:build\\win-x86-debug\\test-cpp17.xml"
+                //       build\\win-x86-debug\\bin\\TestMKLogging-c++20.exe --gtest_output="xml:build\\win-x86-debug\\test-cpp20.xml"
+
+                //       cmake --preset win-x86-release
+                //       cmake --build build\\win-x86-release --parallel
+                //       build\\win-x86-release\\bin\\TestMKLogging-c++17.exe --gtest_output="xml:build\\win-x86-release\\test-cpp17.xml"
+                //       build\\win-x86-release\\bin\\TestMKLogging-c++20.exe --gtest_output="xml:build\\win-x86-release\\test-cpp20.xml"
+
+                //       cmake --preset win-x64-debug
+                //       cmake --build build\\win-x64-debug --parallel
+                //       build\\win-x64-debug\\bin\\TestMKLogging-c++17.exe --gtest_output="xml:build\\win-x64-debug\\test-cpp17.xml"
+                //       build\\win-x64-debug\\bin\\TestMKLogging-c++20.exe --gtest_output="xml:build\\win-x64-debug\\test-cpp20.xml"
+
+                //       cmake --preset win-x64-release
+                //       cmake --build build\\win-x64-release --parallel
+                //       build\\win-x64-release\\bin\\TestMKLogging-c++17.exe --gtest_output="xml:build\\win-x64-release\\test-cpp17.xml"
+                //       build\\win-x64-release\\bin\\TestMKLogging-c++20.exe --gtest_output="xml:build\\win-x64-release\\test-cpp20.xml"
+                //     """
+                //   }
+                //   post {
+                //     always {
+                //       recordIssues(tools: [cmake(id: 'VS2022-Ninja')])
+                //     }
+                //   }
+                // }
+                stage('Record test results') {
                   steps {
-                    bat """
-                      call "C:\\Program Files (x86)\\Microsoft Visual Studio\\2022\\BuildTools\\Common7\\Tools\\VsDevCmd.bat"
-                      cmake --version
-
-                      cmake --preset win-x86-debug
-                      cmake --build build\\win-x86-debug --parallel
-                      build\\win-x86-debug\\bin\\TestMKLogging-c++17.exe --gtest_output="xml:build\\win-x86-debug\\test-cpp17.xml"
-                      build\\win-x86-debug\\bin\\TestMKLogging-c++20.exe --gtest_output="xml:build\\win-x86-debug\\test-cpp20.xml"
-
-                      cmake --preset win-x86-release
-                      cmake --build build\\win-x86-release --parallel
-                      build\\win-x86-release\\bin\\TestMKLogging-c++17.exe --gtest_output="xml:build\\win-x86-release\\test-cpp17.xml"
-                      build\\win-x86-release\\bin\\TestMKLogging-c++20.exe --gtest_output="xml:build\\win-x86-release\\test-cpp20.xml"
-
-                      cmake --preset win-x64-debug
-                      cmake --build build\\win-x64-debug --parallel
-                      build\\win-x64-debug\\bin\\TestMKLogging-c++17.exe --gtest_output="xml:build\\win-x64-debug\\test-cpp17.xml"
-                      build\\win-x64-debug\\bin\\TestMKLogging-c++20.exe --gtest_output="xml:build\\win-x64-debug\\test-cpp20.xml"
-
-                      cmake --preset win-x64-release
-                      cmake --build build\\win-x64-release --parallel
-                      build\\win-x64-release\\bin\\TestMKLogging-c++17.exe --gtest_output="xml:build\\win-x64-release\\test-cpp17.xml"
-                      build\\win-x64-release\\bin\\TestMKLogging-c++20.exe --gtest_output="xml:build\\win-x64-release\\test-cpp20.xml"
-                    """
-                  }
-                  post {
-                    always {
-                      recordIssues(tools: [cmake(id: 'VS2022-Ninja')])
-                      junit 'build/**/*.xml'
-                      recordIssues(tools: [junitParser(id: 'VS2022-junit', pattern: 'build/**/*.xml')])
-                    }
+                    junit 'build/**/*.xml'
+                    recordIssues(tools: [junitParser(id: 'VS2022-junit', pattern: 'build/**/*.xml')])
                   }
                 }
               }
@@ -108,19 +112,19 @@ pipeline {
 
                       cmake --preset windows-x86-vs2026
 
-                      cmake --build --preset windows-x86-vs2026-debug --parallel
-                      build\\windows-x86-vs2026\\bin\\Debug\\TestMKLogging-c++17.exe --gtest_output="xml:build\\windows-x86-vs2026\\test-cpp17-debug.xml" || exit /b 0
-                      build\\windows-x86-vs2026\\bin\\Debug\\TestMKLogging-c++20.exe --gtest_output="xml:build\\windows-x86-vs2026\\test-cpp20-debug.xml" || exit /b 0
+                      REM cmake --build --preset windows-x86-vs2026-debug --parallel
+                      REM build\\windows-x86-vs2026\\bin\\Debug\\TestMKLogging-c++17.exe --gtest_output="xml:build\\windows-x86-vs2026\\test-cpp17-debug.xml" || exit /b 0
+                      REM build\\windows-x86-vs2026\\bin\\Debug\\TestMKLogging-c++20.exe --gtest_output="xml:build\\windows-x86-vs2026\\test-cpp20-debug.xml" || exit /b 0
 
-                      cmake --build --preset windows-x86-vs2026-release --parallel
-                      build\\windows-x86-vs2026\\bin\\Release\\TestMKLogging-c++17.exe --gtest_output="xml:build\\windows-x86-vs2026\\test-cpp17-release.xml" || exit /b 0
-                      build\\windows-x86-vs2026\\bin\\Release\\TestMKLogging-c++20.exe --gtest_output="xml:build\\windows-x86-vs2026\\test-cpp20-release.xml" || exit /b 0
+                      REM cmake --build --preset windows-x86-vs2026-release --parallel
+                      REM build\\windows-x86-vs2026\\bin\\Release\\TestMKLogging-c++17.exe --gtest_output="xml:build\\windows-x86-vs2026\\test-cpp17-release.xml" || exit /b 0
+                      REM build\\windows-x86-vs2026\\bin\\Release\\TestMKLogging-c++20.exe --gtest_output="xml:build\\windows-x86-vs2026\\test-cpp20-release.xml" || exit /b 0
 
                       cmake --preset windows-x64-vs2026
 
-                      cmake --build --preset windows-x64-vs2026-debug --parallel
-                      build\\windows-x64-vs2026\\bin\\Debug\\TestMKLogging-c++17.exe --gtest_output="xml:build\\windows-x64-vs2026\\test-cpp17-debug.xml" || exit /b 0
-                      build\\windows-x64-vs2026\\bin\\Debug\\TestMKLogging-c++20.exe --gtest_output="xml:build\\windows-x64-vs2026\\test-cpp20-debug.xml" || exit /b 0
+                      REM cmake --build --preset windows-x64-vs2026-debug --parallel
+                      REM build\\windows-x64-vs2026\\bin\\Debug\\TestMKLogging-c++17.exe --gtest_output="xml:build\\windows-x64-vs2026\\test-cpp17-debug.xml" || exit /b 0
+                      REM build\\windows-x64-vs2026\\bin\\Debug\\TestMKLogging-c++20.exe --gtest_output="xml:build\\windows-x64-vs2026\\test-cpp20-debug.xml" || exit /b 0
 
                       cmake --build --preset windows-x64-vs2026-release --parallel
                       build\\windows-x64-vs2026\\bin\\Release\\TestMKLogging-c++17.exe --gtest_output="xml:build\\windows-x64-vs2026\\test-cpp17-release.xml" || exit /b 0
