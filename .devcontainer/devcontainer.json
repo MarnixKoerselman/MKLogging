@@ -30,7 +30,6 @@
         "ms-azuretools.vscode-containers",
         "mhutchie.git-graph",
         "esbenp.prettier-vscode",
-        "amazonwebservices.amazon-q-vscode",
         "github.vscode-github-actions",
         "editorconfig.editorconfig" // https://editorconfig.org/
       ]
