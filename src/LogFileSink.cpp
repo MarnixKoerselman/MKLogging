@@ -20,7 +20,7 @@ namespace MKLogging
     FileSystemUtils::CreateDirectoriesFromFilePath(filePath);
 
     // Open in untranslated mode
-    m_File = std::fopen(std::filesystem::path(filePath).string().c_str(), "wb");
+    m_File = std::fopen(filePath.string().c_str(), "wb");
     if (IsOpen())
     {
       const char* szUtf8Bom = "\xEF\xBB\xBF";
