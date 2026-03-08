@@ -7,7 +7,7 @@
   },
   "configurePresets": [
     {
-      "name": "base",
+      "name": "ninja-base",
       "hidden": true,
       "generator": "Ninja",
       "binaryDir": "${sourceDir}/build/${presetName}",
@@ -18,7 +18,7 @@
     },
     {
       "name": "linux-debug",
-      "inherits": "base",
+      "inherits": "ninja-base",
       "displayName": "Linux Debug",
       "description": "Linux debug build with all symbols",
       "condition": {
@@ -32,7 +32,7 @@
     },
     {
       "name": "linux-release",
-      "inherits": "base",
+      "inherits": "ninja-base",
       "displayName": "Linux Release",
       "description": "Linux optimized release build",
       "condition": {
@@ -47,7 +47,7 @@
     },
     {
       "name": "linux-relwithdebinfo",
-      "inherits": "base",
+      "inherits": "ninja-base",
       "displayName": "Linux Release with Debug Info",
       "description": "Linux optimized build with debug information",
       "condition": {
@@ -61,7 +61,7 @@
     },
     {
       "name": "linux-x86-debug",
-      "inherits": "base",
+      "inherits": "ninja-base",
       "displayName": "Linux x86 Debug",
       "description": "Linux 32-bit debug build",
       "condition": {
@@ -77,7 +77,7 @@
     },
     {
       "name": "linux-x86-release",
-      "inherits": "base",
+      "inherits": "ninja-base",
       "displayName": "Linux x86 Release",
       "description": "Linux 32-bit release build",
       "condition": {
@@ -94,7 +94,7 @@
     },
     {
       "name": "linux-debug-coverage",
-      "inherits": "base",
+      "inherits": "ninja-base",
       "displayName": "Linux Debug Coverage",
       "description": "Linux debug build with code coverage",
       "condition": {
@@ -110,8 +110,8 @@
       }
     },
     {
-      "name": "windows-base",
-      "inherits": "base",
+      "name": "ninja-msvc-base",
+      "inherits": "ninja-base",
       "hidden": true,
       "cacheVariables": {
         "CMAKE_C_COMPILER": "cl.exe",
@@ -124,9 +124,9 @@
       }
     },
     {
-      "name": "win-x86-debug",
-      "inherits": "windows-base",
-      "displayName": "Windows x86 Debug",
+      "name": "ninja-msvc-x86-debug",
+      "inherits": "ninja-msvc-base",
+      "displayName": "Debug (x86)",
       "description": "Windows x86 debug build",
       "architecture": {
         "value": "x86",
@@ -137,9 +137,9 @@
       }
     },
     {
-      "name": "win-x86-release",
-      "inherits": "windows-base",
-      "displayName": "Windows x86 Release",
+      "name": "ninja-msvc-x86-release",
+      "inherits": "ninja-msvc-base",
+      "displayName": "Release (x86)",
       "description": "Windows x86 release build",
       "architecture": {
         "value": "x86",
@@ -151,9 +151,9 @@
       }
     },
     {
-      "name": "win-x64-debug",
-      "inherits": "windows-base",
-      "displayName": "Windows x64 Debug",
+      "name": "ninja-msvc-x64-debug",
+      "inherits": "ninja-msvc-base",
+      "displayName": "Debug (x64)",
       "description": "Windows x64 debug build",
       "architecture": {
         "value": "x64",
@@ -164,9 +164,18 @@
       }
     },
     {
-      "name": "win-x64-release",
-      "inherits": "windows-base",
-      "displayName": "Windows x64 Release",
+      "name": "ninja-msvc-x64-debug-coverage",
+      "inherits": "ninja-msvc-x64-debug",
+      "displayName": "Debug (x64) with coverage",
+      "description": "Windows x64 debug build with coverage",
+      "cacheVariables": {
+        "CMAKE_EXE_LINKER_FLAGS": "/PROFILE"
+      }
+    },
+    {
+      "name": "ninja-msvc-x64-release",
+      "inherits": "ninja-msvc-base",
+      "displayName": "Release (x64)",
       "description": "Windows x64 release build",
       "architecture": {
         "value": "x64",
@@ -178,10 +187,10 @@
       }
     },
     {
-      "name": "windows-base-vs2022",
+      "name": "vs2022-base",
       "description": "Target Windows with the Visual Studio 2022 generator.",
       "hidden": true,
-      "inherits": "base",
+      "inherits": "ninja-base",
       "generator": "Visual Studio 17 2022",
       "toolset": {
         "value": "v143,host=x64",
@@ -199,43 +208,20 @@
       }
     },
     {
-      "name": "windows-x86-vs2022",
+      "name": "vs2022-x86",
       "displayName": "VS2022 x86",
       "description": "Target Windows (32-bit).",
-      "inherits": "windows-base-vs2022",
+      "inherits": "vs2022-base",
       "architecture": {
         "value": "Win32",
         "strategy": "set"
       }
     },
     {
-      "name": "windows-x64-vs2022",
-      "displayName": "VS2022 x64",
-      "description": "Target Windows (64-bit).",
-      "inherits": "windows-base-vs2022",
-      "architecture": {
-        "value": "x64",
-        "strategy": "set"
-      }
-    },
-    {
-      "name": "windows-x64-vs2022-coverage",
-      "displayName": "VS2022 x64 Code Coverage",
-      "description": "Target Windows (64-bit) with code coverage enabled.",
-      "inherits": "windows-base-vs2022",
-      "architecture": {
-        "value": "x64",
-        "strategy": "set"
-      },
-      "cacheVariables": {
-        "CMAKE_EXE_LINKER_FLAGS": "/PROFILE"
-      }
-    },
-    {
-      "name": "windows-base-vs2026",
+      "name": "vs2026-base",
       "description": "Target Windows with the Visual Studio 2026 generator.",
       "hidden": true,
-      "inherits": "base",
+      "inherits": "ninja-base",
       "generator": "Visual Studio 18 2026",
       "cacheVariables": {
         "CMAKE_C_COMPILER": "cl.exe",
@@ -249,20 +235,10 @@
       }
     },
     {
-      "name": "windows-x86-vs2026",
-      "displayName": "VS2026 x86",
-      "description": "Target Windows (32-bit).",
-      "inherits": "windows-base-vs2026",
-      "architecture": {
-        "value": "Win32",
-        "strategy": "set"
-      }
-    },
-    {
-      "name": "windows-x64-vs2026",
+      "name": "vs2026-x64",
       "displayName": "VS2026 x64",
       "description": "Target Windows (64-bit).",
-      "inherits": "windows-base-vs2026",
+      "inherits": "vs2026-base",
       "architecture": {
         "value": "x64",
         "strategy": "set"
@@ -271,67 +247,32 @@
   ],
   "buildPresets": [
     {
-      "name": "windows-x86-vs2022-debug",
+      "name": "vs2022-x86-debug",
       "description": "Debug configuration for Windows 32-bit target.",
-      "displayName": "Debug (x86)",
+      "displayName": "VS2022 Debug (x86)",
       "configuration": "Debug",
-      "configurePreset": "windows-x86-vs2022"
+      "configurePreset": "vs2022-x86"
     },
     {
-      "name": "windows-x86-vs2022-release",
+      "name": "vs2022-x86-release",
       "description": "Release configuration for Windows 32-bit target",
-      "displayName": "Release (x86)",
+      "displayName": "VS2022 Release (x86)",
       "configuration": "Release",
-      "configurePreset": "windows-x86-vs2022"
+      "configurePreset": "vs2022-x86"
     },
     {
-      "name": "windows-x64-vs2022-debug",
-      "description": "Debug configuration for Windows 64-bit target.",
-      "displayName": "Debug (x64)",
-      "configuration": "Debug",
-      "configurePreset": "windows-x64-vs2022"
-    },
-    {
-      "name": "windows-x64-vs2022-coverage-debug",
-      "description": "Debug configuration for Windows 64-bit target with code coverage.",
-      "displayName": "Debug (x64) Coverage",
-      "configuration": "Debug",
-      "configurePreset": "windows-x64-vs2022-coverage"
-    },
-    {
-      "name": "windows-x64-vs2022-release",
-      "description": "Release configuration for Windows 64-bit target",
-      "displayName": "Release (x64)",
-      "configuration": "Release",
-      "configurePreset": "windows-x64-vs2022"
-    },
-    {
-      "name": "windows-x86-vs2026-debug",
-      "description": "Debug configuration for Windows 32-bit target.",
-      "displayName": "Debug (x86)",
-      "configuration": "Debug",
-      "configurePreset": "windows-x86-vs2026"
-    },
-    {
-      "name": "windows-x86-vs2026-release",
-      "description": "Release configuration for Windows 32-bit target",
-      "displayName": "Release (x86)",
-      "configuration": "Release",
-      "configurePreset": "windows-x86-vs2026"
-    },
-    {
-      "name": "windows-x64-vs2026-debug",
-      "displayName": "Debug (x64)",
+      "name": "vs2026-x64-debug",
+      "displayName": "VS2026 Debug (x64)",
       "description": "Debug configuration for Windows 64-bit target.",
       "configuration": "Debug",
-      "configurePreset": "windows-x64-vs2026"
+      "configurePreset": "vs2026-x64"
     },
     {
-      "name": "windows-x64-vs2026-release",
-      "displayName": "Release (x64)",
+      "name": "vs2026-x64-release",
+      "displayName": "VS2026 Release (x64)",
       "description": "Release configuration for Windows 64-bit target.",
       "configuration": "Release",
-      "configurePreset": "windows-x64-vs2026"
+      "configurePreset": "vs2026-x64"
     },
     {
       "name": "linux-debug-coverage",

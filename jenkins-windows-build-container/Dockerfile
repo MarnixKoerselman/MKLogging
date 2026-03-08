@@ -20,6 +20,7 @@ RUN C:\TEMP\vs_buildtools.exe --quiet --wait --norestart --nocache --includeReco
   --add Microsoft.VisualStudio.Workload.VCTools
 
 # https://gitforwindows.org/silent-or-unattended-installation.html
+# FIXME: git does not belong inside this container; Jenkins should install git automatically (using "tools")
 RUN PowerShell -Command "& {$ProgressPreference='SilentlyContinue' ; Invoke-WebRequest -UseBasicParsing https://github.com/git-for-windows/git/releases/download/v2.52.0.windows.1/Git-2.52.0-64-bit.exe -OutFile C:\TEMP\git-installer.exe}" `
 && C:\TEMP\git-installer.exe /VERYSILENT /NORESTART /NOCANCEL /SP- /CLOSEAPPLICATIONS /NOICONS /NORESTARTAPPLICATIONS
 

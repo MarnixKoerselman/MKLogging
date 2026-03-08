@@ -11,7 +11,7 @@ jobs:
 
     strategy:
       matrix:
-        preset: [windows-x86-vs2022, windows-x64-vs2022]
+        preset: [vs2022-x86]
         config: [Debug, Release]
 
     steps:
@@ -46,4 +46,4 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: source-package-${{ matrix.preset }}-${{ matrix.config }}
-          path: dist/*
+          path: dist/*.zip

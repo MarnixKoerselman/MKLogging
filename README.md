@@ -139,7 +139,7 @@ A typical log command (e.g. `LOGD("var=" << var)`) has the following properties:
 
 ```bash
 # Configure with preset
-cmake --preset linux-release  # or windows-x64-vs2022
+cmake --preset linux-release  # or ninja-msvc-x64-release
 
 # Build
 cmake --build build/linux-release --parallel
