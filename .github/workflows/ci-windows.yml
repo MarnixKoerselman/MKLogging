@@ -25,7 +25,7 @@ jobs:
           arch: ${{ contains(matrix.preset, 'x86') && 'x86' || 'x64' }}
 
       - name: Configure CMake
-        run: cmake --preset ${{ matrix.preset }}
+        run: cmake --preset ${{ matrix.preset }} -DSOURCE_DIST_PROJECT_VERSION=0.0.0
 
       - name: Build
         run: cmake --build build/${{ matrix.preset }} --config ${{ matrix.config }} --parallel
