@@ -19,12 +19,13 @@ ADD https://aka.ms/vs/${VS_VERSION}/vs_buildtools.exe C:\TEMP\vs_buildtools.exe
 RUN C:\TEMP\vs_buildtools.exe --quiet --wait --norestart --nocache --includeRecommended `
   --add Microsoft.VisualStudio.Workload.VCTools
 
-# https://gitforwindows.org/silent-or-unattended-installation.html
-# FIXME: git does not belong inside this container; Jenkins should install git automatically (using "tools")
-RUN PowerShell -Command "& {$ProgressPreference='SilentlyContinue' ; Invoke-WebRequest -UseBasicParsing https://github.com/git-for-windows/git/releases/download/v2.52.0.windows.1/Git-2.52.0-64-bit.exe -OutFile C:\TEMP\git-installer.exe}" `
-&& C:\TEMP\git-installer.exe /VERYSILENT /NORESTART /NOCANCEL /SP- /CLOSEAPPLICATIONS /NOICONS /NORESTARTAPPLICATIONS
+# MinGit is git for applications. It is necessary to install git in the Agent, because Jenkins won't add it to the path if Jenkins installs it - which means that only Jenkins knows where to find it, and applications (such as vcpkg) do not.
+ADD https://github.com/git-for-windows/git/releases/download/v2.53.0.windows.2/MinGit-2.53.0.2-64-bit.zip C:\TEMP\MinGit.zip
+RUN PowerShell -Command "Expand-Archive -Path C:\TEMP\MinGit.zip -DestinationPath C:\MinGit; [Environment]::SetEnvironmentVariable('PATH', $env:PATH + ';C:\MinGit\cmd', 'Machine')"
 
-# "C:\Program Files (x86)\Microsoft Visual Studio\2022\BuildTools\Common7\Tools\VsMSBuildCmd.bat"
+# "C:\Program Files (x86)\Microsoft Visual Studio\18\BuildTools\Common7\Tools\VsDevCmd.bat"
+# "C:\Program Files (x86)\Microsoft Visual Studio\18\BuildTools\Common7\Tools\VsMSBuildCmd.bat"
+# "C:\Program Files (x86)\Microsoft Visual Studio\18\BuildTools\Common7\Tools\vsdevcmd\core\msbuild.bat"
 
 # ADD https://dist.nuget.org/win-x86-commandline/latest/nuget.exe C:\Tools\nuget.exe
 # RUN setx /m PATH "%PATH%;C:\Tools"
