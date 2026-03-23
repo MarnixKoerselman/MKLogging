@@ -35,7 +35,7 @@ TEST(LogFileSink, Utf8)
   EnsureCleanOutputDirectory(testOuputDirectoryPath);
 
   std::filesystem::path logFilePath = testOuputDirectoryPath / "test.log";
-  std::string testMessage = u8"Hello World\n你好世界";
+  std::string testMessage = "Hello World\n\xe4\xbd\xa0\xe5\xa5\xbd\xe4\xb8\x96\xe7\x95\x8c";
   {
     LogFileSink logFile;
     ASSERT_TRUE(logFile.Create(logFilePath));

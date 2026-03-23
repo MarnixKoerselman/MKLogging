@@ -12,7 +12,8 @@ namespace MKLogging
   {
     if (MKL_ISLOGGED(m_Logger, m_LogLevel))
     {
-      LogRecordAutoSink(m_Logger, m_LogLevel, m_Function, m_File, m_Line).Get() << "Entering" << MKL_ENDLINE;
+      LogRecordAutoSink __rec(m_Logger, m_LogLevel, m_Function, m_File, m_Line);
+      __rec.SetMessage("Entering\n");
     }
   }
 
@@ -26,7 +27,8 @@ namespace MKLogging
   {
     if (MKL_ISLOGGED(m_Logger, m_LogLevel))
     {
-      LogRecordAutoSink(m_Logger, m_LogLevel, location).Get() << "Entering" << MKL_ENDLINE;
+      LogRecordAutoSink __rec(m_Logger, m_LogLevel, location);
+      __rec.SetMessage("Entering\n");
     }
   }
 #endif // __cplusplus >= 202002L
@@ -35,7 +37,8 @@ namespace MKLogging
   {
     if (MKL_ISLOGGED(m_Logger, m_LogLevel))
     {
-      LogRecordAutoSink(m_Logger, m_LogLevel, m_Function, m_File, m_Line).Get() << "Leaving" << MKL_ENDLINE;
+      LogRecordAutoSink __rec(m_Logger, m_LogLevel, m_Function, m_File, m_Line);
+      __rec.SetMessage("Leaving\n");
     }
   }
 

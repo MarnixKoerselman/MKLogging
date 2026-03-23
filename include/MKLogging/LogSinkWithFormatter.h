@@ -2,7 +2,7 @@
 
 #include "ILogSink.h"
 #include <memory>
-#include <ostream>
+#include <string>
 
 namespace MKLogging
 {
@@ -16,7 +16,7 @@ namespace MKLogging
     virtual ~LogSinkWithFormatter() = default;
 
     void SetFormatter(const std::shared_ptr<LogFormatter>& formatter);
-    void OutputFormattedRecord(std::ostream& os, const LogRecord& record);
+    std::string FormatRecord(const LogRecord& record);
 
     static std::shared_ptr<LogFormatter> GetDefaultFormatter();
 

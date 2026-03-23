@@ -1,8 +1,9 @@
 #include "MKLogging/LogRotatingFileSink.h"
 #include "MKLogging/Logger.h"
 #include <regex>
-#include <iomanip>
+#include <format>
 #include <list>
+#include <ctime>
 
 namespace MKLogging
 {
@@ -14,7 +15,7 @@ namespace MKLogging
   {
     if (m_LogFileDirectoryPath.empty())
     {
-      LOGW(L"no output directory specified; log files will be placed in the current working directory");
+      LOGW("no output directory specified; log files will be placed in the current working directory");
     }
   }
 
@@ -35,16 +36,13 @@ namespace MKLogging
     if (!m_LogFile.IsOpen())
     {
       std::filesystem::path logFileName = GetNextFileName();
-      LOGD(L"Create logfile " << logFileName);
+      LOGD("Create logfile {}", logFileName.string());
       if (!m_LogFile.Create(m_LogFileDirectoryPath / logFileName))
       {
         // TODO: handle error
       }
 
       // keep the number of log files in check
-      // make a collection of files, using the creation file stamp (from file name) to sort the collection
-      // while collection size > m_MaxFileCount => remove the oldest file
-      // the log files have the timestamp in sortable order in the file name
       std::list<std::filesystem::path> logFilePaths;
       std::wregex matcher(GetLogFileNameRegex());
       std::wcmatch wideMatch;
@@ -53,7 +51,7 @@ namespace MKLogging
       {
         if (std::regex_match(dirEntry.path().filename().wstring().c_str(), wideMatch, matcher))
         {
-          LOGD(L"Found logfile " << dirEntry.path());
+          LOGD("Found logfile {}", dirEntry.path().string());
           logFilePaths.push_back(dirEntry.path());
         }
       }
@@ -66,11 +64,11 @@ namespace MKLogging
       while (logFilePaths.size() > m_MaxFileCount)
       {
         const auto& filePath = logFilePaths.front();
-        LOGD(L"Deleting logfile " << filePath);
+        LOGD("Deleting logfile {}", filePath.string());
         std::error_code resultCode;
         if (!std::filesystem::remove(filePath, resultCode))
         {
-          LOGE(L"Failed to remove logfile " << filePath << L": " << resultCode.message().c_str());
+          LOGE("Failed to remove logfile {}: {}", filePath.string(), resultCode.message());
         }
         logFilePaths.erase(logFilePaths.begin());
       }
@@ -89,18 +87,22 @@ namespace MKLogging
     const auto currentDateTimeTimeT = std::chrono::system_clock::to_time_t(timeStamp);
     const auto currentDateTimeLocalTime = *std::gmtime(&currentDateTimeTimeT);
 
-    std::wstringstream fileNameStream;
-    fileNameStream
-      << m_sLogFileName
-      << L'-'
-      << std::put_time(&currentDateTimeLocalTime, L"%Y-%m-%d-%H-%M-%S");
+    // Use std::format for the narrow string part, then widen
+    auto formatted = std::format("-{:04}-{:02}-{:02}-{:02}-{:02}-{:02}",
+      currentDateTimeLocalTime.tm_year + 1900,
+      currentDateTimeLocalTime.tm_mon + 1,
+      currentDateTimeLocalTime.tm_mday,
+      currentDateTimeLocalTime.tm_hour,
+      currentDateTimeLocalTime.tm_min,
+      currentDateTimeLocalTime.tm_sec);
 
-    return fileNameStream.str();
+    std::wstring result = m_sLogFileName;
+    result.append(formatted.begin(), formatted.end());
+    return result;
   }
 
   std::wstring LogRotatingFileSink::GetLogFileNameRegex() const
   {
-    // FormatString(L"%s-.*\\.%s", m_sLogFileName.c_str(), m_LogFileExtension.c_str())
     std::wstring matcher = m_sLogFileName;
     matcher += L"-.*\\.";
     matcher += m_LogFileExtension;

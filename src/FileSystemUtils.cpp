@@ -14,7 +14,7 @@ namespace MKLogging
       std::error_code errorCode;
       if (!std::filesystem::create_directories(directoryPath, errorCode))
       {
-        LOGE("Could not create directories " << directoryPath << " (" << errorCode << ")");
+        LOGE("Could not create directories {} ({})", directoryPath.string(), errorCode.message());
       }
     }
   }

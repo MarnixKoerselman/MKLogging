@@ -11,7 +11,7 @@ namespace MKLogging
 
 	void LogOutputStreamSink::OutputRecord(const LogRecord& record)
 	{
-		OutputFormattedRecord(m_Stream, record);
+		m_Stream << FormatRecord(record);
 	}
 
 	LogStdOutSink::LogStdOutSink()

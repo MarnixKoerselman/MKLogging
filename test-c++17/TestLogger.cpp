@@ -21,13 +21,6 @@
 // Functional: use global instance g_LogCentral
 TEST(Functional, DefaultBehaviour)
 {
-  // This is not a real test, more like a demonstration of the capabilities of the global logger.
-  // - output in the Visual Studio output window
-  // - no log file
-  // - in debug build: min log level is Verbose
-  // - in release build: min log level is Warning
-
-  // Test that there are no log files in the output directory
   std::filesystem::path testOuputDirectoryPath = GetTestOutputDirectoryPath("Functional.DefaultBehaviour");
   DirectoryEntries initialDirectoryEntries = GetDirectoryContents(testOuputDirectoryPath);
 
@@ -37,10 +30,9 @@ TEST(Functional, DefaultBehaviour)
   LOGI("hello information in utf-8");
   LOGW("hello warning");
   LOGE("hello error");
-  LOGD(true);
-  LOGI(false);
+  LOGD("{}", true);
+  LOGI("{}", false);
 
-  // Test that there are no log files in the output directory
   DirectoryEntries finalDirectoryEntries = GetDirectoryContents(testOuputDirectoryPath);
   EXPECT_EQ(initialDirectoryEntries, finalDirectoryEntries);
 }
@@ -105,17 +97,17 @@ TEST(Logger, Utf8)
   logger.SetMinimumLogLevel(ELogLevel::All); // set before listeners to avoid irrelevant warnings in the log
   logger.AddListener(stringSink);
 
-  const char* szTestMessage = u8"Hello World\n你好世界";
+  const char* szTestMessage = "Hello World\n\xe4\xbd\xa0\xe5\xa5\xbd\xe4\xb8\x96\xe7\x95\x8c";
   std::string testMessage = szTestMessage;
 
-  MKL_LOGI(&logger, szTestMessage);
+  MKL_LOGI(&logger, "{}", szTestMessage);
   std::string actualMessage = stringSink->Buffer.substr(stringSink->Buffer.rfind(szTestMessage));
   actualMessage.pop_back(); // remove the \n that was added by the logger
   EXPECT_STREQ(szTestMessage, actualMessage.c_str());
 
   stringSink->Buffer.clear();
 
-  MKL_LOGI(&logger, testMessage);
+  MKL_LOGI(&logger, "{}", testMessage);
   actualMessage = stringSink->Buffer.substr(stringSink->Buffer.rfind(testMessage));
   actualMessage.pop_back(); // remove the \n that was added by the logger
   EXPECT_EQ(testMessage, actualMessage);
@@ -131,41 +123,17 @@ TEST(Logger, ANSI)
   const char* szTestMessage = "Hello World\n";
   std::string testMessage = szTestMessage;
 
-  MKL_LOGI(&logger, szTestMessage);
+  MKL_LOGI(&logger, "{}", szTestMessage);
   std::string actualMessage = stringSink->Buffer.substr(stringSink->Buffer.rfind(szTestMessage));
   actualMessage.pop_back(); // remove the \n that was added by the logger
   EXPECT_STREQ(szTestMessage, actualMessage.c_str());
 
   stringSink->Buffer.clear();
 
-  MKL_LOGI(&logger, testMessage);
+  MKL_LOGI(&logger, "{}", testMessage);
   actualMessage = stringSink->Buffer.substr(stringSink->Buffer.rfind(testMessage));
   actualMessage.pop_back(); // remove the \n that was added by the logger
   EXPECT_EQ(testMessage, actualMessage);
-}
-
-TEST(Logger, UCS2)
-{
-  auto stringSink = std::make_shared<FakeStringLogSink>();
-  Logger logger;
-  logger.SetMinimumLogLevel(ELogLevel::All); // set before listeners to avoid irrelevant warnings in the log
-  logger.AddListener(stringSink);
-
-  const wchar_t* szTestMessage = L"Hello World\n";
-  std::wstring testMessage = szTestMessage;
-  std::string testMessageUtf8 = Ucs2ToUtf8(szTestMessage);
-
-  MKL_LOGI(&logger, szTestMessage);
-  std::string actualMessage = stringSink->Buffer.substr(stringSink->Buffer.rfind(testMessageUtf8));
-  actualMessage.pop_back(); // remove the \n that was added by the logger
-  EXPECT_EQ(testMessageUtf8, actualMessage);
-
-  stringSink->Buffer.clear();
-
-  MKL_LOGI(&logger, testMessage);
-  actualMessage = stringSink->Buffer.substr(stringSink->Buffer.rfind(testMessageUtf8));
-  actualMessage.pop_back(); // remove the \n that was added by the logger
-  EXPECT_EQ(testMessageUtf8, actualMessage);
 }
 
 TEST(Logger, CombineStringTypes)
@@ -191,9 +159,11 @@ TEST(Logger, CombineStringTypes)
 #ifdef WIN32
   logger.AddListener(std::make_shared<LogDebugOutputSink>());
 #endif
-  MKL_LOGI(&logger, "\n\tHello world" << L"\n\tHello world" << u8"\n\t你好世界" << L"\n\t你好世界" << L"\n\t\x4f60\x597d\x4e16\x754c");
+  const char* utf8Chinese = "\n\t\xe4\xbd\xa0\xe5\xa5\xbd\xe4\xb8\x96\xe7\x95\x8c";
+  MKL_LOGI(&logger, "{}", std::string("\n\tHello world") + "\n\tHello world"
+    + utf8Chinese + utf8Chinese + utf8Chinese);
 
-  auto helloWorldChinese = u8"\n\t你好世界";
+  auto helloWorldChinese = utf8Chinese;
 
   // string buffer
   EXPECT_EQ(0u, stringSink->Buffer.find("\n\tHello world"));
@@ -255,8 +225,8 @@ TEST(Logger, MultipleThreadsWithDebugOutputAndQueuedLogFile)
     {
       for (int bottlesOfBeer = 99; bottlesOfBeer > 0; bottlesOfBeer--)
       {
-        MKL_LOGW(&logger, "\n" << bottlesOfBeer << " bottles of beer on the wall, " << bottlesOfBeer << " bottles of beer.\n"
-                 << "Take one down and pass it around, " << bottlesOfBeer - 1 << " bottles of beer on the wall.");
+        MKL_LOGW(&logger, "\n{} bottles of beer on the wall, {} bottles of beer.\nTake one down and pass it around, {} bottles of beer on the wall.",
+                 bottlesOfBeer, bottlesOfBeer, bottlesOfBeer - 1);
       }
     }
     );
@@ -277,13 +247,18 @@ TEST(Logger, MultipleThreadsWithDebugOutputAndQueuedLogFile)
   std::chrono::system_clock::time_point endTime = std::chrono::system_clock::now();
 
   // log some statistics
-  MKL_LOGW(&logger, ""
-           << "\n\tIt took the main thread " << std::chrono::duration_cast<std::chrono::microseconds>(intermediateTime - startTime).count() << " us to set up the production"
-           << "\n\t and there were " << intermediateQueueLength << " items in the queue at that time"
-           << "\n\tProduction took " << std::chrono::duration_cast<std::chrono::milliseconds>(producedTime - startTime).count() << " ms in total"
-           << "\n\tWhen log production stopped, there were " << nProducedQueueLength << " items in the queue"
-           << "\n\tDraining the queue took " << std::chrono::duration_cast<std::chrono::milliseconds>(endTime - producedTime).count() << " ms"
-           << "\n\tTotal duration=" << std::chrono::duration_cast<std::chrono::milliseconds>(endTime - startTime).count() << " ms"
+  MKL_LOGW(&logger, "\n\tIt took the main thread {} us to set up the production"
+           "\n\t and there were {} items in the queue at that time"
+           "\n\tProduction took {} ms in total"
+           "\n\tWhen log production stopped, there were {} items in the queue"
+           "\n\tDraining the queue took {} ms"
+           "\n\tTotal duration={} ms",
+           std::chrono::duration_cast<std::chrono::microseconds>(intermediateTime - startTime).count(),
+           intermediateQueueLength,
+           std::chrono::duration_cast<std::chrono::milliseconds>(producedTime - startTime).count(),
+           nProducedQueueLength,
+           std::chrono::duration_cast<std::chrono::milliseconds>(endTime - producedTime).count(),
+           std::chrono::duration_cast<std::chrono::milliseconds>(endTime - startTime).count()
   );
 
   logger.RemoveListener(bufferedFile);
@@ -305,7 +280,7 @@ TEST(Logger, MultipleThreadsWithDebugOutputAndQueuedLogFile)
   std::string newLogFileText(fileSize, '\0');
   size_t nReadItemCount = std::fread(newLogFileText.data(), sizeof(char), newLogFileText.size(), file);
   std::fclose(file);
-  ASSERT_EQ(nReadItemCount, newLogFileText.size()); // newline translation in effect - number of characters in buffer should be less than the file size
+  ASSERT_EQ(nReadItemCount, newLogFileText.size());
   newLogFileText.resize(nReadItemCount);
   EXPECT_EQ(logFileText, newLogFileText);
 }
@@ -381,9 +356,9 @@ TEST(Logger, ChainOfLoggers3)
   public:
     SimpleFormatter(const char* header) : m_Header(header)
     {}
-    void OutputRecordWithFormatting(std::ostream& os, const LogRecord& record) override
+    std::string FormatRecord(const LogRecord& record) override
     {
-      os << m_Header << ": " << record.GetLogMessage();
+      return std::format("{}: {}", m_Header, record.GetLogMessage());
     }
     const char* m_Header;
   };

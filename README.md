@@ -28,13 +28,13 @@
 
 This is a simple logging framework, and its primary intended use is during development. There is nothing against using the same log facilities in production though.
 
-To use the logger, a developer will typically use `LOGD`, `LOGI`, `LOGW` and `LOGE` macros to emit information. Typically this information ends up as `OutputDebugString` (in the Visual Studio output window), and in a log file (for post mortem analysis) during development, and in rotating log files when deployed in a production environment. Adding your own extensions that e.g. sends the log output to a central log server is totally possible and entirely up to you.
+To use the logger, a developer will typically use `LOGD`, `LOGI`, `LOGW` and `LOGE` macros to emit information, using `std::format` syntax for message construction. Typically this information ends up as `OutputDebugString` (in the Visual Studio output window), and in a log file (for post mortem analysis) during development, and in rotating log files when deployed in a production environment. Adding your own extensions that e.g. sends the log output to a central log server is totally possible and entirely up to you.
 
 ### Examples
 
 ```cpp
-LOGD("i=" << i << ", x=" << x << ", y=" << y);
-LOGE("failed to create file at " << filePath << " (error=" << errorCode << ")");
+LOGD("i={}, x={}, y={}", i, x, y);
+LOGE("failed to create file at {} (error={})", filePath, errorCode);
 ```
 
 ### Log Levels
@@ -47,7 +47,7 @@ LOGE("failed to create file at " << filePath << " (error=" << errorCode << ")");
 
 ## Implementation Overview
 
-This is a cross-platform C++17 logging library built with CMake. It supports Windows (MSVC), Linux (GCC/Clang), and provides both 32-bit and 64-bit builds. The project uses modern CMake practices with presets for different configurations and includes comprehensive CI/CD pipelines for automated testing.
+This is a cross-platform C++20 logging library built with CMake. It uses `std::format` for type-safe, high-performance log message construction. It supports Windows (MSVC), Linux (GCC/Clang), and provides both 32-bit and 64-bit builds. The project uses modern CMake practices with presets for different configurations and includes comprehensive CI/CD pipelines for automated testing.
 
 ### Build System
 
@@ -114,22 +114,46 @@ LogCentral()->AddListener(std::make_shared<MyLogSink>());
 
 Loggers have a default formatter, and this logs all metadata (source file, line number, function, thread & process ID) along with the user-provided log message. Log sinks do not have a default formatter, but it is possible to use a formatter on a sink. Please take note that formatting may be 'expensive' and formatters should be null-ed if possible.
 
+The formatter API uses `std::string`-returning methods that can be overridden individually:
+
+```cpp
+class LogFormatter {
+public:
+    virtual std::string FormatRecord(const LogRecord& record);
+    virtual std::string FormatLogLevel(ELogLevel logLevel);
+    virtual std::string FormatTime(const std::chrono::system_clock::time_point& time);
+    virtual std::string FormatThreadId(std::thread::id threadId);
+    virtual std::string FormatLogMessage(const LogRecord& record);
+};
+```
+
 Take a look at the implementation of the default formatter for ideas, and rewrite it or create a derived class with your own preferred formatting.
 
 ## Usage Considerations
 
-A typical log command (e.g. `LOGD("var=" << var)`) has the following properties:
+A typical log command (e.g. `LOGD("var={}", var)`) has the following properties:
 
 - **Performance** - Check if the log statement should be logged; if the minimum log level (property of LogCentral) is higher than - in this example - DEBUG, then the rest of the log statement is not evaluated, which means (almost) zero overhead for log statements that are ignored
 - **Runtime Control** - The idea is that all log statements could stay in, even when these do not seem very interesting; but they can be enabled even at runtime, if your application enables that
 - **Compile-time Removal** - If you wish, it is possible to completely discard log statements (e.g. if the release build should never ever contain logs at DEBUG level), by defining these macros before including Logger.h:
 
   ```cpp
-  #define LOGD(x) (void)0
+  #define LOGD(...) (void)0
   #include "Logger.h"
   ```
 
-- **UTF-8 Support** - The log statement is `std::ostream` based, for UTF-8. Conversion helpers for `std::wstring` and `wchar_t*` are provided, but they use `std::wstring_convert<std::codecvt_utf8<wchar_t>>` converter which is deprecated. The conversion helpers can be replaced (see Logger.h: `MKL_NO_STD_STRING_HELPERS`).
+- **UTF-8 Support** - The log statement uses `std::format` which works with UTF-8 `char` strings natively.
+
+- **Custom Type Formatting** - To make your own types loggable, provide a `std::formatter` specialization:
+
+  ```cpp
+  template <>
+  struct std::formatter<MyType> : std::formatter<std::string> {
+    auto format(const MyType& val, std::format_context& ctx) const {
+      return std::formatter<std::string>::format(val.toString(), ctx);
+    }
+  };
+  ```
 
 - **_Source location_** - in c++20 a new type `std::source_location` was included, which does not offer much under _MSVC_ (IMHO it makes the function name a little less readable) but the function name improvement for _GLIBCXX_ is significant. By default the c++20 implementation is used if possible, but this behaviour can be modified with compiler flag `MKL_USE_SOURCE_LOCATION` (see the `CMakeLists.txt` files in the test directories for examples).
 
@@ -167,13 +191,15 @@ int main() {
     LogCentral()->SetMinimumLogLevel(ELogLevel::Info);
 
     // Add file logging
-    LogCentral()->AddListener(std::make_shared<LogFileSink>("app.log"));
+    auto fileSink = std::make_shared<LogFileSink>();
+    fileSink->Create("app.log");
+    LogCentral()->AddListener(fileSink);
 
-    // Basic usage with central logger
+    // Basic usage with central logger (std::format syntax)
     LOGI("Application started");
-    LOGD("Debug info: value=" << 42);
-    LOGW("Warning message");
-    LOGE("Error occurred");
+    LOGD("Debug info: value={}", 42);
+    LOGW("Warning: {} items remaining", count);
+    LOGE("Error code: {:#x}", errorCode);
 
     return 0;
 }
@@ -211,11 +237,9 @@ target_link_libraries(
 
 ### Performance Notes
 
-`iostream` based output is slower than `std::printf` based output. See [this Stack Overflow discussion](https://stackoverflow.com/questions/2872543/printf-vs-cout-in-c/20238349#20238349) for some thoughts.
+The library uses `std::format` for log message construction, which offers better performance than `iostream` while maintaining type safety. See [this Stack Overflow discussion](https://stackoverflow.com/questions/2872543/printf-vs-cout-in-c/20238349#20238349) for some background on `iostream` vs `printf` performance.
 
-Some tests (in `test/PerformanceTest.cpp`) demonstrate this difference.
-
-For creating the log statement however, there are many advantages of using string stream buffer to construct the log statement: mostly ease-of-use (e.g. consistent logging of a class), and type safety.
+Some tests (in `test-c++17/PerformanceTest.cpp`) demonstrate performance characteristics.
 
 ### Helpers
 
@@ -240,8 +264,9 @@ void f()
 
 **Modern C++ Features**
 
-- Upgrade to C++20 consistently (currently mixed C++17/20)
-- Add `std::format` support as alternative to iostream for better performance
+- ~~Upgrade to C++20 consistently~~ ✅ Done — C++20 is now the minimum requirement
+- ~~Add `std::format` support~~ ✅ Done — `std::format` replaces `iostream` for log message construction
+- ~~Replace deprecated `std::codecvt`~~ ✅ Done — removed along with the `wstring` conversion helpers
 - Consider `std::span` for binary data logging instead of raw pointers
 
 **Thread Safety & Performance**
@@ -253,7 +278,6 @@ void f()
 
 **API Modernization**
 
-- Replace deprecated `std::codecvt` with modern UTF-8 conversion
 - Add RAII-based scoped logging contexts
 - Implement proper move semantics throughout
 - Add `std::string_view` overloads where appropriate

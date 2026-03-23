@@ -1,8 +1,6 @@
 #include "MKLogging/LogUnbufferedFileSink.h"
 #include "MKLogging/FileSystemUtils.h"
-#include <sstream>
 #include <cstdio>
-#include <fstream>
 #include <string.h> // strerror
 
 namespace MKLogging
@@ -59,16 +57,8 @@ namespace MKLogging
 
   void LogUnbufferedFileSink::OutputRecord(const LogRecord& record)
   {
-    std::ostringstream buffer;
-    OutputFormattedRecord(buffer, record);
-    WriteToFile(buffer.str());
+    WriteToFile(FormatRecord(record));
   }
-
-  //void LogUnbufferedFileSink::OutputString(const std::wstring& text)
-  //{
-  //    // When the file is opened in Unicode translation mode�for example, if fd is opened by using _open or _sopen and a mode parameter that includes _O_WTEXT, _O_U16TEXT, or _O_U8TEXT, or if it's opened by using fopen and a mode parameter that includes ccs=UNICODE, ccs=UTF-16LE, or ccs=UTF-8, or if the mode is changed to a Unicode translation mode by using _setmode�buffer is interpreted as a pointer to an array of wchar_t that contains UTF-16 data. An attempt to write an odd number of bytes in this mode causes a parameter validation error.
-  //    OutputData(text.data(), text.size() * sizeof(std::wstring::value_type));
-  //}
 
   void LogUnbufferedFileSink::WriteToFile(const void* data, size_t size)
   {

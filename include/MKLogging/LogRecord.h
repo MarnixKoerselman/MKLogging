@@ -2,7 +2,7 @@
 
 #include "ILogSink.h"
 #include "ELogLevel.h"
-#include <sstream>
+#include <string>
 #include <chrono>
 #include <thread>
 #include <memory>
@@ -20,10 +20,10 @@ namespace MKLogging
 #if __cplusplus >= 202002L
     LogRecord(ELogLevel logLevel, std::source_location location);
 #endif // __cplusplus >= 202002L
-    LogRecord(const LogRecord& rhs);
+    LogRecord(const LogRecord& rhs) = default;
     virtual ~LogRecord() = default;
 
-    std::ostream& Get();
+    void SetMessage(std::string msg);
     void LogHex(const char* dataHeader, const void* data, int dataSize, int maxTraceValueCount = 128);
     std::string GetLogMessage() const;
 
@@ -39,7 +39,7 @@ namespace MKLogging
     std::string UnformattedMessage() const;
 
   protected:
-    std::ostringstream m_MessageBuffer;
+    std::string m_Message;
   };
 
 } // namespace MKLogging

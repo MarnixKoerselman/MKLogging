@@ -1,6 +1,7 @@
 #pragma once
 
-#include <ostream>
+#include <format>
+#include <string_view>
 
 namespace MKLogging
 {
@@ -24,6 +25,14 @@ namespace MKLogging
 
   void operator++(ELogLevel& logLevel);
 
-  std::ostream& operator <<(std::ostream& os, ELogLevel logLevel);
-
 } // namespace MKLogging
+
+// std::format support for ELogLevel
+template <>
+struct std::formatter<MKLogging::ELogLevel> : std::formatter<std::string_view>
+{
+  auto format(MKLogging::ELogLevel level, std::format_context& ctx) const
+  {
+    return std::formatter<std::string_view>::format(MKLogging::ELogLevel_ToString(level), ctx);
+  }
+};

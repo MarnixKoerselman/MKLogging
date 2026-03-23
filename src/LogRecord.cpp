@@ -1,11 +1,10 @@
 #include "MKLogging/LogRecord.h"
 #include <chrono>
 #include <cassert>
-#include <iostream>
-#include <iomanip>
 #include <thread>
 #include <algorithm>
 #include <cstring>
+#include <format>
 
 namespace MKLogging
 {
@@ -18,7 +17,6 @@ namespace MKLogging
     , Time(std::chrono::system_clock::now())
     , ThreadId(std::this_thread::get_id())
   {
-    std::boolalpha(m_MessageBuffer);
   }
 
 #if __cplusplus >= 202002L
@@ -30,64 +28,44 @@ namespace MKLogging
     , Time(std::chrono::system_clock::now())
     , ThreadId(std::this_thread::get_id())
   {
-    std::boolalpha(m_MessageBuffer);
   }
 #endif
 
-  LogRecord::LogRecord(const LogRecord& rhs)
-    : LogLevel(rhs.LogLevel)
-    , Function(rhs.Function)
-    , File(rhs.File)
-    , Line(rhs.Line)
-    , Time(rhs.Time)
-    , ThreadId(rhs.ThreadId)
-    , PreformattedMessage(rhs.PreformattedMessage)
+  void LogRecord::SetMessage(std::string msg)
   {
-    m_MessageBuffer.str(rhs.m_MessageBuffer.str());
-    std::boolalpha(m_MessageBuffer);
-  }
-
-  std::ostream& LogRecord::Get()
-  {
-    return m_MessageBuffer;
+    m_Message = std::move(msg);
   }
 
   void LogRecord::LogHex(const char* dataHeader, const void* data, int dataSize, int maxTraceValueCount /* = 128 */)
   {
-    std::ostream& os = Get();
-
-    auto formatFlags = os.flags(); // remember the original stream formatting, to be restored when this function is done
-
-    os << dataHeader << " Size=" << dataSize << " bytes\n";
+    std::string result = std::format("{} Size={} bytes\n", dataHeader, dataSize);
 
     if ((data != nullptr) && (dataSize > 0))
     {
       const std::byte* pByteBuffer(reinterpret_cast<const std::byte*>(data));
 
-      // show contents of the buffer as hex values
-      os << std::hex << std::uppercase << std::setfill('0');
       for (int i = 0; i < std::min(dataSize, maxTraceValueCount); i++)
       {
-        os << ' ' << std::setw(2) << static_cast<int>(pByteBuffer[i]);
+        result += std::format(" {:02X}", static_cast<int>(pByteBuffer[i]));
         if (((i + 1) % 16) == 0)
         {
-          os << "\n";
+          result += "\n";
         }
         else if (((i + 1) % 8) == 0)
         {
-          os << "  ";
+          result += "  ";
         }
       }
       if (dataSize > maxTraceValueCount)
       {
-        os << " .......\n";
+        result += " .......\n";
       }
       else
       {
-        os << "\n";
+        result += "\n";
       }
     }
-    os.flags(formatFlags);
+    m_Message = std::move(result);
   }
 
   std::string LogRecord::GetLogMessage() const
@@ -96,12 +74,12 @@ namespace MKLogging
     {
       return *PreformattedMessage;
     }
-    return m_MessageBuffer.str();
+    return m_Message;
   }
 
   std::string LogRecord::UnformattedMessage() const
   {
-    return m_MessageBuffer.str();
+    return m_Message;
   }
 
   bool operator ==(const LogRecord& lhs, const LogRecord& rhs)
@@ -112,7 +90,7 @@ namespace MKLogging
       && (lhs.Function == rhs.Function)
       && (lhs.Time == rhs.Time)
       && (lhs.ThreadId == rhs.ThreadId)
-      && (lhs.m_MessageBuffer.str() == rhs.m_MessageBuffer.str());
+      && (lhs.m_Message == rhs.m_Message);
   }
 
 } // namespace MKLogging

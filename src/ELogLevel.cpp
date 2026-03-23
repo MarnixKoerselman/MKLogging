@@ -1,5 +1,7 @@
 #include "MKLogging/ELogLevel.h"
 #include <cstring>
+#include <stdexcept>
+#include <string>
 
 namespace
 {
@@ -22,30 +24,6 @@ namespace MKLogging
   {
     logLevel = static_cast<ELogLevel>(static_cast<int>(logLevel) + 1);
   }
-
-  std::ostream& operator<<(std::ostream& os, ELogLevel logLevel)
-  {
-    return os << ELogLevel_ToString(logLevel);
-  }
-
-  //ELogLevel& operator++(ELogLevel& logLevel)
-  //{
-  //    if (logLevel >= ELogLevel::Max) {
-  //        logLevel = ELogLevel::Min;
-  //    }
-  //    else {
-  //        logLevel = static_cast<ELogLevel>(static_cast<int>(logLevel) + 1);
-  //    }
-  //    return logLevel;
-  //}
-
-  // postfix increment operator
-  //ELogLevel operator++(ELogLevel& logLevel, int)
-  //{
-  //    ELogLevel eOldValue = logLevel;
-  //    ++logLevel;
-  //    return eOldValue;
-  //}
 
   const char* ELogLevel_ToString(ELogLevel logLevel)
   {

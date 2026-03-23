@@ -28,13 +28,13 @@ TEST(LogFormatters, DefaultLogFormatter)
     EXPECT_EQ(function, record.Function);
     EXPECT_EQ(file, record.File);
     EXPECT_EQ(line, record.Line);
-    //EXPECT_EQ(_, record.Time);
     EXPECT_EQ(std::this_thread::get_id(), record.ThreadId);
     EXPECT_STREQ("test", record.GetLogMessage().c_str());
   });
 
   {
-    LogRecordAutoSink(&mockSink, ELogLevel::Info, function, file, line).Get() << "test";
+    LogRecordAutoSink rec(&mockSink, ELogLevel::Info, function, file, line);
+    rec.SetMessage("test");
   }
 }
 
@@ -43,7 +43,8 @@ TEST(LogFormatters, MessageOnlyLogFormatter_LogRecordWithSink)
   // unless explicitly configured, a log sink does not have a formatter
   std::shared_ptr<FakeStringLogSink> buffer = std::make_shared<FakeStringLogSink>();
   {
-    LogRecordAutoSink(buffer.get(), ELogLevel::Info, __FUNCTION__, __FILE__, __LINE__).Get() << "test";
+    LogRecordAutoSink rec(buffer.get(), ELogLevel::Info, __FUNCTION__, __FILE__, __LINE__);
+    rec.SetMessage("test");
   }
   EXPECT_STREQ("test", buffer->Buffer.c_str());
   buffer->Buffer.clear();
@@ -66,9 +67,9 @@ TEST(LogFormatters, DerivedLogFormatter)
   class DerivedFormatter : public LogFormatter
   {
   public:
-    virtual void OutputRecordWithFormatting(std::ostream& os, const LogRecord& record) override
+    std::string FormatRecord(const LogRecord& record) override
     {
-      os << "DerivedFormatter: " << record.GetLogMessage();
+      return std::format("DerivedFormatter: {}", record.GetLogMessage());
     }
   };
 
@@ -86,21 +87,21 @@ TEST(LogFormatters, DerivedLogFormatterPartials)
   class DerivedFormatter : public LogFormatter
   {
   public:
-    virtual void OutputLogLevel(std::ostream& os, ELogLevel /*logLevel*/) override
+    std::string FormatLogLevel(ELogLevel /*logLevel*/) override
     {
-      os << "loglevel";
+      return "loglevel";
     }
-    virtual void OutputTime(std::ostream& os, const std::chrono::system_clock::time_point& /*time*/) override
+    std::string FormatTime(const std::chrono::system_clock::time_point& /*time*/) override
     {
-      os << "time";
+      return "time";
     }
-    virtual void OutputThreadId(std::ostream& os, std::thread::id /*threadId*/) override
+    std::string FormatThreadId(std::thread::id /*threadId*/) override
     {
-      os << "threadid";
+      return "threadid";
     }
-    virtual void OutputMessage(std::ostream& os, const LogRecord& /*record*/) override
+    std::string FormatLogMessage(const LogRecord& /*record*/) override
     {
-      os << "message";
+      return "message";
     }
   };
 

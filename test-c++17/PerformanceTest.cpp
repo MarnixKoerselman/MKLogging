@@ -34,7 +34,7 @@ public:
   {
     for (int i = SONG_LENGTH; i > 0; i--)
     {
-      LOGV("There are " << i << " bottles of beer on the wall, " << i << " bottles of beer. Take one down and pass it around, " << i - 1 << " bottles of beer on the wall.");
+      LOGV("There are {} bottles of beer on the wall, {} bottles of beer. Take one down and pass it around, {} bottles of beer on the wall.", i, i, i - 1);
     }
   }
 
@@ -42,7 +42,7 @@ public:
   {
     for (int i = SONG_LENGTH; i > 0; i--)
     {
-      LOGD("There are " << i << " bottles of beer on the wall, " << i << " bottles of beer. Take one down and pass it around, " << i - 1 << " bottles of beer on the wall.");
+      LOGD("There are {} bottles of beer on the wall, {} bottles of beer. Take one down and pass it around, {} bottles of beer on the wall.", i, i, i - 1);
     }
   }
 
@@ -50,7 +50,7 @@ public:
   {
     for (int i = SONG_LENGTH; i > 0; i--)
     {
-      LOGI("There are " << i << " bottles of beer on the wall, " << i << " bottles of beer. Take one down and pass it around, " << i - 1 << " bottles of beer on the wall.");
+      LOGI("There are {} bottles of beer on the wall, {} bottles of beer. Take one down and pass it around, {} bottles of beer on the wall.", i, i, i - 1);
     }
   }
 
@@ -58,7 +58,7 @@ public:
   {
     for (int i = SONG_LENGTH; i > 0; i--)
     {
-      LOGW("There are " << i << " bottles of beer on the wall, " << i << " bottles of beer. Take one down and pass it around, " << i - 1 << " bottles of beer on the wall.");
+      LOGW("There are {} bottles of beer on the wall, {} bottles of beer. Take one down and pass it around, {} bottles of beer on the wall.", i, i, i - 1);
     }
   }
 
@@ -66,7 +66,7 @@ public:
   {
     for (int i = SONG_LENGTH; i > 0; i--)
     {
-      LOGE("There are " << i << " bottles of beer on the wall, " << i << " bottles of beer. Take one down and pass it around, " << i - 1 << " bottles of beer on the wall.");
+      LOGE("There are {} bottles of beer on the wall, {} bottles of beer. Take one down and pass it around, {} bottles of beer on the wall.", i, i, i - 1);
     }
   }
 
@@ -148,7 +148,6 @@ auto MeasureTime(TimedFunction func)
   func();
   std::chrono::system_clock::time_point endTime = std::chrono::system_clock::now();
   auto millis = std::chrono::duration_cast<std::chrono::milliseconds>(endTime - startTime).count();
-  //std::cout << millis << " ms" << std::endl;
   return millis;
 }
 
@@ -187,7 +186,7 @@ TEST_F(PerformanceTest, FilePerformance)
   {
     for (int i = 0; i < testCount; i++)
     {
-      streamFile.GetStream() << L"This is test " << i << L"\n";
+      streamFile.GetStream() << "This is test " << i << "\n";
     }
   });
 

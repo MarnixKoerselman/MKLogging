@@ -1,56 +1,49 @@
 #include "MKLogging/LogFormatter.h"
-#include <iomanip>
-#include <time.h>
+#include <format>
+#include <ctime>
+#include <sstream>
 
 namespace MKLogging
 {
 
-  void LogFormatter::OutputRecordWithFormatting(std::ostream& os, const LogRecord& record)
+  std::string LogFormatter::FormatRecord(const LogRecord& record)
   {
-    auto flags = os.flags();
-    os << record.File << '(' << record.Line << ")\n";
-    OutputTime(os, record.Time);
-    os << ' ';
-    OutputThreadId(os, record.ThreadId);
-    os << ' ';
-    OutputLogLevel(os, record.LogLevel);
-    os << ' ';
-    OutputMessage(os, record);
-    os.flags(flags);
+    return std::format("{}({})\n{} {} {} {}",
+      record.File, record.Line,
+      FormatTime(record.Time),
+      FormatThreadId(record.ThreadId),
+      FormatLogLevel(record.LogLevel),
+      FormatLogMessage(record));
   }
 
-  void LogFormatter::OutputLogLevel(std::ostream& os, ELogLevel logLevel)
+  std::string LogFormatter::FormatLogLevel(ELogLevel logLevel)
   {
-    os << logLevel;
+    return std::format("{}", logLevel);
   }
 
-  void LogFormatter::OutputTime(std::ostream& os, const std::chrono::system_clock::time_point& time)
+  std::string LogFormatter::FormatTime(const std::chrono::system_clock::time_point& time)
   {
-    //auto ms = std::chrono::duration_cast<std::chrono::milliseconds>(time.time_since_epoch()) % 1000;
-    //// convert to std::time_t in order to convert to std::tm (broken time)
-    //auto time2 = std::chrono::system_clock::to_time_t(time);
-    //tm localTime;
-    //if (localtime_s(&localTime, &time2) == 0)
-    //{
-    //  os << std::put_time(&localTime, "%F %T") << '.' << std::setw(3) << std::setfill('0') << std::dec << ms.count();
-    //}
-    // const auto currentDateTime = std::chrono::system_clock::now();
-    const auto currentDateTime = time;
-    const auto currentDateTimeTimeT = std::chrono::system_clock::to_time_t(currentDateTime);
-    const auto currentDateTimeLocalTime = *std::gmtime(&currentDateTimeTimeT);
-
-    const auto ms = std::chrono::time_point_cast<std::chrono::milliseconds>(currentDateTime).time_since_epoch().count() % 1000;
-    os << std::put_time(&currentDateTimeLocalTime, "%F %T") << "." << std::setw(3) << std::setfill('0') << std::dec << ms;
+    const auto timeT = std::chrono::system_clock::to_time_t(time);
+    const auto localTime = *std::gmtime(&timeT);
+    const auto ms = std::chrono::time_point_cast<std::chrono::milliseconds>(time).time_since_epoch().count() % 1000;
+    return std::format("{:04}-{:02}-{:02} {:02}:{:02}:{:02}.{:03}",
+      localTime.tm_year + 1900, localTime.tm_mon + 1, localTime.tm_mday,
+      localTime.tm_hour, localTime.tm_min, localTime.tm_sec, ms);
   }
 
-  void LogFormatter::OutputThreadId(std::ostream& os, std::thread::id threadId)
+  std::string LogFormatter::FormatThreadId(std::thread::id threadId)
   {
-    os << "T=0x" << std::hex << std::setw(8) << std::setfill('0') << std::uppercase << threadId;
+    // std::thread::id doesn't have a direct integer accessor, use ostringstream for portability
+    std::ostringstream oss;
+    oss << threadId;
+    unsigned long long id = 0;
+    try { id = std::stoull(oss.str()); } catch (...) {}
+    return std::format("T=0x{:08X}", id);
   }
 
-  void LogFormatter::OutputMessage(std::ostream& os, const LogRecord& record)
+  std::string LogFormatter::FormatLogMessage(const LogRecord& record)
   {
-    os << record.Function << ": " << record.GetLogMessage();
+    return std::format("{}: {}", record.Function, record.GetLogMessage());
   }
 
 } // namespace MKLogging

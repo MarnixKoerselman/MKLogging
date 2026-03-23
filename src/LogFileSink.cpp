@@ -12,7 +12,7 @@ namespace MKLogging
 
   bool LogFileSink::Create(const std::filesystem::path& filePath)
   {
-    LOGD(L"filePath=" << filePath);
+    LOGD("filePath={}", filePath.string());
 
     Close();
 
@@ -27,10 +27,6 @@ namespace MKLogging
       m_FileSize = std::fwrite(szUtf8Bom, 1, 3, m_File);
     }
 
-    // https://docs.microsoft.com/en-us/cpp/c-runtime-library/reference/fwrite
-    // If file is opened with UTF-8 string processing, then only wstring values should be written
-    // m_File = _wfsopen(filePath.c_str(), L"wt, ccs=UTF-8", _SH_DENYWR);
-
     return IsOpen();
   }
 
@@ -42,7 +38,7 @@ namespace MKLogging
       m_File = nullptr;
       if (result != 0)
       {
-        LOGE(L"fclose failed with error " << result);
+        LOGE("fclose failed with error {}", result);
       }
     }
   }
@@ -63,9 +59,6 @@ namespace MKLogging
     {
       const size_t writtenElementCount = std::fwrite(text.data(), sizeof(std::string::value_type), text.size(), m_File);
       m_FileSize += writtenElementCount * sizeof(std::string::value_type);
-
-      //const size_t writtenElementCount = std::fwrite(text.data(), sizeof(std::wstring::value_type), text.size(), m_File);
-      //m_FileSize += writtenElementCount * sizeof(std::wstring::value_type);
     }
   }
 
@@ -74,9 +67,7 @@ namespace MKLogging
   {
     if (IsOpen())
     {
-      std::ostringstream buffer;
-      OutputFormattedRecord(buffer, record);
-      WriteToFile(buffer.str());
+      WriteToFile(FormatRecord(record));
     }
   }
 

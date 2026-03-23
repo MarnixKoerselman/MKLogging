@@ -1,7 +1,7 @@
 project(TestMKLogging-c++17)
 
-# this needs to be c++17 because of the utf-8 strings
-set(CMAKE_CXX_STANDARD 17)
+# std::format requires C++20
+set(CMAKE_CXX_STANDARD 20)
 
 add_executable(${PROJECT_NAME}
   "FakeFileLogSink.cpp"
@@ -24,7 +24,7 @@ add_executable(${PROJECT_NAME}
   "VersionTest.cpp"
 )
 
-# C++17 tests use macro-based source location by default
+# These tests use macro-based source location
 target_compile_definitions(${PROJECT_NAME} PRIVATE MKL_USE_SOURCE_LOCATION=0)
 
 include(GoogleTest)

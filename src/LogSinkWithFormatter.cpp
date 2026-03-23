@@ -18,19 +18,19 @@ namespace MKLogging
     m_Formatter = formatter;
   }
 
-  void LogSinkWithFormatter::OutputFormattedRecord(std::ostream& os, const LogRecord& record)
+  std::string LogSinkWithFormatter::FormatRecord(const LogRecord& record)
   {
     if (m_Formatter)
     {
-      m_Formatter->OutputRecordWithFormatting(os, record);
+      return m_Formatter->FormatRecord(record);
     }
     else if (record.PreformattedMessage)
     {
-      os << *record.PreformattedMessage;
+      return *record.PreformattedMessage;
     }
     else
     {
-      os << record.GetLogMessage();
+      return record.GetLogMessage();
     }
   }
 

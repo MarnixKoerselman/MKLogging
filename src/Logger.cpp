@@ -1,7 +1,6 @@
 #include "MKLogging/Logger.h"
-#include <codecvt>
-#include <locale>
 #include "MKLogging/Version.h"
+#include <format>
 
 namespace MKLogging
 {
@@ -18,19 +17,6 @@ namespace MKLogging
     return SharedLogCentral().get();
   }
 
-#ifndef MKL_NO_STD_STRING_HELPERS
-  std::ostream& operator <<(std::ostream& os, const std::wstring& s)
-  {
-    return os << s.c_str();
-  }
-
-  std::ostream& operator <<(std::ostream& os, const wchar_t* sz)
-  {
-    static std::wstring_convert<std::codecvt_utf8<wchar_t>> converter;
-    return os << converter.to_bytes(sz ? sz : L"<null>");
-  }
-#endif
-
   ///////////////////////////////////////////////////////////////////////////////////////////////////
 
   Logger::Logger(std::initializer_list<std::shared_ptr<ILogSink>> sinks)
@@ -42,7 +28,7 @@ namespace MKLogging
 
   void Logger::SetMinimumLogLevel(ELogLevel logLevel)
   {
-    MKL_LOGW(this, "Setting log level to: " << ELogLevel_ToString(logLevel));
+    MKL_LOGW(this, "Setting log level to: {}", ELogLevel_ToString(logLevel));
     m_MinimumLogLevel = logLevel;
   }
 
@@ -51,19 +37,15 @@ namespace MKLogging
     if (!IsLogged(record.LogLevel))
       return;
 
-    // If there is a formatter registered, then prepare the preformatted message and store it in the record (N.B.: the 'parameter' record is not changed!)
-    // The log sinks can decide for themselves if they want to use the preformatted message, or apply their own formatting.
-    // If all sinks have a custom formatter, then the Logger's formatter should be nilled for performance reasons.
     const LogRecord* pRecord = &record;
 
     std::unique_ptr<LogRecord> recordWithPreformattedMessage;
     if (m_Formatter)
     {
-      std::ostringstream buffer;
-      OutputFormattedRecord(buffer, record);
+      std::string formatted = FormatRecord(record);
 
-      recordWithPreformattedMessage = std::make_unique<LogRecord>(record); // Make a temporary log record that contains the preformatted message. Don't change the 'source' record, that would mess with the responsibilities in the log chain.
-      recordWithPreformattedMessage->PreformattedMessage = std::make_shared<std::string>(buffer.str());
+      recordWithPreformattedMessage = std::make_unique<LogRecord>(record);
+      recordWithPreformattedMessage->PreformattedMessage = std::make_shared<std::string>(std::move(formatted));
       pRecord = recordWithPreformattedMessage.get();
     }
 
@@ -76,8 +58,6 @@ namespace MKLogging
 
   bool Logger::IsLogged(ELogLevel logLevel)
   {
-    // TODO: allow overruling the hard-coded log level by dynamic application properties, to manipulate the log level at runtime
-
     return (logLevel >= m_MinimumLogLevel) && HasListeners();
   }
 

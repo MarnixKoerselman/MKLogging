@@ -3,7 +3,7 @@
 #include "LogRecord.h"
 #include <chrono>
 #include <thread>
-#include <ostream>
+#include <string>
 
 namespace MKLogging
 {
@@ -12,13 +12,15 @@ namespace MKLogging
   class LogFormatter
   {
   public:
+    virtual ~LogFormatter() = default;
+
     // this method is the entrypoint, and calls the 'partials' below
-    virtual void OutputRecordWithFormatting(std::ostream& os, const LogRecord& record);
+    virtual std::string FormatRecord(const LogRecord& record);
     // partials
-    virtual void OutputLogLevel(std::ostream& os, ELogLevel logLevel);
-    virtual void OutputTime(std::ostream& os, const std::chrono::system_clock::time_point& time);
-    virtual void OutputThreadId(std::ostream& os, std::thread::id threadId);
-    virtual void OutputMessage(std::ostream& os, const LogRecord& record);
+    virtual std::string FormatLogLevel(ELogLevel logLevel);
+    virtual std::string FormatTime(const std::chrono::system_clock::time_point& time);
+    virtual std::string FormatThreadId(std::thread::id threadId);
+    virtual std::string FormatLogMessage(const LogRecord& record);
   };
 
 } // namespace MKLogging
